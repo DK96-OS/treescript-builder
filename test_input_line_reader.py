@@ -13,12 +13,12 @@ class TestInputLineReader(unittest.TestCase):
 
     def test_create_depth_space(self):
         for depth in range(0, 15):
-            str_len = len(create_depth(depth))
+            str_len = len(create_depth(depth, 0))
             self.assertEqual(str_len, 2 * depth)
 
     def test_calculate_depth_file(self):
         for depth in range(0, 15):
-            self.assertEqual(calculate_depth(create_depth(depth) + 'file'), depth)
+            self.assertEqual(calculate_depth(create_depth(depth, 0) + 'file'), depth)
 
     def test_create_depth_space_char_3(self):
         for depth in range(0, 15):
@@ -42,9 +42,10 @@ class TestInputLineReader(unittest.TestCase):
             )
     
     def test_process_line_dir_(self):
-        for dir_name in self.dir_variants:
+        for dir_path in self.dir_variants:
             for depth in range(15):
-                input_line = create_depth(depth, 3) + dir_name
+                input_line = create_depth(depth, 3) + dir_path
+                dir_name = dir_path.strip('/\\')
                 self.assertEqual(
                     process_line(input_line),
                     (depth, True, dir_name, "")
