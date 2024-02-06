@@ -1,0 +1,76 @@
+#!/usr/bin/python
+""" File Tree Builder
+    Builds a File Tree from a given input.
+"""
+# Default Input Reader
+from input_line_reader import process_many_lines
+
+
+def build_tree(input_tree: str, data_directory: str = '.', ):
+    """
+    Builds the directory tree from the input structure.
+
+    Parameters:
+    - input_tree (str): The Tree Node Structure Input as a string.
+    - root_path (str, optional): The path at the base of the Tree. Defaults to '.'.
+
+    Returns:
+    None
+    """
+    import os
+    from pathstack import PathStack
+    # Process the Input Data into Structured Data
+    data_list = process_many_lines(input_tree)
+    # Create a Stack for the Path
+    path_stack = PathStack()
+    # Process one line at a time
+    for data_line in data_list:
+        depth, is_dir, name, data = data_line
+        # Adjust path stack to current depth.
+        path_stack.reduce_depth(depth)
+        # Ensure the Node Exists
+        if is_dir:
+            # Add the new directory to the path stack.
+            path_stack.push(name)
+            # Ensure the Directory Exists
+            os.makedirs(path_stack.join_stack(), exist_ok=True)
+            return True
+        # Create the File
+        with open(path_stack.create_path(name), 'w') as f:
+            if data == "" or data is None:
+                return True
+            # Currently, inserts the Input Data Argument
+            f.write(data)
+             # todo: implement File Data Directory and Labelling
+
+def main():
+    """
+    The main function that initiates the tree building process.
+
+    It reads the file path from the command line argument, reads the tree structure from the file,
+    and calls build_tree to construct the directory structure.
+
+    Returns:
+    None
+    """
+    import sys
+    if len(sys.argv) < 2:
+        print("Usage: python ftb <path_to_tree_structure_file> <data_directory>")
+        sys.exit(1)
+    # Required argument
+    file_path = sys.argv[1]
+    # Optional argument
+    if (len(sys.argv) >= 3):
+        # Next Argument is the Data Directory
+        data_directory = sys.argv[2]
+    else:
+        data_directory = ""
+    # Read the Tree Node Structure Input from the File
+    with open(file_path, 'r') as file:
+        input_tree = file.read()
+    #
+    build_tree(input_tree, data_directory)
+
+
+if __name__ == "__main__":
+    main()

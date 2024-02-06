@@ -1,0 +1,86 @@
+#!/usr/bin/python
+""" File Tree Remover
+    Removes Files in a File Tree from a given input.
+"""
+# Default Input Reader
+from input_line_reader import process_line
+
+
+def trim_tree():
+    """
+    Removes specific Files and Empty Directories from the File System.
+
+    Parameters:
+    - input_tree (str): The Tree Node Structure Input as a string.
+    - root_path (str, optional): The path at the base of the Tree. Defaults to '.'.
+
+    Returns:
+    None
+    """
+    from input_line_reader import process_many_lines
+    data_list = process_many_lines(input_tree)
+    #
+    from pathstack import PathStack
+    #
+    path_stack = PathStack()
+    # Divide the Input Data into Lines
+    lines = input_tree.strip().split('\n')
+    #
+    for line in lines:
+        # Deconstruct the Line Data
+        depth, is_dir, name, _ = process_line(line)
+        # Adjust the Path Stack to the Line Depth.
+        while path_stack.get_depth() > depth:
+            # Pop a Directory, Check if it is empty
+            closed_dir = path_stack.pop()
+            #
+            if check_empty_dir(path_stack.create_path(closed_dir)):
+                # todo: Remove the directory from the file system
+                pass
+        # Create the actual tree node in the file system
+        if is_dir:
+            # Add the directory to the path stack.
+            path_stack.append(name)
+        else:
+            with open(path_stack.create_path(name), 'r') as f:
+                pass # todo: Delete File
+
+    # Check the Path Stack for Remaining Directories
+    while len(path_stack) > 1:
+        # Check if the Directory is empty
+        # If it is remove it
+        # If not break the loop and exit
+        break
+
+
+def main():
+    """
+    The main function that initiates the tree building process.
+
+    It reads the file path from the command line argument, reads the tree structure from the file,
+    and calls build_tree to construct the directory structure.
+
+    Returns:
+    None
+    """
+    import sys
+    if len(sys.argv) < 2:
+        print("Usage: python builder.py <path_to_tree_structure_file>")
+        sys.exit(1)
+    # Required argument
+    file_path = sys.argv[1]
+    # Optional argument
+    if (len(sys.argv) >= 3):
+        # Next Argument is the Data Directory
+        data_directory = sys.argv[2]
+    else:
+        data_directory = ""
+    # Read the Tree Node Structure Input from the File
+    with open(file_path, 'r') as file:
+        input_tree = file.read()
+    #
+    trim_tree(input_tree, data_directory)
+
+
+if __name__ == "__main__":
+    main()
