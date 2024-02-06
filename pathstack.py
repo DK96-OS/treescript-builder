@@ -60,10 +60,9 @@ class PathStack:
 
         Parameters:
         - depth (int): The depth to reduce the stack to.
-        - clear_empty (bool) : Whether to clear empty directories.
 
         Returns:
-        boolean : Whether the Reduction was successful.
+        boolean : Whether the Reduction was successful, ie 1 or more Stack pops.
         """
         # Prevent Invalid Inputs
         if depth < 0:
@@ -83,4 +82,3 @@ class PathStack:
         int : The number of elements in the Path Stack.
         """
         return len(self._stack)
-    
