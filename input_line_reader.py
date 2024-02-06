@@ -19,31 +19,26 @@ def calculate_depth(line: str) -> int:
     Returns:
     int: The depth of the line in the tree structure.
     """
-    depth = 0
-    space_count = 0
     #
-    for char in line:
-        if char in SPACE_CHARS:
-            space_count += 1
-            if space_count > 1:
-                space_count = 0
-                depth += 1
-        else:
-            break
-    return depth
+    from itertools import takewhile
+    space_count = len(list(takewhile(lambda c: c in SPACE_CHARS, line)))
+    depth = space_count >> 1
+    if depth << 1 == space_count:
+        return depth
+    raise Error("Invalid Space Count in Line: " + line)
 
 
 def create_depth(depth: int, space_char: int = 0) -> str:
     """
-		Convert each of the Space Chars into a string of them equivalent to the given depth.
+	Creates a string of space chars equivalent to the given depth.
 
-		Parameters:
-		- depth (int): The amount of depth in the Tree Node Structure.
-		- space_char (int): The specific whitespace character to use. Default is the first.
+	Parameters:
+	- depth (int): The amount of depth in the Tree Node Structure.
+	- space_char (int): The specific whitespace character to use. Default is the first.
 
-		Returns:
-		str: The Strings for each Space Char, of a given depth length.
-		"""
+	Returns:
+	str: The Strings for each Space Char, of a given depth length.
+	"""
     char = SPACE_CHARS[0]
     if 0 < space_char < len(SPACE_CHARS):
         char = SPACE_CHARS[space_char]
@@ -69,16 +64,20 @@ def process_line(line: str) -> tuple[int, bool, str, str]:
         if space_char in args:
             args = args.split(space_char)
             break
-    if args is not list:
-        args = [args]
-    if len(args) == 1:
-        # Do nothing different, there is no second argument
-        name = args[0]
+    #
+    if isinstance(args, str):
+        name = args
         data_file = ""
-    elif (len(args) >= 2):
-        name = args[0]
-        data_file = args[1]
+    elif isinstance(args, list):
+        if len(args) == 1:
+            # Do nothing different, there is no second argument
+            name = args[0]
+            data_file = ""
+        elif (len(args) >= 2):
+            name = args[0]
+            data_file = args[1]
     else:
+        print("Unknown Type: "+ str(type(args)))
         name = "Default"
         data_file = ""
     # Check if the line represents a directory.
