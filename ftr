@@ -2,84 +2,83 @@
 """ File Tree Remover
     Removes Files in a File Tree from a given input.
 """
-# Default Input Reader
-from input_line_reader import process_line
+from pathlib import Path
+from pathstack import PathStack
+from procedural_data import ProceduralData
 
 
-def trim_tree():
+def remove_file(path: str, data_dir: str = None, data_label: str = None):
+    """Remove a File from the Tree.
+    Moves the File if Data Directory and Data Label are given.
+    
+    Parameters:
+    - path (str): The path to the File.
+    - data_dir (str): The Data Directory Path.
+    - data_label (str): The Label for the Data Contents of the File being removed.
     """
-    Removes specific Files and Empty Directories from the File System.
+    p = Path(path)
+    # todo:
+    if data_dir is None or data_label is None:
+        p.unlink()
+    else:
+        # todo:
+        p.rename(path, data_dir + data_label)
+
+
+def remove_dir(path: str) -> bool:
+    """Tries to Remove a Directory if it is Empty.
+
+    Parameters:
+    - path (str): The path to the Directory.
+
+    Returns:
+    bool : Whether the Directory was Empty and has been removed.
+    """
+    closed_dir = Path(path)
+    # Check if it is empty
+    if len(closed_dir.glob('*')) == 0:
+        closed_dir.rmdir()
+        return True
+    return False
+
+
+def trim_tree(input_tree: list[ProceduralData], data_dir: str = None):
+    """Removes specific Files and Empty Directories from the File System.
 
     Parameters:
     - input_tree (str): The Tree Node Structure Input as a string.
-    - root_path (str, optional): The path at the base of the Tree. Defaults to '.'.
-
-    Returns:
-    None
+    - data_dir (str, optional): The path to a Data Directory. Defaults to None.
     """
-    from input_line_reader import process_many_lines
-    data_list = process_many_lines(input_tree)
-    #
-    from pathstack import PathStack
-    #
     path_stack = PathStack()
-    # Divide the Input Data into Lines
-    lines = input_tree.strip().split('\n')
-    #
-    for line in lines:
-        # Deconstruct the Line Data
-        depth, is_dir, name, _ = process_line(line)
-        # Adjust the Path Stack to the Line Depth.
-        while path_stack.get_depth() > depth:
-            # Pop a Directory, Check if it is empty
-            closed_dir = path_stack.pop()
-            #
-            if check_empty_dir(path_stack.create_path(closed_dir)):
-                # todo: Remove the directory from the file system
-                pass
+    # Process one line at a time
+    for data in input_tree:
+        # Adjust Path Stack to current Depth.
+        while path_stack.get_depth() > data.depth:
+            # Pop a Directory, get it's Path
+            remove_dir(path_stack.create_path(path_stack.pop()))
         # Create the actual tree node in the file system
-        if is_dir:
-            # Add the directory to the path stack.
-            path_stack.append(name)
+        if data.is_dir:
+            path_stack.append(data.name)
         else:
-            with open(path_stack.create_path(name), 'r') as f:
-                pass # todo: Delete File
-
-    # Check the Path Stack for Remaining Directories
-    while len(path_stack) > 1:
-        # Check if the Directory is empty
-        # If it is remove it
-        # If not break the loop and exit
-        break
+            remove_file(
+                path_stack.create_path(data.name),
+                data_dir,
+                data.data_arg
+            )
+    # Check PathStack's Remaining Directories
+    while path_stack.get_depth() > 0:
+        if not remove_dir(path_stack.create_path(path_stack.pop())):
+            break
 
 
 def main():
-    """
-    The main function that initiates the tree building process.
-
-    It reads the file path from the command line argument, reads the tree structure from the file,
-    and calls build_tree to construct the directory structure.
-
-    Returns:
-    None
-    """
-    import sys
-    if len(sys.argv) < 2:
-        print("Usage: python builder.py <path_to_tree_structure_file>")
-        sys.exit(1)
-    # Required argument
-    file_path = sys.argv[1]
-    # Optional argument
-    if (len(sys.argv) >= 3):
-        # Next Argument is the Data Directory
-        data_directory = sys.argv[2]
-    else:
-        data_directory = ""
-    # Read the Tree Node Structure Input from the File
-    with open(file_path, 'r') as file:
-        input_tree = file.read()
-    #
-    trim_tree(input_tree, data_directory)
+    """Validates Arguments, then runs File Tree Remover."""
+    from argument_validation import ArgumentValidation
+    args = ArgumentValidation()
+    trim_tree(
+        args.get_tree_input(),
+        args.get_data_dir()
+    )
 
 
 if __name__ == "__main__":
