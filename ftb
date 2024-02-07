@@ -42,17 +42,30 @@ def build_tree(input_tree: list[ProceduralData], data_dir: str = None):
         if data.is_dir:
             path_stack.push(data.name)
             os.makedirs(path_stack.join_stack(), exist_ok=True)
-        else:
+        elif data_dir is None:
             create_file(path_stack.create_path(data.name), data.data_arg)
+        else:
+            data_path = Path(path_stack.create_path(data.data_arg))
+            data_content = data_path.read_text()
+            create_file(path_stack.create_path(data.name), data_content)
 
 
 def main():
     """Validates Arguments, then runs File Tree Builder."""
-    from argument_validation import ArgumentValidation
-    args = ArgumentValidation()
+    import sys
+    from input_data import get_input_from_args
+    from input_line_reader import process_many_lines
+    args = get_input_from_args(sys.argv)
+    input_tree = args.get_tree_input()
+    # Check the Input
+    if input_tree is None or len(input_tree) < 1:
+        raise ValueError("Tree Input not found, or empty.")
+    procedural_data_sequence = process_many_lines(input_tree)
+    if len(procedural_data_sequence) < 1:
+        raise SystemExit("Empty Procedure")
     build_tree(
-        args.get_tree_input(),
-        args.get_data_dir()
+        procedural_data_sequence,
+        args.data_dir
     )
 
 

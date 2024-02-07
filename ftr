@@ -73,11 +73,20 @@ def trim_tree(input_tree: list[ProceduralData], data_dir: str = None):
 
 def main():
     """Validates Arguments, then runs File Tree Remover."""
-    from argument_validation import ArgumentValidation
-    args = ArgumentValidation()
+    import sys
+    from input_data import get_input_from_args
+    from input_line_reader import process_many_lines
+    args = get_input_from_args(sys.argv)
+    input_tree = args.get_tree_input()
+    # Check the Input
+    if input_tree is None or len(input_tree) < 1:
+        raise ValueError("Tree Input not found, or empty.")
+    procedural_data_sequence = process_many_lines(input_tree)
+    if len(procedural_data_sequence) < 1:
+        raise SystemExit("Empty Procedure")
     trim_tree(
-        args.get_tree_input(),
-        args.get_data_dir()
+        procedural_data_sequence,
+        args.data_dir
     )
 
 
