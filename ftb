@@ -3,7 +3,8 @@
     Builds a File Tree from a given input.
 """
 import os
-from pathstack import PathStack
+from pathlib import Path
+from path_stack import PathStack
 from procedural_data import ProceduralData
 
 

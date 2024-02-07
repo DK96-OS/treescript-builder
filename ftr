@@ -3,7 +3,7 @@
     Removes Files in a File Tree from a given input.
 """
 from pathlib import Path
-from pathstack import PathStack
+from path_stack import PathStack
 from procedural_data import ProceduralData
 
 
