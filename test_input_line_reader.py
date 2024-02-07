@@ -1,5 +1,6 @@
 import unittest
 from input_line_reader import create_depth, calculate_depth, process_line
+from procedural_data import ProceduralData
 
 
 class TestInputLineReader(unittest.TestCase):
@@ -38,7 +39,7 @@ class TestInputLineReader(unittest.TestCase):
             input_line = create_depth(depth, 3) + file_name
             self.assertEqual(
                 process_line(input_line),
-                (depth, False, file_name, "")
+                ProceduralData(depth, False, file_name, "")
             )
     
     def test_process_line_dir_(self):
@@ -48,7 +49,7 @@ class TestInputLineReader(unittest.TestCase):
                 dir_name = dir_path.strip('/\\')
                 self.assertEqual(
                     process_line(input_line),
-                    (depth, True, dir_name, "")
+                    ProceduralData(depth, True, dir_name, "")
                 )
 
     def test_depth_0_dir_variants(self):
