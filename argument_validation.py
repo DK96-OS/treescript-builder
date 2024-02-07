@@ -18,7 +18,7 @@ class ArgumentValidation:
         # Required argument
         self.parser.add_argument('tree_input', type=str, help='The File containing the Tree Node Structure')
         # Optional argument
-        self.parser.add_argument('data_directory', type=str, metavar='OPTION', help='The Data Directory')
+        self.parser.add_argument('--data_dir', default=None, help='The Data Directory')
         # Potential Future Flags
         #self.parser.add_argument('-r', '--remove', action='store_true', help='')
 
@@ -31,7 +31,7 @@ class ArgumentValidation:
     def get_tree_input(self):
         """Obtains the Input Data from the File.
         """
-        file_path = self.args.input_tree
+        file_path = self.args.tree_input
         with open(file_path, 'r') as file:
             input_tree = file.read()
         # Check the Input
@@ -43,4 +43,4 @@ class ArgumentValidation:
     def get_data_dir(self):
         """Obtain the Data Directory.
         """
-        return self.args.data_directory
+        return self.args.data_dir
