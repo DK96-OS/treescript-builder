@@ -25,6 +25,8 @@ class PathStack:
         Returns:
         str : The String removed from the top of the Stack.
         """
+        if len(self._stack) <= 0:
+            return None
         return self._stack.pop()
 
     def join_stack(self) -> str:
@@ -64,14 +66,13 @@ class PathStack:
         Returns:
         boolean : Whether the Reduction was successful, ie 1 or more Stack pops.
         """
-        # Prevent Invalid Inputs
-        if depth < 0:
-            return False
         current_depth = self.get_depth()
-        if current_depth <= depth:
+        if current_depth < depth or depth < 0:
             return False
+        if current_depth == depth:
+            return True
         for _ in range(current_depth, depth, -1):
-                self._stack.pop()
+            self._stack.pop()
         return True
 
     def get_depth(self) -> int:
