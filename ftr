@@ -5,41 +5,7 @@
 from pathlib import Path
 from path_stack import PathStack
 from procedural_data import ProceduralData
-
-
-def remove_file(path: str, data_dir: str = None, data_label: str = None):
-    """Remove a File from the Tree.
-    Moves the File if Data Directory and Data Label are given.
-    
-    Parameters:
-    - path (str): The path to the File.
-    - data_dir (str): The Data Directory Path.
-    - data_label (str): The Label for the Data Contents of the File being removed.
-    """
-    p = Path(path)
-    # todo:
-    if data_dir is None or data_label is None:
-        p.unlink()
-    else:
-        # todo:
-        p.rename(path, data_dir + data_label)
-
-
-def remove_dir(path: str) -> bool:
-    """Tries to Remove a Directory if it is Empty.
-
-    Parameters:
-    - path (str): The path to the Directory.
-
-    Returns:
-    bool : Whether the Directory was Empty and has been removed.
-    """
-    closed_dir = Path(path)
-    # Check if it is empty
-    if len(closed_dir.glob('*')) == 0:
-        closed_dir.rmdir()
-        return True
-    return False
+from file_operations import remove_file, remove_dir
 
 
 def trim_tree(input_tree: list[ProceduralData], data_dir: str = None):
