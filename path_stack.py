@@ -1,5 +1,6 @@
 """ Path Stack Management.
 """
+from pathlib import Path
 
 
 class PathStack:
@@ -41,7 +42,7 @@ class PathStack:
             return "./"
         return "./" + "/".join(self._stack) + "/"
 
-    def create_path(self, filename: str) -> str:
+    def create_path(self, filename: str) -> Path:
         """
         Combines all Elements in the Stack and appends a File name.
 
@@ -53,7 +54,7 @@ class PathStack:
         """
         if type(filename) is not str:
             return self.join_stack()
-        return self.join_stack() + filename
+        return Path(self.join_stack() + filename)
 
     def reduce_depth(self, depth: int) -> bool:
         """

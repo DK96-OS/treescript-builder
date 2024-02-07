@@ -1,7 +1,7 @@
 """ Test Cases for Path Stack class
 """
 import unittest
-
+from pathlib import Path
 from path_stack import PathStack
 
 
@@ -67,7 +67,7 @@ class TestPathStack(unittest.TestCase):
         dir_name_1, file_name = "java", "Main.java"
         self.instance.push(dir_name_1)
         self.assertEqual(
-            "./" + dir_name_1 + "/" + file_name,
+            Path("./" + dir_name_1 + "/" + file_name),
             self.instance.create_path(file_name)
         )
 
