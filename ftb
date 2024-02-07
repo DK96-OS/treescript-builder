@@ -2,71 +2,31 @@
 """ File Tree Builder
     Builds a File Tree from a given input.
 """
-import os
-from pathlib import Path
-from path_stack import PathStack
-from procedural_data import ProceduralData
-
-
-def create_file(path: str, data: str) -> bool:
-    """Ensure that a File at the given path exists.
-
-    Parameters:
-    - path (str): The Path to the File to be created, and written to.
-    - data (str): The Data to be written to the File Content.
-    """
-    with open(path, 'w') as f:
-        if data == "" or data is None:
-            return True
-        # Currently, inserts the Input Data Argument
-        f.write(data)
-        # todo: implement File Data Directory and Labelling
-    return True
-
-
-def build_tree(input_tree: list[ProceduralData], data_dir: str = None):
-    """Builds the directory tree from the input structure.
-
-    Parameters:
-    - input_tree (str): The Tree Node Structure Input as a string.
-    - root_path (str, optional): The path at the base of the Tree. Defaults to '.'.
-    """
-    path_stack = PathStack()
-    # Process one line at a time
-    for data in input_tree:
-        # Adjust path stack to current depth.
-        success = path_stack.reduce_depth(data.depth)
-        if not success:
-            raise ValueError("Invalid Depth at Tree Node")
-        # Split Directory and File Handling
-        if data.is_dir:
-            path_stack.push(data.name)
-            os.makedirs(path_stack.join_stack(), exist_ok=True)
-        elif data_dir is None:
-            create_file(path_stack.create_path(data.name), data.data_arg)
-        else:
-            data_path = Path(path_stack.create_path(data.data_arg))
-            data_content = data_path.read_text()
-            create_file(path_stack.create_path(data.name), data_content)
+import sys
+import input_data
+import input_line_reader
+from tree_worker import TreeWorker
 
 
 def main():
     """Validates Arguments, then runs File Tree Builder."""
-    import sys
-    from input_data import get_input_from_args
-    from input_line_reader import process_many_lines
-    args = get_input_from_args(sys.argv)
+    args = input_data.get_input_from_args(sys.argv)
     input_tree = args.get_tree_input()
     # Check the Input
     if input_tree is None or len(input_tree) < 1:
         raise ValueError("Tree Input not found, or empty.")
-    procedural_data_sequence = process_many_lines(input_tree)
+    #
+    procedural_data_sequence = input_line_reader.process_many_lines(input_tree)
     if len(procedural_data_sequence) < 1:
         raise SystemExit("Empty Procedure")
-    build_tree(
-        procedural_data_sequence,
-        args.data_dir
-    )
+    #
+    worker = TreeWorker(args.data_dir)
+    # Process one line at a time
+    for data in procedural_data_sequence:
+        if not worker.build(data):
+            raise Exception(
+                "Invalid Operation: name=" + data.name + ", depth=" + data.depth
+            )
 
 
 if __name__ == "__main__":
