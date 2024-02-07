@@ -1,6 +1,7 @@
 import argparse
 from input_data import InputData
 from typing import Optional
+from pathlib import Path
 
 
 class ArgumentValidation:
@@ -12,6 +13,7 @@ class ArgumentValidation:
         )
         self._define_arguments()
         self.parsed_args = None
+        self.input_data = None
     
     def _define_arguments(self):
         """Defines the command line arguments and their properties."""
@@ -52,8 +54,30 @@ class ArgumentValidation:
         """Validates the parsed command line arguments."""
         if self.parsed_args is None:
             raise ValueError("Arguments are Missing or Invalid.")
-        elif not self.parsed_args.tree_file:
+        # Validate Tree
+        tree_file = self.parsed_args.tree_file
+        if tree_file is None or not isinstance(tree_file, str):
             raise ValueError("The Tree File argument cannot be empty.")
+        elif len(tree_file) < 1:
+            raise ValueError("The Tree File name cannot be empty.")
+        tree_file_path = Path(tree_file)
+        if not tree_file_path.exists():
+            raise IOError("The Tree Input File does not Exist.")
+        # Validate Data Directory, if it exists
+        data_dir = self.parsed_args.data_dir
+        if data_dir is None:
+            data_path = None
+            return
+        if not isinstance(data_dir, str):
+            raise ValueError("The Data Directory must be a String")
+        data_path = Path(data_dir)
+        if not data_path.exists():
+            raise IOError("This Data Directory does not exist!")
+        # Valid Input
+        self.input_data = InputData(
+            tree_file_path,
+            data_path
+        )
     
     def get_input(self) -> InputData:
         """Obtain the Input Data object from the most recently parsed arguments.
@@ -61,9 +85,6 @@ class ArgumentValidation:
         Returns:
         InputData | None : Container for Valid Input Data.
         """
-        if self.parsed_args is None:
+        if self.input_data is None:
             return None
-        return InputData(
-            self.parsed_args.tree_file,
-            self.parsed_args.data_dir
-        )
+        return self.input_data
