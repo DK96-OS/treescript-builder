@@ -30,11 +30,15 @@ class TreeWorker:
             )
         else:
             data_path = self._data_dir
-            (data.data_arg)
+            if data.data_arg is None or data.data_arg == "":
+                data = ""
+            else:
+                data = data_path.read_text()
             create_file(
                 self._path_stack.create_path(data.name),
-                data_path.read_text()
+                data
             )
+        return True
     
     def remove(self, data: ProceduralData) -> bool:
         """Execute a Procedural Remove Operation"""
@@ -51,6 +55,10 @@ class TreeWorker:
                 self._data_dir,
                 data.data_arg
             )
+        return True
 
-    def cleanup(self):
-        self._path_stack.pop()
+    def cleanup_path_stack(self):
+        """Clears the Remaining Path Stack. Executing Removal of Empty Dirs."""
+        while self._path_stack.get_depth() > 0:
+            # Pop a Directory, get it's Path
+            remove_dir(self._path_stack.create_path(self._path_stack.pop()))
