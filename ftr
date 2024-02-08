@@ -2,39 +2,6 @@
 """ File Tree Remover
     Removes Files in a File Tree from a given input.
 """
-from pathlib import Path
-from path_stack import PathStack
-from procedural_data import ProceduralData
-from file_operations import remove_file, remove_dir
-
-
-def trim_tree(input_tree: list[ProceduralData], data_dir: str = None):
-    """Removes specific Files and Empty Directories from the File System.
-
-    Parameters:
-    - input_tree (str): The Tree Node Structure Input as a string.
-    - data_dir (str, optional): The path to a Data Directory. Defaults to None.
-    """
-    path_stack = PathStack()
-    # Process one line at a time
-    for data in input_tree:
-        # Adjust Path Stack to current Depth.
-        while path_stack.get_depth() > data.depth:
-            # Pop a Directory, get it's Path
-            remove_dir(path_stack.create_path(path_stack.pop()))
-        # Create the actual tree node in the file system
-        if data.is_dir:
-            path_stack.append(data.name)
-        else:
-            remove_file(
-                path_stack.create_path(data.name),
-                data_dir,
-                data.data_arg
-            )
-    # Check PathStack's Remaining Directories
-    while path_stack.get_depth() > 0:
-        if not remove_dir(path_stack.create_path(path_stack.pop())):
-            break
 
 
 def main():
@@ -42,18 +9,27 @@ def main():
     import sys
     from input_data import get_input_from_args
     from input_line_reader import process_many_lines
+    from tree_worker import TreeWorker
+    # Validate Arguments From System Input
     args = get_input_from_args(sys.argv)
+    # Read the Input Tree File, Check the Input
     input_tree = args.get_tree_input()
-    # Check the Input
     if input_tree is None or len(input_tree) < 1:
         raise ValueError("Tree Input not found, or empty.")
+    # Process all Lines of text into procedural data
     procedural_data_sequence = process_many_lines(input_tree)
     if len(procedural_data_sequence) < 1:
         raise SystemExit("Empty Procedure")
-    trim_tree(
-        procedural_data_sequence,
-        args.data_dir
-    )
+    # Use this Worker to execute Stateful Procedural Operations
+    worker = TreeWorker(args.data_dir)
+    # Process one line at a time
+    for data in procedural_data_sequence:
+        if not worker.remove(data):
+            raise Exception(
+                "Invalid Operation: name=" + data.name + ", depth=" + data.depth
+            )
+    # Remove any Empty Directories remaining on the Stack
+    worker.cleanup_path_stack()
 
 
 if __name__ == "__main__":

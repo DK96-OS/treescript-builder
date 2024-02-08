@@ -2,24 +2,25 @@
 """ File Tree Builder
     Builds a File Tree from a given input.
 """
-import sys
-import input_data
-import input_line_reader
-from tree_worker import TreeWorker
 
 
 def main():
     """Validates Arguments, then runs File Tree Builder."""
+    import sys
+    import input_data
+    import input_line_reader
+    from tree_worker import TreeWorker
+    # Validate Arguments From System Input
     args = input_data.get_input_from_args(sys.argv)
+    # Read the Input Tree File, Check the Input
     input_tree = args.get_tree_input()
-    # Check the Input
     if input_tree is None or len(input_tree) < 1:
         raise ValueError("Tree Input not found, or empty.")
-    #
+    # Process all Lines of text into procedural data
     procedural_data_sequence = input_line_reader.process_many_lines(input_tree)
     if len(procedural_data_sequence) < 1:
         raise SystemExit("Empty Procedure")
-    #
+    # Use this Worker to execute Stateful Procedural Operations
     worker = TreeWorker(args.data_dir)
     # Process one line at a time
     for data in procedural_data_sequence:
