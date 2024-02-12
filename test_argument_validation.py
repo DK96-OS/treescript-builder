@@ -18,23 +18,23 @@ class TestArgumentValidation(unittest.TestCase):
         )
 
     def test_parse_args_single_arg(self):
-        file_name = 'input_file'
+        file_name = 'tree-struct'
         self.assertTrue(
             self.instance.parse_args([file_name])
         )
         self.assertEqual(
-            file_name, self.instance.get_input().tree_file
+            file_name, str(self.instance.get_input().tree_file)
         )
 
     def test_parse_args_two_args(self):
         file_name = 'tree-struct'
-        data_dir = "./filedata"
+        data_dir = "docs"
         self.assertTrue(
             self.instance.parse_args([file_name, '--data_dir=' + data_dir])
         )
         self.assertEqual(
-            file_name, self.instance.get_input().tree_file
+            file_name, str(self.instance.get_input().tree_file)
         )
         self.assertEqual(
-            data_dir, self.instance.get_input().data_dir
+            data_dir, str(self.instance.get_input().data_dir)
         )

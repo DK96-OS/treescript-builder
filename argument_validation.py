@@ -44,10 +44,10 @@ class ArgumentValidation:
             return False
         try:
             self.parsed_args = self._parser.parse_args(args)
-            self._validate_arguments()
         except:
             self.parsed_args = None
             return False
+        self._validate_arguments()
         return True
 
     def _validate_arguments(self):
@@ -66,7 +66,9 @@ class ArgumentValidation:
         # Validate Data Directory, if it exists
         data_dir = self.parsed_args.data_dir
         if data_dir is None:
-            data_path = None
+            self.input_data = InputData(
+                tree_file_path, None
+            )
             return
         if not isinstance(data_dir, str):
             raise ValueError("The Data Directory must be a String")
