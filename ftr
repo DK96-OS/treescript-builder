@@ -7,9 +7,9 @@
 def main():
     """Validates Arguments, then runs File Tree Remover."""
     import sys
-    from input_data import get_input_from_args
-    from input_line_reader import process_many_lines
-    from tree_worker import TreeWorker
+    from src.input_data import get_input_from_args
+    from src.input_line_reader import process_many_lines
+    from src.tree_worker import TreeWorker
     # Validate Arguments From System Input
     args = get_input_from_args(sys.argv)
     # Read the Input Tree File, Check the Input

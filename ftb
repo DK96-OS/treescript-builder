@@ -7,9 +7,9 @@
 def main():
     """Validates Arguments, then runs File Tree Builder."""
     import sys
-    import input_data
-    import input_line_reader
-    from tree_worker import TreeWorker
+    import src.input_data
+    import src.input_line_reader
+    from src.tree_worker import TreeWorker
     # Validate Arguments From System Input
     args = input_data.get_input_from_args(sys.argv)
     # Read the Input Tree File, Check the Input
