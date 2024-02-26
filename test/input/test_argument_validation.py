@@ -1,5 +1,5 @@
 import unittest
-from src.argument_validation import ArgumentValidation
+from input.argument_validation import ArgumentValidation
 
 
 class TestArgumentValidation(unittest.TestCase):
