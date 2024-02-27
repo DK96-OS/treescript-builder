@@ -24,7 +24,7 @@ def calculate_depth(line: str) -> int:
     depth = space_count >> 1
     if depth << 1 == space_count:
         return depth
-    raise Error("Invalid Space Count in Line: " + line)
+    raise ValueError("Invalid Space Count in Line: " + line)
 
 
 def create_depth(depth: int, space_char: int = 0) -> str:
