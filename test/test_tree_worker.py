@@ -1,6 +1,6 @@
 import unittest
-from tree_worker import TreeWorker
-from procedural_data import ProceduralData
+from src.tree_worker import TreeWorker
+from src.procedural_data import ProceduralData
 from unittest.mock import patch, MagicMock
 
 
