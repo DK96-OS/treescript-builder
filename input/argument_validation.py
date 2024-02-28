@@ -42,6 +42,9 @@ def validate_argument_syntax(args: Optional[list[str]] = None) -> ArgumentData:
 def _define_arguments() -> ArgumentParser:
     """
     Defines Command Line Requirements, Optional Arguments and Flags.
+
+    Returns:
+    argparse.ArgumentParser - An instance with all supported FTB Arguments.
     """
     parser = ArgumentParser(
         description="File Tree Builder"

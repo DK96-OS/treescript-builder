@@ -1,5 +1,11 @@
-"""Initialize the Input Module."""
-from input_data import InputData
+"""The Input Module.
+
+1. Validate And Format Input Arguments.
+2. Read Input Instructions.
+
+"""
+from data.input_data import InputData
+from data.instruction_data import InstructionData
 
 
 def validate_input_arguments(arguments: list[str]) -> InputData:
@@ -24,3 +30,19 @@ def validate_input_arguments(arguments: list[str]) -> InputData:
         validate_directory(arg_data.data_dir_path_str),
         arg_data.is_reversed
     )
+
+
+def read_input_instructions(input_data: InputData) -> list[InstructionData]:
+    """
+    Process Multiple Lines from the Tree Node Structure Input.
+
+    Parameters:
+    - input_string (str): The Input containing multiple lines of tree node data.
+
+    Returns:
+    list[InstructionData] - The List of Instruction Data, read from the Input String.
+    """
+    from input.line_reader import process_line
+    return [
+        process_line(line) for line in input_data.tree_input.split("\n")
+    ]
