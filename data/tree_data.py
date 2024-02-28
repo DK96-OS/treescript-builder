@@ -1,16 +1,16 @@
-"""Instruction DataClass.
+"""Tree Node DataClass.
 """
 from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class InstructionData:
+class TreeData:
     """
-    An Instruction to the procedural algorithm.
+    A DataClass representing a Tree Node.
 
     Fields:
-    - depth (int): The depth in the tree of this operation.
-    - is_dir (bool): Whether the operation acts on a directory.
+    - depth (int): The depth in the tree.
+    - is_dir (bool): Whether this Node is a directory.
     - name (str): The Name of the Tree Node.
     - data_label (str): The Data Label.
     """
