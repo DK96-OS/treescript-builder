@@ -32,7 +32,7 @@ def make_dir_exist(
     """
     if path.exists():
         return
-    path.mkdir()
+    path.mkdir(exist_ok=True)
 
 
 def read_file(
@@ -55,7 +55,8 @@ def read_file(
 def remove_file(
     path: Path
 ):
-    """Remove a File from the Tree.
+    """
+    Remove a File from the Tree.
     Moves the File if Data Directory and Data Label are given.
     
     Parameters:
@@ -63,7 +64,7 @@ def remove_file(
     - data_dir (Path, optional): The Data Directory Path.
     - data_label (str, optional): The Label for the Data Contents of the File being removed.
     """
-    path.unlink()
+    path.unlink(missing_ok=True)
 
 
 def remove_dir(
@@ -78,7 +79,7 @@ def remove_dir(
     bool : Whether the Directory was Empty and has been removed.
     """
     # Check if it is empty
-    if len(path.glob('*')) == 0:
-        path.rmdir()
-        return True
-    return False
+    if len(path.glob('*')) > 0:
+        return False
+    path.rmdir()
+    return True
