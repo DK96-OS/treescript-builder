@@ -30,9 +30,9 @@ def make_dir_exist(
 ):
     """Ensure that the Directory at the given Path exists.
     """
-    if dir.exists():
+    if path.exists():
         return
-    dir.mkdir()
+    path.mkdir()
 
 
 def read_file(
@@ -48,7 +48,7 @@ def read_file(
     """
     try:
         return path.read_text()
-    except:
+    except IOError as w:
         return None
 
 

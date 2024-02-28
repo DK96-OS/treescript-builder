@@ -3,9 +3,9 @@
 from typing import Optional
 from pathlib import Path
 from .path_stack import PathStack
-from .procedural_data import ProceduralData
+from data.instruction_data import InstructionData
 from .file_operations import create_file, make_dir_exist, read_file, remove_dir, remove_file
-from .data_directory import DataDirectory
+from data.data_directory import DataDirectory
 
 
 class TreeWorker:
@@ -19,13 +19,13 @@ class TreeWorker:
         # The Data Directory
         self._data_dir = data_dir
 
-    def _search_data_dir(self, data: ProceduralData) -> Optional[Path]:
+    def _search_data_dir(self, data: InstructionData) -> Optional[Path]:
         """Search the Data Directory for Data associated with the ProceduralData."""
         # No Data Directory
         if self._data_dir is None:
             return None
         # No Data Argument
-        if data.data_arg == "":
+        if data.data_label == "":
             # Use the File Name
             path = self._data_dir.search_name(data.name)
             if path is None or not path.exists():
@@ -34,13 +34,13 @@ class TreeWorker:
         # Search in Data Directory
         data_path = self._data_dir.search_label(
             file_name=data.name,
-            data_label=data.data_arg
+            data_label=data.data_label
         )
         if data_path is None:
-            raise SystemError("Failed to Find Data: "+ data.data_arg)
+            raise SystemError("Failed to Find Data: "+ data.data_label)
         return data_path
 
-    def build(self, data: ProceduralData) -> bool:
+    def build(self, data: InstructionData) -> bool:
         """Execute a Procedural Builder Operation"""
         success = self._path_stack.reduce_depth(data.depth)
         if not success:
@@ -62,7 +62,7 @@ class TreeWorker:
         except:
             raise SystemError("Failed File Operation")
     
-    def remove(self, data: ProceduralData) -> bool:
+    def remove(self, data: InstructionData) -> bool:
         """Execute a Procedural Remove Operation"""
         # Adjust Path Stack to current Depth.
         while self._path_stack.get_depth() > data.depth:
@@ -80,7 +80,7 @@ class TreeWorker:
                 self._path_stack.create_path(data.name)
             )
         # 
-        self._data_dir, data.data_arg
+        self._data_dir, data.data_label
         #
         remove_file(
             self._path_stack.create_path(data.name)
