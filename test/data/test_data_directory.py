@@ -1,5 +1,5 @@
 import unittest
-from src.data_directory import get_file_extension, is_valid_data_label, DataDirectory
+from data.data_directory import get_file_extension, is_valid_data_label, DataDirectory
 
 
 class TestDataDirectory(unittest.TestCase):

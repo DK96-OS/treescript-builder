@@ -1,9 +1,10 @@
-"""Testing the Init Section of Input Module"""
+"""Testing the Init Section of Input Module.
+"""
 import unittest
 from input import is_nonempty_str
 
 
-class TestInputInit(unittest.TestCase):
+class TestInit(unittest.TestCase):
 
     def test_is_nonempty_str_none_returns_false(self):
         self.assertFalse(is_nonempty_str(None))

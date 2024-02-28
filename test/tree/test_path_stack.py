@@ -2,7 +2,7 @@
 """
 import unittest
 from pathlib import Path
-from src.path_stack import PathStack
+from tree.path_stack import PathStack
 
 
 class TestPathStack(unittest.TestCase):
