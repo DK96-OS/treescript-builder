@@ -3,7 +3,7 @@
 from typing import Optional
 from pathlib import Path
 from .path_stack import PathStack
-from data.instruction_data import InstructionData
+from data.tree_data import TreeData
 from .file_operations import create_file, make_dir_exist, read_file, remove_dir, remove_file
 from data.data_directory import DataDirectory
 
@@ -19,8 +19,10 @@ class TreeWorker:
         # The Data Directory
         self._data_dir = data_dir
 
-    def _search_data_dir(self, data: InstructionData) -> Optional[Path]:
-        """Search the Data Directory for Data associated with the ProceduralData."""
+    def _search_data_dir(self, data: TreeData) -> Optional[Path]:
+        """
+        Search the Data Directory for a Data Label match.
+        """
         # No Data Directory
         if self._data_dir is None:
             return None
@@ -40,8 +42,10 @@ class TreeWorker:
             raise SystemError("Failed to Find Data: "+ data.data_label)
         return data_path
 
-    def build(self, data: InstructionData) -> bool:
-        """Execute a Procedural Builder Operation"""
+    def build(self, data: TreeData) -> bool:
+        """
+        Execute a Procedural Builder Operation.
+        """
         success = self._path_stack.reduce_depth(data.depth)
         if not success:
             return False
@@ -62,8 +66,10 @@ class TreeWorker:
         except:
             raise SystemError("Failed File Operation")
     
-    def remove(self, data: InstructionData) -> bool:
-        """Execute a Procedural Remove Operation"""
+    def remove(self, data: TreeData) -> bool:
+        """
+        Execute a Procedural Remove Operation.
+        """
         # Adjust Path Stack to current Depth.
         while self._path_stack.get_depth() > data.depth:
             # Pop a Directory, get it's Path
@@ -88,7 +94,12 @@ class TreeWorker:
         return True
 
     def cleanup_path_stack(self):
-        """Clears the Remaining Path Stack. Executing Removal of Empty Dirs."""
+        """
+        Clears the Remaining Path Stack.
+        Removes any Empty Directories Left on the Stack.
+        """
         while self._path_stack.get_depth() > 0:
             # Pop a Directory, get it's Path
-            remove_dir(self._path_stack.create_path(self._path_stack.pop()))
+            dir = self._path_stack.create_path(self._path_stack.pop())
+            if not remove_dir(dir):
+                break

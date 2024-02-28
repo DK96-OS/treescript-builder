@@ -1,6 +1,6 @@
 import unittest
 from tree.tree_worker import TreeWorker
-from data.instruction_data import InstructionData
+from data.tree_data import TreeData
 from unittest.mock import patch, MagicMock
 
 
@@ -12,14 +12,14 @@ class TestTreeWorker(unittest.TestCase):
 
     @patch("file_operations.make_dir_exist")
     def test_build_initial_condition_dir(self):
-        input_data = InstructionData(
+        input_data = TreeData(
             0, True, "name", ""
         )
         self.instance.build(input_data)
 
     @patch("file_operations.remove_dir")
     def test_remove_initial_condition_dir(self):
-        input_data = InstructionData(
+        input_data = TreeData(
             0, True, "name", ""
         )
         self.instance.remove(input_data)
