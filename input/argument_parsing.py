@@ -1,14 +1,14 @@
 """Defines and Validates Argument Syntax.
+    Encapsulates Definition and Validation of Argument Syntax.
 """
 from argparse import ArgumentParser
 from input.argument_data import ArgumentData
 from typing import Optional
 
 
-def validate_argument_syntax(args: Optional[list[str]] = None) -> ArgumentData:
+def parse_arguments(args: Optional[list[str]] = None) -> ArgumentData:
     """
-    Encapsulates Definition and Validation of Argument Syntax.
-    Parses command line arguments.
+    Parse command line arguments.
 
     Parameters:
     - args: A list of argument strings.
@@ -23,18 +23,18 @@ def validate_argument_syntax(args: Optional[list[str]] = None) -> ArgumentData:
     if parsed_args is None:
         raise ValueError("Arguments are Missing or Invalid.")
     # Validate Tree Name Syntax
-    tree_file = parsed_args.tree_file
-    if not _is_nonempty_str(tree_file):
+    tree_file_name = parsed_args.tree_file_name
+    if not _is_nonempty_str(tree_file_name):
         raise ValueError("The Tree File argument cannot be empty.")
     # Validate Data Directory Name Syntax if Present
-    data_dir = parsed_args.data_dir
-    if data_dir is not None:
-        if not _is_nonempty_str(data_dir):
+    data_dir_name = parsed_args.data_dir
+    if data_dir_name is not None:
+        if not _is_nonempty_str(data_dir_name):
             raise ValueError("The Tree File argument cannot be empty.")
     # Return the Syntactically valid Argument Data
     return ArgumentData(
-        tree_file,
-        data_dir,
+        tree_file_name,
+        data_dir_name,
         is_reversed=parsed_args.reversed
     )
 
@@ -51,7 +51,7 @@ def _define_arguments() -> ArgumentParser:
     )
     # Required argument
     parser.add_argument(
-        'tree_file',
+        'tree_file_name',
         type=str,
         help='The File containing the Tree Node Structure'
     )
@@ -68,21 +68,3 @@ def _define_arguments() -> ArgumentParser:
         help='Flag to reverse the File Tree Operation'
     )
     return parser
-
-
-def _is_nonempty_str(argument) -> bool:
-    """
-    Determine whether an argument is a non-empty string. Does not count whitespace.
-    Uses the strip method to remove empty space.
-
-    Parameters:
-    - argument (str) : The given argument.
-
-    Returns:
-    bool - True if the argument is a non-empty (non-blank) string.
-    """
-    if argument is None or not isinstance(argument, str):
-        return False
-    elif len(argument.strip()) < 1:
-        return False
-    return True
