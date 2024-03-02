@@ -6,13 +6,13 @@ The Default Input Reader.
     The Directory Boolean indicates whether the line represents a Directory.
     The Name String is the name of the line.
 """
-from data.instruction_data import InstructionData
+from data.tree_data import TreeData
 
 
 SPACE_CHARS = (' ', ' ', ' ', ' ')
 
 
-def process_line(line: str) -> InstructionData:
+def process_line(line: str) -> TreeData:
     """
     Processes a single line of the input tree structure.
     Returns a tuple indicating the depth, type (file or directory), name of file or dir, and file data if available.
@@ -52,7 +52,7 @@ def process_line(line: str) -> InstructionData:
     if is_dir:
         # Extract the name, removing '/' or '\' if present.
         name = name.strip('/\\')
-    return InstructionData(
+    return TreeData(
         _calculate_depth(line), is_dir, name, data_file
     )
 

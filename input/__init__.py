@@ -1,11 +1,14 @@
 """The Input Module.
 
 1. Validate And Format Input Arguments.
-2. Read Input Instructions.
+2. Read Input Tree.
 
 """
+from typing import Generator
+from itertools import groupby
 from data.input_data import InputData
-from data.instruction_data import InstructionData
+from data.tree_data import TreeData
+from input.line_reader import process_line
 
 
 def validate_input_arguments(arguments: list[str]) -> InputData:
@@ -32,17 +35,31 @@ def validate_input_arguments(arguments: list[str]) -> InputData:
     )
 
 
-def read_input_instructions(input_data: InputData) -> list[InstructionData]:
+def read_input_tree(input_data: InputData) -> tuple[TreeData, ...]:
     """
     Process Multiple Lines from the Tree Node Structure Input.
 
     Parameters:
-    - input_string (str): The Input containing multiple lines of tree node data.
+    - input_data (InputData): The Input containing multiple lines of tree node data.
 
     Returns:
-    list[InstructionData] - The List of Instruction Data, read from the Input String.
+    tuple[InstructionData] - The Tuple of Instruction Data, read from the Input String.
     """
-    from input.line_reader import process_line
-    return [
+    return (
         process_line(line) for line in input_data.tree_input.split("\n")
-    ]
+    )
+
+
+def tree_node_generator(input_data: InputData) -> Generator[TreeData]:
+    """
+    Generate structured Tree Data from the Input Data String.
+
+    Parameters:
+    - input_data (InputData): The Input.
+
+    Returns:
+    Generator[TreeData] - 
+    """
+    for is_newline, group in groupby(input_data.tree_input, lambda x: x == "\n"):
+        if not is_newline:
+            yield process_line(''.join(group))

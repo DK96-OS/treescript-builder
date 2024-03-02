@@ -1,6 +1,6 @@
 import unittest
 from input.line_reader import _calculate_depth, process_line
-from data.instruction_data import InstructionData
+from data.tree_data import TreeData
 
 
 class TestLineReader(unittest.TestCase):
@@ -39,7 +39,7 @@ class TestLineReader(unittest.TestCase):
             input_line = create_depth(depth, 3) + file_name
             self.assertEqual(
                 process_line(input_line),
-                InstructionData(depth, False, file_name, "")
+                TreeData(depth, False, file_name, "")
             )
     
     def test_process_line_dir_(self):
@@ -49,7 +49,7 @@ class TestLineReader(unittest.TestCase):
                 dir_name = dir_path.strip('/\\')
                 self.assertEqual(
                     process_line(input_line),
-                    InstructionData(depth, True, dir_name, "")
+                    TreeData(depth, True, dir_name, "")
                 )
 
     def test_depth_0_dir_variants(self):
