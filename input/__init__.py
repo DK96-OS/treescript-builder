@@ -50,7 +50,7 @@ def read_input_tree(input_data: InputData) -> tuple[TreeData, ...]:
     )
 
 
-def tree_node_generator(input_data: InputData) -> Generator[TreeData]:
+def tree_node_generator(input_data: InputData) -> Generator[TreeData, None, None]:
     """
     Generate structured Tree Data from the Input Data String.
 
