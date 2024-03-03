@@ -3,7 +3,7 @@
 from typing import Optional
 from pathlib import Path
 from .path_stack import PathStack
-from data.tree_data import TreeData
+from input.tree_data import TreeData
 from .file_operations import create_file, make_dir_exist, read_file, remove_dir, remove_file
 from data.data_directory import DataDirectory
 

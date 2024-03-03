@@ -1,6 +1,6 @@
 """The Tree Module.
 """
-from data.tree_data import TreeData
+from input.tree_data import TreeData
 from tree.path_stack import PathStack
 
 
