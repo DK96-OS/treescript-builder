@@ -1,7 +1,11 @@
 """File Validation Methods.
+    These Methods all raise SystemExit exceptions.
 """
-from typing import Optional
 from pathlib import Path
+from sys import exit
+from typing import Optional
+
+from input.string_validation import validate_name
 
 
 def validate_input_file(file_name: str) -> str:
@@ -15,15 +19,15 @@ def validate_input_file(file_name: str) -> str:
     str - The String Contents of the Input File.
 
     Raises:
-    IOError - If the File does not exist, or is empty or blank.
+    SystemExit - If the File does not exist, or is empty or blank.
     """
     file_path = Path(file_name)
     if not file_path.exists():
-        raise IOError("The Input File does not Exist.")
+        exit("The Input File does not Exist.")
     data = _get_input(file_path)
-    if len(data) < 1:
-        raise IOError("Input was Empty")
-    return data
+    if validate_name(data):
+        return data
+    exit("Input was Empty")
 
 
 def validate_directory(dir_path_str: Optional[str]) -> Optional[Path]:
@@ -37,14 +41,16 @@ def validate_directory(dir_path_str: Optional[str]) -> Optional[Path]:
     Path (optional) - The Directory Path, or None if given input is None.
 
     Raises:
-    IOError - If the given path does not exist.
+    SystemExit - If the given path does not exist.
     """
     if dir_path_str is None:
         return None
+    if not validate_name(dir_path_str):
+    	exit("Data Directory is invalid")
     path = Path(dir_path_str)
     if path.exists():
         return path
-    raise IOError("The given Directory does not exist!")
+    exit("The given Directory does not exist!")
 
 
 def _get_input(file: Path) -> str:
@@ -58,11 +64,11 @@ def _get_input(file: Path) -> str:
     str - The text contents of the File at the given Path.
 
     Raises
-    IOError - If the file does not exist, or the read operation failed.
+    SystemExit - If the file does not exist, or the read operation failed.
     """
     if not file.exists():
-        raise IOError("File does not exist.")
+        exit("File does not exist.")
     try:
         return file.read_text().strip()
-    except:
-        raise IOError("Failed to Read from File.")
+    except IOError as e:
+        exit("Failed to Read from File.")
