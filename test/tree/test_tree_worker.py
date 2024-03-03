@@ -1,6 +1,6 @@
 import unittest
 from tree.tree_worker import TreeWorker
-from data.tree_data import TreeData
+from input.tree_data import TreeData
 from unittest.mock import patch, MagicMock
 
 

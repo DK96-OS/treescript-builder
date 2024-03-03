@@ -1,6 +1,6 @@
 import unittest
 from input.line_reader import _calculate_depth, process_line
-from data.tree_data import TreeData
+from input.tree_data import TreeData
 
 
 class TestLineReader(unittest.TestCase):
