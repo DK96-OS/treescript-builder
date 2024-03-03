@@ -6,13 +6,46 @@ The Default Input Reader.
     The Directory Boolean indicates whether the line represents a Directory.
     The Name String is the name of the line.
 """
-from data.tree_data import TreeData
+from itertools import groupby
+from typing import Generator
+
+from input.tree_data import TreeData
 
 
 SPACE_CHARS = (' ', ' ', ' ', ' ')
 
 
-def process_line(line: str) -> TreeData:
+def read_input_tree(input_tree_data: str) -> Generator[TreeData, None, None]:
+    """
+    Generate structured Tree Data from the Input Data String.
+
+    Parameters:
+    - input_data (InputData): The Input.
+
+    Returns:
+    Generator[TreeData] - 
+    """
+    for is_newline, group in groupby(input_tree_data, lambda x: x == "\n"):
+        if not is_newline:
+            yield _process_line(''.join(group))
+
+
+def read_input_tree_to_tuple(input_tree_data: str) -> tuple[TreeData, ...]:
+    """
+    Process Multiple Lines from the Tree Node Structure Input.
+
+    Parameters:
+    - input_data (InputData): The Input containing multiple lines of tree node data.
+
+    Returns:
+    tuple[InstructionData] - The Tuple of Instruction Data, read from the Input String.
+    """
+    return (
+        _process_line(line) for line in input_tree_data.split("\n")
+    )
+
+
+def _process_line(line: str) -> TreeData:
     """
     Processes a single line of the input tree structure.
     Returns a tuple indicating the depth, type (file or directory), name of file or dir, and file data if available.
