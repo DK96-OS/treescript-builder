@@ -22,7 +22,14 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install Dependencies
+        run: python3 -m pip install --user pytest pytest-cov
+
       - name: Run unit tests
-        run: |
-          python -m unittest discover -v
-  
+        run: pytest test/ --cov=input --cov=tree --cov=data --cov-report=html --cov-fail-under=80
+
+      - name: Upload Test Coverage Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: ftb-coverage
+          path: htmlcov/
