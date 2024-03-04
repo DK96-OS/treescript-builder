@@ -5,11 +5,11 @@ from tree.tree_worker import TreeWorker
 
 
 def build_tree(input_data: InputData):
-	"""
-	Build The Tree as defined by the InputData.
+    """
+    Build The Tree as defined by the InputData.
 
-	Parameters:
-	- input_data (str): The InputData produced by the Input Module.
+    Parameters:
+    - input_data (str): The InputData produced by the Input Module.
 	"""
     # Use this Worker to execute Stateful Procedural Operations
     worker = TreeWorker(input_data.data_dir)
