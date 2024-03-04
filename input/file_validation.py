@@ -46,7 +46,7 @@ def validate_directory(dir_path_str: Optional[str]) -> Optional[Path]:
     if dir_path_str is None:
         return None
     if not validate_name(dir_path_str):
-    	exit("Data Directory is invalid")
+        exit("Data Directory is invalid")
     path = Path(dir_path_str)
     if path.exists():
         return path
