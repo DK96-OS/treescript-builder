@@ -23,7 +23,7 @@ def test_data_directory_init_non_path_raise_exit(test_input):
 
 def test_data_directory_init_dir_does_not_exist_raise_exit():
     with pytest.MonkeyPatch().context() as m:
-        m.setattr(Path, 'exists', lambda c: True)
+        m.setattr(Path, 'exists', lambda c: False)
         try:
             DataDirectory(Path('data_dir'))
             assert False
@@ -61,6 +61,7 @@ def test_search_label_does_not_exist_returns_none(test_input):
         instance = DataDirectory(Path('data_dir'))
         # When the Label is searched, the Path does not exist
         m.setattr(Path, 'exists', lambda c: False)
+        m.setattr(Path, 'glob', lambda c, d: [])
         assert instance.search_label(test_input) == None
 
 
@@ -74,8 +75,10 @@ def test_search_label_does_not_exist_returns_none(test_input):
     ]
 )
 def test_search_label_exists_returns_path(test_input):
+    data_dir_path = Path('data_dir')
     with pytest.MonkeyPatch().context() as m:
         m.setattr(Path, 'exists', lambda c: True)
-        instance = DataDirectory(Path('data_dir'))
+        instance = DataDirectory(data_dir_path)
         # 
-        assert instance.search_label(test_input) == Path(test_input)
+        m.setattr(Path, 'glob', lambda c, d: [data_dir_path / test_input])
+        assert instance.search_label(test_input) == data_dir_path / test_input

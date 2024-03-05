@@ -32,9 +32,9 @@ class DataDirectory:
         """
         if not is_valid_data_label(data_label):
             return None
+        # Find the Data Label File
+        data_files = sorted(self._data_dir.glob(data_label))
         #
-        data_path = self._data_dir.resolve(data_label)
-        if not data_path.exists():
+        if len(data_files) == 0:
             return None
-        #
-        return data_path
+        return data_files[0]
