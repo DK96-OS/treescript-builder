@@ -1,65 +1,81 @@
-import unittest
-from data.data_directory import get_file_extension, is_valid_data_label, DataDirectory
+"""Testing Data Directory
+"""
+from pathlib import Path
+import pytest
+
+from data.data_directory import DataDirectory
 
 
-class TestDataDirectory(unittest.TestCase):
+@pytest.mark.parametrize(
+    "test_input",
+    [
+        ('data_dir'),
+        (None),
+    ]
+)
+def test_data_directory_init_non_path_raise_exit(test_input):
+    try:
+        DataDirectory(test_input)
+        assert False
+    except SystemExit as e:
+        assert True
 
-    def setUp(self):
-        pass
 
-    def test_get_file_extension_empty_str_returns_none(self):
-        self.assertIsNone(
-            get_file_extension("")
-        )
+def test_data_directory_init_dir_does_not_exist_raise_exit():
+    with pytest.MonkeyPatch().context() as m:
+        m.setattr(Path, 'exists', lambda c: True)
+        try:
+            DataDirectory(Path('data_dir'))
+            assert False
+        except SystemExit as e:
+            assert True
 
-    def test_get_file_extension_space_char_returns_none(self):
-        self.assertIsNone(
-            get_file_extension(" ")
-        )
-    
-    def test_get_file_extension_name_only_returns_none(self):
-        self.assertIsNone(
-            get_file_extension("name")
-        )
-    
-    def test_get_file_extension_java_file_returns_java(self):
-        self.assertEqual(
-            "java",
-            get_file_extension("ClassName.java")
-        )
-    
-    def test_get_file_extension_python_file_returns_py(self):
-        self.assertEqual(
-            "py",
-            get_file_extension("python_script.py")
-        )
-    
-    def test_is_valid_data_label_empty_str_returns_false(self):
-        self.assertFalse(
-            is_valid_data_label("")
-        )
-    
-    def test_is_valid_data_label_space_char_returns_false(self):
-        self.assertFalse(
-            is_valid_data_label(" ")
-        )
-    
-    def test_is_valid_data_label_name_returns_true(self):
-        self.assertTrue(
-            is_valid_data_label("Name")
-        )
-    
-    def test_is_valid_data_label_file_with_ext_returns_true(self):
-        self.assertTrue(
-            is_valid_data_label("ClassName.java")
-        )
-    
-    def test_is_valid_data_label_file_with_numbers_returns_true(self):
-        self.assertTrue(
-            is_valid_data_label("FileNumber23")
-        )
-    
-    def test_is_valid_data_label_file_with_number_and_ext_returns_true(self):
-        self.assertTrue(
-            is_valid_data_label("FileNumber23.txt")
-        )
+
+@pytest.mark.parametrize(
+    "test_input",
+    [
+        ('*'),
+        ('invalid/label'),
+    ]
+)
+def test_search_label_invalid_label_returns_none(test_input):
+    with pytest.MonkeyPatch().context() as m:
+        m.setattr(Path, 'exists', lambda c: True)
+        instance = DataDirectory(Path('data_dir'))
+        assert instance.search_label(test_input) == None
+
+
+@pytest.mark.parametrize(
+    "test_input",
+    [
+        ('valid_label'),
+        ('valid-label'),
+        ('script.py'),
+        ('123'),
+    ]
+)
+def test_search_label_does_not_exist_returns_none(test_input):
+    with pytest.MonkeyPatch().context() as m:
+        # When the Data Directory is created, Path must exist
+        m.setattr(Path, 'exists', lambda c: True)
+        instance = DataDirectory(Path('data_dir'))
+        # When the Label is searched, the Path does not exist
+        m.setattr(Path, 'exists', lambda c: False)
+        assert instance.search_label(test_input) == None
+
+
+@pytest.mark.parametrize(
+    "test_input",
+    [
+        ('valid_label'),
+        ('valid-label'),
+        ('script.py'),
+        ('123'),
+    ]
+)
+def test_search_label_exists_returns_path(test_input):
+    with pytest.MonkeyPatch().context() as m:
+        m.setattr(Path, 'exists', lambda c: True)
+        instance = DataDirectory(Path('data_dir'))
+        # 
+        assert instance.search_label(test_input) == Path(test_input)
