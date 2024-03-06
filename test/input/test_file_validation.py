@@ -3,7 +3,7 @@
 import pytest
 from pathlib import Path
 
-from input.file_validation import validate_input_file, validate_directory
+from input.file_validation import validate_input_file, validate_directory, get_file_extension
 
 
 @pytest.mark.parametrize(
@@ -59,3 +59,30 @@ def test_validate_directory_exists_returns_true():
     with pytest.MonkeyPatch().context() as m:
         m.setattr(Path, 'exists', lambda c: True)
         assert validate_directory("dir1") == Path('dir1')
+
+
+@pytest.mark.parametrize(
+    "test_input",
+    [
+        (''),
+        (' '),
+        ('file'),
+        ('incorrect.'),
+    ]
+)
+def test_get_file_extension_returns_none(test_input):
+    assert get_file_extension(test_input) == None
+
+
+@pytest.mark.parametrize(
+    "test_input,expect",
+    [
+        ('requirements.txt', 'txt'),
+        ('__init__.py', 'py'),
+        ('data_files.py', 'py'),
+        ('ClassName.java', 'java'),
+        ('archive.tar.gz', 'gz'),
+    ]
+)
+def test_get_file_extension_returns_str(test_input, expect):
+    assert get_file_extension(test_input) == expect
