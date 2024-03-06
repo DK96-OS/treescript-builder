@@ -4,7 +4,7 @@ from pathlib import Path
 from sys import exit
 from typing import Optional
 
-from data.data_files import is_valid_data_label
+from input.string_validation import validate_data_label
 
 
 class DataDirectory:
@@ -30,11 +30,11 @@ class DataDirectory:
         Returns:
         Path (optional) - The Path to the Data File, or None.
         """
-        if not is_valid_data_label(data_label):
+        if not validate_data_label(data_label):
             return None
         # Find the Data Label File
-        data_files = sorted(self._data_dir.glob(data_label))
-        #
-        if len(data_files) == 0:
+        data_files = self._data_dir.glob(data_label)
+        try:
+            return next(data_files)
+        except StopIteration as s:
             return None
-        return data_files[0]

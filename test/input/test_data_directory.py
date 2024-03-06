@@ -3,7 +3,7 @@
 from pathlib import Path
 import pytest
 
-from data.data_directory import DataDirectory
+from input.data_directory import DataDirectory
 
 
 @pytest.mark.parametrize(
