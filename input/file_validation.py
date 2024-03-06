@@ -53,6 +53,27 @@ def validate_directory(dir_path_str: Optional[str]) -> Optional[Path]:
     exit("The given Directory does not exist!")
 
 
+def get_file_extension(file_name: str) -> Optional[str]:
+    """
+    Obtain the File Extension, if it exists.
+        The Last extension in a multi-part extension is returned.
+    
+    Parameters:
+    - file_name (str): The name of the File.
+
+    Returns:
+    str or None - The File Extension, or None.
+    """
+    try:
+        index = file_name[::-1].index('.')
+        result = file_name[len(file_name) - index:]
+        if len(result) < 1:
+            return None
+        return result
+    except:
+        return None
+
+
 def _get_input(file: Path) -> str:
     """
     Read the String contents of the File, strips surrounding space characters.
