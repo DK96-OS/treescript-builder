@@ -5,8 +5,11 @@ from sys import exit
 from typing import Optional
 
 from input.data_directory import DataDirectory
+from input.file_validation import read_file
 from input.tree_data import TreeData
 from tree.path_stack import PathStack
+from tree.tree_builder import create_file, make_dir_exist
+from tree.tree_trimmer import remove_dir, remove_file
 
 
 class TreeWorker:
