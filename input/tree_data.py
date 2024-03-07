@@ -15,6 +15,7 @@ class TreeData:
     - data_label (str): The Data Label.
     """
     
+    line_number: int
     depth: int
     is_dir: bool
     name: str

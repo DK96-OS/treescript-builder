@@ -25,9 +25,15 @@ def read_input_tree(input_tree_data: str) -> Generator[TreeData, None, None]:
     Returns:
     Generator[TreeData] - 
     """
+    line_number = 1
     for is_newline, group in groupby(input_tree_data, lambda x: x == "\n"):
         if not is_newline:
-            yield _process_line(''.join(group))
+            line = ''.join(group)
+            if line.lstrip().startswith('#'):
+                continue
+            yield _process_line(line_number, line)
+        else:
+            line_number += 1
 
 
 def read_input_tree_to_tuple(input_tree_data: str) -> tuple[TreeData, ...]:
@@ -40,12 +46,15 @@ def read_input_tree_to_tuple(input_tree_data: str) -> tuple[TreeData, ...]:
     Returns:
     tuple[InstructionData] - The Tuple of Instruction Data, read from the Input String.
     """
+    all_lines = enumerate(input_tree_data.split("\n"), start=1)
     return (
-        _process_line(line) for line in input_tree_data.split("\n")
+        _process_line(n, line) for n, line in filter(
+            all_lines, lambda _, x: not x.lstrip().startswith('#')
+        )
     )
 
 
-def _process_line(line: str) -> TreeData:
+def _process_line(line_number: int, line: str) -> TreeData:
     """
     Processes a single line of the input tree structure.
     Returns a tuple indicating the depth, type (file or directory), name of file or dir, and file data if available.
@@ -86,7 +95,11 @@ def _process_line(line: str) -> TreeData:
         # Extract the name, removing '/' or '\' if present.
         name = name.strip('/\\')
     return TreeData(
-        _calculate_depth(line), is_dir, name, data_file
+        line_number,
+        _calculate_depth(line),
+        is_dir,
+        name,
+        data_file
     )
 
 
