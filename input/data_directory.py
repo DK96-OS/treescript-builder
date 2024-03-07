@@ -38,3 +38,27 @@ class DataDirectory:
             return next(data_files)
         except StopIteration as s:
             return None
+
+    def send_label(self, data_label: str, data: str) -> bool:
+        """
+        Send Labelled Data to the Data Directory.
+
+        Parameters:
+        - data_label (str): The Label to store the data in.
+        - data (str): The Data to Store in the Data Directory.
+
+        Returns:
+        bool - True if the Label is valid, and the Data Directory accepted the data.
+        """
+        if not validate_data_label(data_label):
+            return False
+        #
+        data_path = self._data_dir / data_label
+        # If the File already exists, cancel
+        if data_path.exists():
+            return False
+        try:
+            data_path.write_text(data)
+            return True
+        except IOError as e:
+            return False
