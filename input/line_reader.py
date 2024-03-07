@@ -7,6 +7,7 @@ The Default Input Reader.
     The Name String is the name of the line.
 """
 from itertools import groupby
+from sys import exit
 from typing import Generator
 
 from input.tree_data import TreeData
@@ -23,7 +24,10 @@ def read_input_tree(input_tree_data: str) -> Generator[TreeData, None, None]:
     - input_data (InputData): The Input.
 
     Returns:
-    Generator[TreeData] - 
+    Generator[TreeData] - Produces TreeData from the Input Data.
+
+    Raises:
+    SystemExit - When any Line cannot be read successfully.
     """
     line_number = 1
     for is_newline, group in groupby(input_tree_data, lambda x: x == "\n"):
@@ -45,6 +49,9 @@ def read_input_tree_to_tuple(input_tree_data: str) -> tuple[TreeData, ...]:
 
     Returns:
     tuple[InstructionData] - The Tuple of Instruction Data, read from the Input String.
+
+    Raises:
+    SystemExit - When any Line cannot be read successfully.
     """
     all_lines = enumerate(input_tree_data.split("\n"), start=1)
     return (
@@ -64,7 +71,14 @@ def _process_line(line_number: int, line: str) -> TreeData:
 
     Returns:
     tuple: (int, bool, str, str) where int is the depth, bool is true when is Directory, and str is name, followed by str data.
-    """    
+
+    Raises:
+    SystemExit - When Line cannot be read successfully.
+    """
+    # Calculate the Depth
+    depth = _calculate_depth(line)
+    if depth < 0:
+        exit(f"Invalid Space Count in Line: {line_number}")
     # Remove Space
     args = line.strip()
     # Try to split line into multiple arguments
@@ -75,19 +89,12 @@ def _process_line(line_number: int, line: str) -> TreeData:
     # Check whether line was split or not
     if isinstance(args, str):
         name = args
-        data_file = ""
-    elif isinstance(args, list):
-        if len(args) == 1:
-            # Do nothing different, there is no second argument
-            name = args[0]
-            data_file = ""
-        elif len(args) >= 2:
-            name = args[0]
-            data_file = args[1]
+        data_label = ""
+    elif isinstance(args, list) and len(args) >= 2:
+        name = args[0]
+        data_label = args[1]
     else:
-        print("Unknown Type: "+ str(type(args)))
-        name = "Default"
-        data_file = ""
+        exit(f"Invalid Line: {line_number}")
     # Check if the line represents a directory.
     is_dir = name.endswith('/') or name.startswith('/')  
     is_dir = is_dir or name.endswith('\\') or name.startswith('\\')
@@ -96,10 +103,10 @@ def _process_line(line_number: int, line: str) -> TreeData:
         name = name.strip('/\\')
     return TreeData(
         line_number,
-        _calculate_depth(line),
+        depth,
         is_dir,
         name,
-        data_file
+        data_label
     )
 
 
@@ -111,7 +118,7 @@ def _calculate_depth(line: str) -> int:
     - line (str): A line from the tree command output.
 
     Returns:
-    int: The depth of the line in the tree structure.
+    int: The depth of the line in the tree structure, or -1 if space count is invalid.
     """
     from itertools import takewhile
     space_count = len(list(
@@ -120,4 +127,5 @@ def _calculate_depth(line: str) -> int:
     depth = space_count >> 1
     if depth << 1 == space_count:
         return depth
-    raise ValueError("Invalid Space Count in Line: " + line)
+    # Invalid Space Count: Negative 1
+    return -1
