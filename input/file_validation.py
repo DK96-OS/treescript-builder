@@ -74,6 +74,23 @@ def get_file_extension(file_name: str) -> Optional[str]:
         return None
 
 
+def read_file(
+    path: Path
+) -> Optional[str]:
+    """Read the File at the given Path.
+
+    Parameters:
+    - path (str): The Path to the File to Read.
+
+    Returns:
+    str - The contents of the file. If the read fails, returns None.
+    """
+    try:
+        return path.read_text()
+    except IOError as w:
+        return None
+
+
 def _get_input(file: Path) -> str:
     """
     Read the String contents of the File, strips surrounding space characters.
