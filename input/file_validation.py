@@ -90,6 +90,6 @@ def _get_input(file: Path) -> str:
     if not file.exists():
         exit("File does not exist.")
     try:
-        return file.read_text().strip()
+        return file.read_text()
     except IOError as e:
         exit("Failed to Read from File.")
