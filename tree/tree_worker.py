@@ -1,11 +1,12 @@
 """ File Tree Worker.
 """
-from typing import Optional
 from pathlib import Path
-from .path_stack import PathStack
+from sys import exit
+from typing import Optional
+
+from input.data_directory import DataDirectory
 from input.tree_data import TreeData
-from .file_operations import create_file, make_dir_exist, read_file, remove_dir, remove_file
-from data.data_directory import DataDirectory
+from tree.path_stack import PathStack
 
 
 class TreeWorker:
@@ -28,18 +29,11 @@ class TreeWorker:
             return None
         # No Data Argument
         if data.data_label == "":
-            # Use the File Name
-            path = self._data_dir.search_name(data.name)
-            if path is None or not path.exists():
-                return None
-            return path
+            return None
         # Search in Data Directory
-        data_path = self._data_dir.search_label(
-            file_name=data.name,
-            data_label=data.data_label
-        )
+        data_path = self._data_dir.search_label(data.data_label)
         if data_path is None:
-            raise SystemError("Failed to Find Data: "+ data.data_label)
+            exit("Failed to Find Data: "+ data.data_label)
         return data_path
 
     def build(self, data: TreeData) -> bool:
@@ -64,7 +58,7 @@ class TreeWorker:
         try:
             return create_file(file_path, read_file(data_path))
         except:
-            raise SystemError("Failed File Operation")
+            exit("Failed File Operation")
     
     def remove(self, data: TreeData) -> bool:
         """
