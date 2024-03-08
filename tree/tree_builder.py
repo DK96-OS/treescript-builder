@@ -1,45 +1,79 @@
 """Tree Building Operations
 """
 from pathlib import Path
-from typing import Optional
 
-from input.input_data import InputData
-from tree.tree_worker import TreeWorker
+from tree.instruction_data import InstructionData
 
 
-def build(input_data: InputData):
-    worker = TreeWorker(input_data.data_dir)
-    for data in input_data.get_tree_data():
-        if not worker.build(data):
-            exit("Failed Operation: name=" + data.name + ", depth=" + data.depth)
+def build(instructions: tuple[InstructionData]):
+    """
+    Execute the Instructions in build mode.
+
+    Parameters:
+    - instructions(tuple[InstructionData]): The Instructions to execute. 
+    
+    Returns:
+    tuple[bool] - The success or failure of each instruction.
+    """
+    return (_build(i) for i in instructions)
 
 
-def create_file(
+def _build(i: InstructionData) -> bool:
+    """
+    Execute a single instruction.
+
+    Parameters:
+    - instruction(InstructionData): The data required to execute the operation.
+    
+    Returns:
+    bool - Whether the given operation succeeded.
+    """
+    if i.is_dir:
+        return _make_dir_exist(i.path)
+    elif i.secondary_path is None:
+        i.path.touch()
+        return True
+    else:
+        return _create_file(i.path, i.secondary_path)
+
+
+def _create_file(
     path: Path,
-    data: Optional[str]
+    data: Path
 ) -> bool:
-    """Ensure that a File at the given path exists.
-    If the Data String is provided, 
+    """
+    Create a File at the given path, with data from the Data Directory.
 
     Parameters:
     - path (Path): The Path to the File to be created, and written to.
-    - data (str, optional): The Data to be written to the File Content.
+    - data (Path): A Data Directory Path to be copied to the new File.
 
     Returns:
     bool - Whether the File operation succeeded.
     """
-    with open(path, 'w') as f:
-        if data is None or data == "":
-            return True
-        f.write(data)
+    from input.file_validation import read_file
+    data_str = read_file(data)
+    if data_str is None or data_str == '':
+        path.touch()
+    else:
+        path.write_text(data_str)
     return True
 
 
-def make_dir_exist(
+def _make_dir_exist(
     path: Path
-):
-    """Ensure that the Directory at the given Path exists.
+) -> bool:
+    """
+    Ensure that the Directory at the given Path exists.
+
+    Parameters:
+    - path (Path): The Path to the File to be created, and written to.
+   
     """
     if path.exists():
-        return
-    path.mkdir(exist_ok=True)
+        return True
+    try:
+        path.mkdir(parents=True, exist_ok=True)
+        return True
+    except:
+        return False

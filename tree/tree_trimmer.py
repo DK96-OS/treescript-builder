@@ -2,48 +2,77 @@
 """
 from pathlib import Path
 
-from input.input_data import InputData
-from tree.tree_worker import TreeWorker
+from tree.instruction_data import InstructionData
 
 
-def trim(input_data: InputData):
+def trim(instructions: tuple[InstructionData, ...]) -> tuple[bool, ...]:
     """
+    Execute the Instructions in trim mode.
+
+    Parameters:
+    - instructions(tuple[InstructionData]): The Instructions to execute. 
+    
+    Returns:
+    tuple[bool] - The success or failure of each instruction.
     """
-    worker = TreeWorker(input_data.data_dir)
-    for data in input_data.get_tree_data():
-        if not worker.remove(data):
-            exit("Failed Operation: name=" + data.name + ", depth=" + data.depth)
-    worker.cleanup_path_stack()
+    return (_trim(i) for i in instructions)
 
 
-def remove_file(
-    path: Path
-):
+def _trim(instruct: InstructionData) -> bool:
+    if instruct.is_dir:
+        return _remove_dir(instruct.path)
+    elif instruct.secondary_path is None:
+        try:
+            instruct.path.unlink(missing_ok=True)
+            return True
+        except:
+            return False
+    else:
+        return _extract_file(instruct.path)
+
+
+def _extract_file(
+    path: Path,
+    data: Path
+) -> bool:
     """
-    Remove a File from the Tree.
-    Moves the File if Data Directory and Data Label are given.
+    Moves the File to the Data Directory.
     
     Parameters:
-    - path (Path): The path to the File.
-    - data_dir (Path, optional): The Data Directory Path.
-    - data_label (str, optional): The Label for the Data Contents of the File being removed.
+    - path (Path): The path to the File in the Tree.
+    - data (Path): A Path to a File in the Data Directory.
+
+    Returns:
+    bool - Whether the entire operation succeeded.
     """
-    path.unlink(missing_ok=True)
+    from input.file_validation import read_file
+    try:
+        data_str = read_file(path)
+        if data_str is None or len(data_str) == 0:
+            data.touch()
+        else:
+            data.write_text(data_str)
+        path.unlink()
+    except:
+        return False
+    return True
 
 
-def remove_dir(
+def _remove_dir(
     path: Path,
 ) -> bool:
-    """Tries to Remove a Directory if it is Empty.
+    """
+    Tries to Remove a Directory, if it is Empty.
 
     Parameters:
     - path (Path): The path to the Directory.
 
     Returns:
-    bool : Whether the Directory was Empty and has been removed.
+    bool : Whether the Directory was Empty, and has been removed.
     """
-    # Check if it is empty
-    if len(path.glob('*')) > 0:
+    try:
+        path.rmdir()
+    except:
+        # Was not empty
         return False
-    path.rmdir()
     return True
