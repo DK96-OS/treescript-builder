@@ -2,8 +2,8 @@
 """
 from typing import Optional, Generator
 from dataclasses import dataclass
-from input.data_directory import DataDirectory
 
+from input.data_directory import DataDirectory
 from input.tree_data import TreeData
 
 
@@ -21,7 +21,6 @@ class InputData:
     data_dir: Optional[DataDirectory]
     is_reversed: bool
 
-
     def get_tree_data(self) -> Generator[TreeData, None, None]:
         """
         Initializes a Generator for processing the Tree Input.
@@ -30,5 +29,5 @@ class InputData:
         Returns:
         Generator - Yields one TreeData for each Line of Tree Input.
         """
-        from line_reader import read_input_tree
+        from input.line_reader import read_input_tree
         return read_input_tree(self.tree_input)

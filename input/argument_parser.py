@@ -60,8 +60,7 @@ def _validate_arguments(
         exit("The Tree File argument was invalid.")
     # Validate Data Directory Name Syntax if Present
     if data_dir_name is None:
-        if is_reverse:
-            exit("Data Directory is Required for Reverse Operations.")
+        pass
     elif not validate_name(data_dir_name):
         exit("The Data Directory argument was invalid.")
     #
