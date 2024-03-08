@@ -9,7 +9,7 @@ from tree.instruction_data import InstructionData
 from tree.path_stack import PathStack
 
 
-def validate_tree_input(
+def validate_tree(
     tree_data_generator: Generator[TreeData, None, None]
     ) -> tuple[InstructionData, ...]:
     """
@@ -23,7 +23,7 @@ def validate_tree_input(
     )
 
 
-def validate_tree_data_directory(
+def validate_with_data_dir(
     tree_data_generator: Generator[TreeData, None, None],
     data_dir: DataDirectory
     ) -> tuple[InstructionData, ...]:
@@ -32,6 +32,6 @@ def validate_tree_data_directory(
     """
     inst = []
     path_stack = PathStack()
-	return (
+    return (
 
     )
