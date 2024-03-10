@@ -59,13 +59,12 @@ class PathStack:
     def reduce_depth(self, depth: int) -> bool:
         """
         Reduce the Depth of the Path Stack.
-        Optionally, remove the directory if it is empty.
 
         Parameters:
         - depth (int): The depth to reduce the stack to.
 
         Returns:
-        boolean : Whether the Reduction was successful, ie 1 or more Stack pops.
+        boolean : Whether the Reduction was successful, ie 0 or more Stack pops.
         """
         current_depth = self.get_depth()
         if current_depth < depth or depth < 0:
@@ -77,8 +76,9 @@ class PathStack:
         return True
 
     def get_depth(self) -> int:
-        """ Obtain the current Depth of the Stack.
-        The state where the current directory is the path, ie: './' has a depth of 0.
+        """
+        Obtain the current Depth of the Stack.
+            The state where the current directory is the path, ie: './' has a depth of 0.
 
         Returns:
         int : The number of elements in the Path Stack.

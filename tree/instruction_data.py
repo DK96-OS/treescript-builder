@@ -13,4 +13,4 @@ class InstructionData:
 
     is_dir: bool
     path: Path
-    secondary_path: Optional[Path]
+    data_path: Optional[Path]
