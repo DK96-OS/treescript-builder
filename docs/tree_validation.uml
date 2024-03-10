@@ -1,0 +1,57 @@
+@startuml
+!theme blueprint
+
+metaclass "Tree Validation" as TREEVAL {
+    __ Methods __
+    + validate_tree(Generator[TreeData]): tuple[InstructionData]
+    + validate_with_data_dir(Generator[TreeData], DataDirectory): tuple[InstructionData]
+}
+
+class "Tree State" as TREESTATE {
+    __ Fields __
+    path_stack: PathStack
+    __ Methods __
+    
+}
+
+class "Instruction Data" as INSTRUCT {
+    __ Fields __
+    is_dir: bool
+    path: Path
+    data_path: Optional[Path]
+}
+
+class "Tree Data" as TREEDATA {
+    __ Fields __
+    line_number: int
+    depth: int
+    is_dir: bool
+    name: str
+    data_label: str
+}
+
+class "Path Stack" as PSTACK {
+    __ Methods __
+    + push(str)
+    + pop(): str
+    + join_stack(): str
+    + create_path(str): Path
+    + reduce_depth(int): bool
+    + get_depth(): int
+}
+
+class "Data Directory" as DATADIR {
+    __ Methods __
+    + search_label(str): Optional[Path]
+}
+
+TREEDATA -down-> TREEVAL
+TREEDATA -right-> DATADIR
+
+DATADIR --> TREEVAL
+
+TREEVAL --> INSTRUCT
+
+TREEVAL --> PSTACK
+
+@enduml
