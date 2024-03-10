@@ -18,10 +18,11 @@ def build_tree(input_data: InputData):
     #
     if input_data.is_reversed:
         from tree.tree_trimmer import trim
-        trim(instructions)
+        results = trim(instructions)
     else:
         from tree.tree_builder import build
-        build(instructions)
+        results = build(instructions)
+    # todo: Process Results
 
 
 def _process_input(input_data: InputData) -> tuple[InstructionData]:
