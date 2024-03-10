@@ -21,14 +21,14 @@ def trim(instructions: tuple[InstructionData, ...]) -> tuple[bool, ...]:
 def _trim(instruct: InstructionData) -> bool:
     if instruct.is_dir:
         return _remove_dir(instruct.path)
-    elif instruct.secondary_path is None:
+    elif instruct.data_path is None:
         try:
             instruct.path.unlink(missing_ok=True)
             return True
         except:
             return False
     else:
-        return _extract_file(instruct.path)
+        return _extract_file(instruct.path, instruct.data_path)
 
 
 def _extract_file(

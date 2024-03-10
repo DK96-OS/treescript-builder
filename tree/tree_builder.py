@@ -30,11 +30,11 @@ def _build(i: InstructionData) -> bool:
     """
     if i.is_dir:
         return _make_dir_exist(i.path)
-    elif i.secondary_path is None:
+    elif i.data_path is None:
         i.path.touch()
         return True
     else:
-        return _create_file(i.path, i.secondary_path)
+        return _create_file(i.path, i.data_path)
 
 
 def _create_file(
