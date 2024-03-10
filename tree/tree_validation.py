@@ -1,6 +1,7 @@
 """Tree Validation Methods.
 """
 from itertools import takewhile
+from pathlib import Path
 from typing import Generator
 
 from input.data_directory import DataDirectory
@@ -16,11 +17,33 @@ def validate_tree(
     Process Tree Data into executable instructions.
         Assume there is no data directory.
     """
+    tree_Data = _validate_tree_structure(tree_data_generator)
+    #
+    tree_val = TreeValidation()
+
     inst = []
     path_stack = PathStack()
-    return (
-        
-    )
+    # More state
+    last_tree_node = None
+    #
+    for t_data in tree_data_generator:
+        # Check Is Directory
+        if t_data.is_dir:
+            tree_val.validate_node()
+            #
+            success = path_stack.reduce_depth(t_data.depth)
+            if not success:
+                exit(f"Inconsistent Tree Depth at Line: {t_data.line_number}")
+            #
+            path_stack.push(t_data.name)
+            # todo: Optimize 
+            inst.append(InstructionData(True, Path(path_stack.join_stack()), None))
+        else:
+            file_path = path_stack.create_path(t_data.name)
+            inst.append(InstructionData(False, file_path, None))
+        #
+    # todo: Empty Path Stack
+    return tuple(inst)
 
 
 def validate_with_data_dir(
@@ -32,6 +55,13 @@ def validate_with_data_dir(
     """
     inst = []
     path_stack = PathStack()
-    return (
+    return ()
 
-    )
+
+def _validate_tree_structure(tree_generator: Generator[TreeData, None, None]) -> tuple[TreeData]:
+    data = []
+    for t in tree_generator:
+        data.append(t)
+    #
+    pass
+    return tuple(data)
