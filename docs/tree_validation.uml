@@ -3,15 +3,24 @@
 
 metaclass "Tree Validation" as TREEVAL {
     __ Methods __
-    + validate_tree(Generator[TreeData]): tuple[InstructionData]
-    + validate_with_data_dir(Generator[TreeData], DataDirectory): tuple[InstructionData]
+    + validate_build(Generator[TreeData], Optional[DataDirectory]): tuple[InstructionData]
+    + validate_trim(Generator[TreeData], Optional[DataDirectory]): tuple[InstructionData]
 }
 
 class "Tree State" as TREESTATE {
     __ Fields __
-    path_stack: PathStack
+    - stack: PathStack
+    - queue: list[str]
+    - prev_line_number: int
     __ Methods __
-    
+    + validate_tree_data(TreeData): int
+    + get_current_depth(): int
+    + get_current_path(): Path
+    + add_to_queue(str)
+    + add_to_stack(str)
+    + process_queue(): Optional[Path]
+    + reduce_depth(int): bool
+    - _update_line_number(int)
 }
 
 class "Instruction Data" as INSTRUCT {
@@ -43,15 +52,17 @@ class "Path Stack" as PSTACK {
 class "Data Directory" as DATADIR {
     __ Methods __
     + search_label(str): Optional[Path]
+    + get_path(str): Path
 }
 
-TREEDATA -down-> TREEVAL
-TREEDATA -right-> DATADIR
+TREEDATA -r-> TREEVAL
 
-DATADIR --> TREEVAL
+DATADIR -d-> TREEVAL
 
-TREEVAL --> INSTRUCT
+TREEVAL -r-> INSTRUCT
 
-TREEVAL --> PSTACK
+TREEVAL -d-> TREESTATE
+TREEVAL -d-> PSTACK
+TREESTATE -l-> PSTACK
 
 @enduml
