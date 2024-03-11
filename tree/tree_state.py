@@ -3,7 +3,7 @@
 """
 from pathlib import Path
 from sys import exit
-from typing import Optional
+from typing import Generator, Optional
 
 from input.tree_data import TreeData
 from tree.path_stack import PathStack
@@ -49,7 +49,7 @@ class TreeState:
         """
         return self._stack.get_depth() + len(self._queue)
 
-    def get_current_path(self) -> str:
+    def get_current_path(self) -> Path:
         """
         Obtain the Current Path of the Tree.
 
@@ -57,8 +57,8 @@ class TreeState:
         str - A Path equivalent to the current Tree State.
         """
         if len(self._queue) > 0:
-            self.process_queue()
-        return self._stack.join_stack()
+            return self.process_queue()
+        return Path(self._stack.join_stack())
     
     def add_to_queue(self, dir_name: str):
         """
@@ -92,7 +92,20 @@ class TreeState:
             self._stack.push(element)
         self._queue.clear()
         # Return the new Path as a str
-        return self._stack.join_stack()
+        return Path(self._stack.join_stack())
+
+    def process_stack(self, depth: int) -> Generator[Path, None, None]:
+        """
+        Pop the Stack to the Desired Depth.
+
+        Parameters:
+        - depth (int): The depth to process the stack to.
+
+        Returns:
+        Generator[Path] - Provides a Path for each entry in the Stack.
+        """
+        while depth < len(self._stack):
+            yield self._stack.create_path(self._stack.pop())
 
     def reduce_depth(self, depth: int) -> bool: 
         """
