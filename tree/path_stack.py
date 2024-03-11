@@ -50,10 +50,10 @@ class PathStack:
         - filename (str): The name of the file to append to the end of the path.
 
         Returns:
-        str : The full path to the file.
+        Path : The Path to the file.
         """
         if type(filename) is not str:
-            return self.join_stack()
+            return Path(self.join_stack())
         return Path(self.join_stack() + filename)
 
     def reduce_depth(self, depth: int) -> bool:
