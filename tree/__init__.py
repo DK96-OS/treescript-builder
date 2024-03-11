@@ -14,35 +14,18 @@ def build_tree(input_data: InputData):
     Raises:
     SystemExit - If a Tree Validation error occurs.
 	"""
-    instructions = _process_input(input_data)
-    #
     if input_data.is_reversed:
-        from tree.tree_trimmer import trim
+        from tree.tree_trimmer import validate_trim, validate_trim_with_data, trim
+        if input_data.data_dir is None:
+            instructions = validate_trim(input_data.get_tree_data())
+        else:
+            instructions = validate_trim_with_data(input_data.get_tree_data(), input_data.data_dir)
         results = trim(instructions)
     else:
-        from tree.tree_builder import build
+        from tree.tree_builder import validate_build, validate_build_with_data, build
+        if input_data.data_dir is None:
+            instructions = validate_build(input_data.get_tree_data())
+        else:
+            instructions = validate_build_with_data(input_data.get_tree_data, input_data.data_dir)
         results = build(instructions)
-    # todo: Process Results
-
-
-def _process_input(input_data: InputData) -> tuple[InstructionData]:
-    """
-    Process Input Tree Data into Instruction Data.
-        Validates Tree operations to catch errors before execution.
-
-    Parameters:
-    - input_data (InputData): The Input given to the module.
-
-    Returns:
-    tuple[InstructionData] - The set of Instructions to execute.
-    """
-    tree_data = input_data.get_tree_data()
-    #
-    if input_data.data_dir is None:
-        from tree.tree_validation import validate_tree
-        return validate_tree(tree_data)
-    else:
-        from tree.tree_validation import validate_with_data_dir
-        return validate_with_data_dir(
-            tree_data, input_data.data_dir
-        )
+    print(results)
