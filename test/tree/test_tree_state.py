@@ -5,6 +5,23 @@ import pytest
 from tree.tree_state import TreeState
 
 
+def test_get_current_path_():
+    instance = TreeState()
+    assert instance.get_current_path() == './'
+
+
+def test_get_current_path_single_item_stack():
+    instance = TreeState()
+    instance.add_to_stack('src')
+    assert instance.get_current_path() == './src/'
+
+
+def test_get_current_path_single_item_queue():
+    instance = TreeState()
+    instance.add_to_queue('src')
+    assert instance.get_current_path() == './src/'
+
+
 @pytest.mark.parametrize(
     'test_input',
     [

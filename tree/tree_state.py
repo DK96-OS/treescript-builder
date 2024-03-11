@@ -25,6 +25,17 @@ class TreeState:
         """
         return self._stack.get_depth() + len(self._queue)
 
+    def get_current_path(self) -> str:
+        """
+        Obtain the Current Path of the Tree.
+
+        Returns:
+        str - A Path equivalent to the current Tree State.
+        """
+        if len(self._queue) > 0:
+            self.process_queue()
+        return self._stack.join_stack()
+    
     def add_to_queue(self, dir_name: str):
         """
         Add a directory to the Queue.

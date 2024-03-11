@@ -19,8 +19,6 @@ def validate_tree(
     """
     tree_Data = _validate_tree_structure(tree_data_generator)
     #
-    tree_val = TreeValidation()
-
     inst = []
     path_stack = PathStack()
     # More state
@@ -29,7 +27,6 @@ def validate_tree(
     for t_data in tree_data_generator:
         # Check Is Directory
         if t_data.is_dir:
-            tree_val.validate_node()
             #
             success = path_stack.reduce_depth(t_data.depth)
             if not success:
