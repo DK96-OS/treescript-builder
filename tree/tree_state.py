@@ -102,7 +102,7 @@ class TreeState:
         - depth (int): The Depth to pop the Stack to.
 
         Returns:
-        str - The directory that was popped from the Stack.
+        bool - Whether the depth reduction succeeded, ie. 0 or more elements popped.
         """
         return self._stack.reduce_depth(depth)
 
