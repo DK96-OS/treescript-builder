@@ -5,6 +5,7 @@ from sys import exit
 from typing import Optional
 
 from input.string_validation import validate_data_label
+from input.tree_data import TreeData
 
 
 class DataDirectory:
@@ -39,26 +40,29 @@ class DataDirectory:
         except StopIteration as s:
             return None
 
-    def send_label(self, data_label: str, data: str) -> bool:
+    def process_tree_data(self, node: TreeData) -> Optional[Path]:
         """
-        Send Labelled Data to the Data Directory.
-
-        Parameters:
-        - data_label (str): The Label to store the data in.
-        - data (str): The Data to Store in the Data Directory.
-
-        Returns:
-        bool - True if the Label is valid, and the Data Directory accepted the data.
+        Process the Data Label 
         """
-        if not validate_data_label(data_label):
-            return False
+        if node.data_label == '':
+            return None
+        data_path = self.search_label(node.data_label)
+        if data_path is None:
+            exit(f'Data Label on Line {node.line_number} not found in Data Directory: {node.data_label}')
+        return data_path
+
+    def check_trim(self, node: TreeData) -> Path:
+        """
+        Determine if the File already exists in the Data Directory.
+        """
+        if node.data_label == '':
+            exit('Data Label !!!!!!!!!!')
         #
-        data_path = self._data_dir / data_label
-        # If the File already exists, cancel
-        if data_path.exists():
-            return False
-        try:
-            data_path.write_text(data)
-            return True
-        except IOError as e:
-            return False
+        data_path = self.search_label(node.data_label)
+        if data_path is not None:
+            exit('Data already Exists')
+        #
+        if not validate_data_label(node.data_label):
+            exit('Data Label is invalid')
+        #
+        return self._data_dir / node.data_label
