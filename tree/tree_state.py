@@ -19,13 +19,13 @@ class TreeState:
         self._queue = []
         self._prev_line_number = 0
 
-    def validate_tree_data(self, tree_data: TreeData) -> int:
+    def validate_tree_data(self, node: TreeData) -> int:
         """
         Ensure that the next TreeData is valid, relative to current state.
             Calculate the change in depth, occurring with this TreeData.
 
         Parameters:
-        - tree_data (TreeData): The next TreeData in the sequence to Validate.
+        - node (TreeData): The next TreeData in the sequence to Validate.
 
         Returns:
         int - The difference between the TreeData depth and the TreeState depth.
@@ -33,11 +33,17 @@ class TreeState:
         Raises:
         SystemExit - When the TreeData is invalid, relative to the current TreeState.
         """
-        self._update_line_number(tree_data.line_number)
+        self._update_line_number(node.line_number)
         # Calculate the Change in Depth
-        if tree_data.depth < 0:
+        if node.depth < 0:
             exit("Invalid Depth Value")
-        return tree_data.depth - self.get_current_depth()
+        state_depth = self.get_current_depth()
+        if state_depth == 0:
+            state_depth = -1
+        delta = node.depth - state_depth
+        if delta > 1:
+            exit(f"You have jumped {delta - 1} steps in the tree on line: {node.line_number}")
+        return delta
 
     def get_current_depth(self) -> int:
         """
@@ -57,7 +63,7 @@ class TreeState:
         str - A Path equivalent to the current Tree State.
         """
         if len(self._queue) > 0:
-            return self.process_queue()
+        	self.process_queue()
         return Path(self._stack.join_stack())
     
     def add_to_queue(self, dir_name: str):
@@ -104,7 +110,9 @@ class TreeState:
         Returns:
         Generator[Path] - Provides a Path for each entry in the Stack.
         """
-        while depth < len(self._stack):
+        if depth < 0:
+            exit('Invalid Depth')
+        while depth < self._stack.get_depth():
             yield self._stack.create_path(self._stack.pop())
 
     def reduce_depth(self, depth: int) -> bool: 
