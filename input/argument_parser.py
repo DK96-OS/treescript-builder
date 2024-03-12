@@ -97,6 +97,7 @@ def _define_arguments() -> ArgumentParser:
     parser.add_argument(
         '-r',
         '--reverse',
+        '--trim',
         action='store_true',
         default=False,
         help='Flag to reverse the File Tree Operation'
