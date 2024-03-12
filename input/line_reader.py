@@ -40,27 +40,6 @@ def read_input_tree(input_tree_data: str) -> Generator[TreeData, None, None]:
             line_number += 1
 
 
-def read_input_tree_to_tuple(input_tree_data: str) -> tuple[TreeData, ...]:
-    """
-    Process Multiple Lines from the Tree Node Structure Input.
-
-    Parameters:
-    - input_data (InputData): The Input containing multiple lines of tree node data.
-
-    Returns:
-    tuple[InstructionData] - The Tuple of Instruction Data, read from the Input String.
-
-    Raises:
-    SystemExit - When any Line cannot be read successfully.
-    """
-    all_lines = enumerate(input_tree_data.split("\n"), start=1)
-    return (
-        _process_line(n, line) for n, line in filter(
-            all_lines, lambda _, x: not x.lstrip().startswith('#')
-        )
-    )
-
-
 def _process_line(line_number: int, line: str) -> TreeData:
     """
     Processes a single line of the input tree structure.

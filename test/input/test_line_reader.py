@@ -1,5 +1,5 @@
 import pytest
-from input.line_reader import _calculate_depth, _process_line, read_input_tree, read_input_tree_to_tuple
+from input.line_reader import _calculate_depth, _process_line, read_input_tree
 from input.tree_data import TreeData
 from test.input import create_depth
 
