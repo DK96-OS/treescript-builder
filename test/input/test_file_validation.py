@@ -56,10 +56,12 @@ def test_validate_directory_does_not_exist_raises_exit():
             assert True
     
 
-def test_validate_directory_exists_returns_true():
+def test_validate_directory_exists_returns_data_dir():
     with pytest.MonkeyPatch().context() as m:
         m.setattr(Path, 'exists', lambda c: True)
-        assert validate_directory("dir1") == DataDirectory(Path('dir1'))
+        data_dir = validate_directory("dir1")
+        assert data_dir is not None
+        assert data_dir._data_dir == Path('dir1')
 
 
 @pytest.mark.parametrize(

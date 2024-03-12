@@ -1,3 +1,5 @@
+"""Testing Line Reader Methods.
+"""
 import pytest
 from input.line_reader import _calculate_depth, _process_line, read_input_tree
 from input.tree_data import TreeData
@@ -134,7 +136,7 @@ def test_read_input_tree_all_dirs():
     test_input = """
 src/
   data/
-      more_data/
+    more_data/
 """
     generator = read_input_tree(test_input)
     assert next(generator) == TreeData(2, 0, True, 'src', '')

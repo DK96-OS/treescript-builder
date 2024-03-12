@@ -61,7 +61,7 @@ def test_search_label_does_not_exist_returns_none(test_input):
         instance = DataDirectory(Path('data_dir'))
         # When the Label is searched, the Path does not exist
         m.setattr(Path, 'exists', lambda c: False)
-        m.setattr(Path, 'glob', lambda c, d: [])
+        m.setattr(Path, 'glob', lambda c, d: iter([]))
         assert instance.search_label(test_input) == None
 
 
@@ -80,5 +80,5 @@ def test_search_label_exists_returns_path(test_input):
         m.setattr(Path, 'exists', lambda c: True)
         instance = DataDirectory(data_dir_path)
         # 
-        m.setattr(Path, 'glob', lambda c, d: [data_dir_path / test_input])
+        m.setattr(Path, 'glob', lambda c, d: iter([data_dir_path / test_input]))
         assert instance.search_label(test_input) == data_dir_path / test_input
