@@ -3,6 +3,7 @@
 import pytest
 from pathlib import Path
 
+from input.data_directory import DataDirectory
 from input.file_validation import validate_input_file, validate_directory, get_file_extension
 
 
@@ -58,7 +59,7 @@ def test_validate_directory_does_not_exist_raises_exit():
 def test_validate_directory_exists_returns_true():
     with pytest.MonkeyPatch().context() as m:
         m.setattr(Path, 'exists', lambda c: True)
-        assert validate_directory("dir1") == Path('dir1')
+        assert validate_directory("dir1") == DataDirectory(Path('dir1'))
 
 
 @pytest.mark.parametrize(
