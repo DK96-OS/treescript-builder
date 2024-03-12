@@ -15,7 +15,7 @@ def trim(instructions: tuple[InstructionData, ...]) -> tuple[bool, ...]:
     Returns:
     tuple[bool] - The success or failure of each instruction.
     """
-    return (_trim(i) for i in instructions)
+    return tuple(_trim(i) for i in instructions)
 
 
 def _trim(instruct: InstructionData) -> bool:

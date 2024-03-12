@@ -5,7 +5,7 @@ from pathlib import Path
 from tree.instruction_data import InstructionData
 
 
-def build(instructions: tuple[InstructionData, ...]) -> tuple[bool]:
+def build(instructions: tuple[InstructionData, ...]) -> tuple[bool, ...]:
     """
     Execute the Instructions in build mode.
 
@@ -15,7 +15,7 @@ def build(instructions: tuple[InstructionData, ...]) -> tuple[bool]:
     Returns:
     tuple[bool] - The success or failure of each instruction.
     """
-    return (_build(i) for i in instructions)
+    return tuple(_build(i) for i in instructions)
 
 
 def _build(i: InstructionData) -> bool:
