@@ -1,12 +1,12 @@
 """Testing Tree Validation Methods.
 """
-from input.tree_data import TreeData
 import pytest
 from pathlib import Path
-    
+
+from input.tree_data import TreeData
 from input.line_reader import read_input_tree
 from tree.instruction_data import InstructionData
-from tree.tree_validation import validate_tree, validate_with_data_dir
+from tree.tree_validation import validate_build, validate_trim
 
 
 def generate_simple_tree():
@@ -14,6 +14,7 @@ def generate_simple_tree():
     Simple Tree: a Directory and a File in that Directory.
     """
     return read_input_tree("src/\n  data.txt")
+
 
 def generate_complex_tree():
     """
@@ -53,15 +54,15 @@ def generate_invalid_tree_line_2():
     return read_input_tree("src/\n    data.txt")
 
 
-def test_validate_tree_simple_tree_returns_data():
-    assert validate_tree(generate_simple_tree()) == (
+def test_validate_build_simple_tree_returns_data():
+    assert validate_build(generate_simple_tree(), None) == (
         InstructionData(True, Path('src/'), None),
         InstructionData(False, Path('src/data.txt'), None),
     )
 
 
-def test_validate_tree_complex_tree_returns_data():
-    assert validate_tree(generate_simple_tree()) == (
+def test_validate_build_complex_tree_returns_data():
+    assert validate_build(generate_complex_tree(), None) == (
         InstructionData(True, Path('.github/workflows/'), None),
         InstructionData(True, Path('module1/'), None),
         InstructionData(False, Path('module1/build.gradle'), None),
@@ -82,19 +83,35 @@ def test_validate_tree_complex_tree_returns_data():
         generate_invalid_tree_line_2(),
     ]
 )
-def test_validate_tree_invalid_tree_raises_exit(generator):
+def test_validate_build_invalid_tree_raises_exit(generator):
     try:
-        validate_tree(generator)
+        validate_build(generator, None)
         assert False
     except SystemExit as e:
         assert True
 
 
-def test_validate_with_data_dir_simple_tree_returns_data():
+def test_validate_build_with_data_dir_simple_tree_returns_data():
     data_dir = pytest.MonkeyPatch()
-    assert validate_with_data_dir(generate_simple_tree(), data_dir) == (
+    assert validate_build(generate_simple_tree(), data_dir) == (
         InstructionData(True, Path('src/'), None),
         InstructionData(False, Path('src/data.txt'), None),
+    )
+
+
+def test_validate_build_with_data_dir_complex_tree_returns_data():
+    data_dir = pytest.MonkeyPatch()
+    assert validate_build(generate_complex_tree(), data_dir) == (
+        InstructionData(True, Path('.github/workflows/'), None),
+        InstructionData(True, Path('module1/'), None),
+        InstructionData(False, Path('module1/build.gradle'), None),
+        InstructionData(True, Path('module1/src/main/java/com/example/'), None),
+        InstructionData(False, Path('module1/src/main/java/com/example/Main.java'), None),
+        InstructionData(True, Path('module1/src/test/java/com/example/'), None),
+        InstructionData(False, Path('module1/src/test/java/com/example/MainTest.java'), None),
+        InstructionData(False, Path('README.md'), None),
+        InstructionData(False, Path('build.gradle'), None),
+        InstructionData(False, Path('settings.gradle'), None),
     )
 
 
@@ -105,10 +122,10 @@ def test_validate_with_data_dir_simple_tree_returns_data():
         generate_invalid_tree_line_2(),
     ]
 )
-def test_validate_with_data_dir_invalid_tree_raises_exit(generator):
+def test_validate_build_with_data_dir_invalid_tree_raises_exit(generator):
     data_dir = pytest.MonkeyPatch()
     try:
-        validate_with_data_dir(generator, data_dir)
+        validate_build(generator, data_dir)
         assert False
     except SystemExit as e:
         assert True

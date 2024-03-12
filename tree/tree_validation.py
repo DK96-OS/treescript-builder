@@ -1,12 +1,10 @@
 """Tree Validation Methods.
 """
-from pathlib import Path
 from typing import Generator, Optional
 
 from input.data_directory import DataDirectory
 from input.tree_data import TreeData
 from tree.instruction_data import InstructionData
-from tree.path_stack import PathStack
 from tree.tree_state import TreeState
 
 
@@ -25,15 +23,15 @@ def validate_build(
     tuple[InstructionData] - A generator that yields Instructions.
     """
     if data_dir is None:
-        return tuple(_validate_build_generator(tree_data))
+        return tuple(_ for _ in _validate_build_generator(tree_data))
     else:
-        return tuple(_validate_build_generator(tree_data, data_dir))
+        return tuple(_ for _ in _validate_build_generator_data(tree_data, data_dir))
 
 
 def validate_trim(
     tree_data: Generator[TreeData, None, None],
     data_dir: Optional[DataDirectory]
-) -> tuple[InstructionData]:
+) -> tuple[InstructionData, ...]:
     """    
     Validate the Trim Instructions.
 
@@ -45,14 +43,14 @@ def validate_trim(
     tuple[InstructionData] - A generator that yields Instructions.
     """
     if data_dir is None:
-        return tuple(_validate_trim_generator(tree_data))
+        return tuple(_ for _ in _validate_trim_generator(tree_data))
     else:
-        return tuple(_validate_trim_generator(tree_data, data_dir))
+        return tuple(_ for _ in _validate_trim_generator_data(tree_data, data_dir))
 
 
 def _validate_build_generator(
     tree_data: Generator[TreeData, None, None]
-) -> Generator[TreeData, None, None]:
+) -> Generator[InstructionData, None, None]:
     tree_state = TreeState()
     for node in tree_data:
         # Error if any Nodes have Data Labels
@@ -79,17 +77,19 @@ def _validate_build_generator(
             if node.is_dir:
                 tree_state.add_to_queue(node.name)
             else:
-                yield InstructionData(False, tree_state.get_current_path() + node.name, None)
+                yield InstructionData(
+                    False, tree_state.get_current_path() / node.name, None
+                )
     # Always Finish Build Sequence with ProcessQueue
     remaining_dirs = tree_state.process_queue()
     if remaining_dirs is not None:
         yield InstructionData(True, remaining_dirs, None)
 
 
-def _validate_build_generator(
+def _validate_build_generator_data(
     tree_data: Generator[TreeData, None, None],
     data_dir: DataDirectory
-) -> Generator[TreeData, None, None]:
+) -> Generator[InstructionData, None, None]:
     tree_state = TreeState()
     for node in tree_data:
         # Calculate Tree Depth Change
@@ -104,7 +104,7 @@ def _validate_build_generator(
                 # Build File
                 yield InstructionData(
                     False,
-                    new_dir / node.name,
+                    tree_state.get_current_path() / node.name,
                     data_dir.process_tree_data(node)
                 )
         else:
@@ -131,11 +131,11 @@ def _validate_build_generator(
 
 def _validate_trim_generator(
     tree_data: Generator[TreeData, None, None]
-) -> Generator[TreeData, None, None]:
+) -> Generator[InstructionData, None, None]:
     tree_state = TreeState()
     for node in tree_data:
         # Calculate Tree Depth Change
-        if tree_state.validate_tree_data() == 1:
+        if tree_state.validate_tree_data(node) == 1:
             if node.is_dir:
                 tree_state.add_to_stack(node.name)
             else:
@@ -162,14 +162,14 @@ def _validate_trim_generator(
         yield InstructionData(True, i, None)
 
 
-def _validate_trim_generator(
+def _validate_trim_generator_data(
     tree_data: Generator[TreeData, None, None],
     data_dir: DataDirectory
-) -> Generator[TreeData, None, None]:
+) -> Generator[InstructionData, None, None]:
     tree_state = TreeState()
     for node in tree_data:
         # Calculate Tree Depth Change
-        if tree_state.validate_tree_data() == 1:
+        if tree_state.validate_tree_data(node) == 1:
             if node.is_dir:
                 tree_state.add_to_stack(node.name)
             else:
