@@ -4,6 +4,7 @@
 from pathlib import Path
 from sys import exit
 from typing import Optional
+from input.data_directory import DataDirectory
 
 from input.string_validation import validate_name
 
@@ -30,7 +31,7 @@ def validate_input_file(file_name: str) -> str:
     exit("Input was Empty")
 
 
-def validate_directory(dir_path_str: Optional[str]) -> Optional[Path]:
+def validate_directory(dir_path_str: Optional[str]) -> Optional[DataDirectory]:
     """
     Ensure that if the Directory is present, it Exists.
 
@@ -38,7 +39,7 @@ def validate_directory(dir_path_str: Optional[str]) -> Optional[Path]:
     - dir_path_str (str, optional): The String representation of the Path to the Directory.
 
     Returns:
-    Path (optional) - The Directory Path, or None if given input is None.
+    DataDirectory (optional) - The DataDirectory, or None if given input is None.
 
     Raises:
     SystemExit - If the given path does not exist.
@@ -49,7 +50,7 @@ def validate_directory(dir_path_str: Optional[str]) -> Optional[Path]:
         exit("Data Directory is invalid")
     path = Path(dir_path_str)
     if path.exists():
-        return path
+        return DataDirectory(path)
     exit("The given Directory does not exist!")
 
 
