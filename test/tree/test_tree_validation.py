@@ -3,6 +3,7 @@
 import pytest
 from pathlib import Path
 
+from input.data_directory import DataDirectory
 from input.tree_data import TreeData
 from input.line_reader import read_input_tree
 from tree.instruction_data import InstructionData
@@ -14,6 +15,36 @@ def generate_simple_tree():
     Simple Tree: a Directory and a File in that Directory.
     """
     return read_input_tree("src/\n  data.txt")
+
+
+def generate_simple_tree2():
+    """
+    Simple Tree: a Directory and a File in that Directory.
+    """
+    yield TreeData(1, 0, True, 'src', '')
+    yield TreeData(2, 1, False, 'data.txt', '')
+
+
+def generate_gradle_module_tree():
+    """
+    Tree Template: a Gradle Module for Java.
+    """
+    yield TreeData(1, 0, True, 'module1', '')
+    yield TreeData(2, 1, False, 'build.gradle', '')
+    yield TreeData(3, 1, True, 'src', '')
+    yield TreeData(4, 2, True, 'main', '')
+    yield TreeData(5, 3, True, 'java', '')
+    yield TreeData(6, 2, True, 'test', '')
+    yield TreeData(7, 3, True, 'java', '')
+
+
+def generate_python_package_tree():
+    """
+    Tree Template: a Python Package
+    """
+    yield TreeData(1, 0, True, 'package_name', '')
+    yield TreeData(2, 1, False, '__init__.py', '')
+    yield TreeData(3, 1, False, 'internal_module.py', '')
 
 
 def generate_complex_tree():
@@ -61,6 +92,30 @@ def test_validate_build_simple_tree_returns_data():
     )
 
 
+def test_validate_build_simple_tree2_returns_data():
+    assert validate_build(generate_simple_tree(), None) == (
+        InstructionData(True, Path('src/'), None),
+        InstructionData(False, Path('src/data.txt'), None),
+    )
+
+
+def test_validate_build_gradle_module_tree_returns_data():
+    assert validate_build(generate_gradle_module_tree(), None) == (
+        InstructionData(True, Path('module1/'), None),
+        InstructionData(False, Path('module1/build.gradle'), None),
+        InstructionData(True, Path('module1/src/main/java/'), None),
+        InstructionData(True, Path('module1/src/test/java/'), None),
+    )
+
+
+def test_validate_build_python_package_tree_returns_data():
+    assert validate_build(generate_python_package_tree(), None) == (
+        InstructionData(True, Path('package_name/'), None),
+        InstructionData(False, Path('package_name/__init__.py'), None),
+        InstructionData(False, Path('package_name/internal_module.py'), None),
+    )
+
+
 def test_validate_build_complex_tree_returns_data():
     assert validate_build(generate_complex_tree(), None) == (
         InstructionData(True, Path('.github/workflows/'), None),
@@ -92,27 +147,55 @@ def test_validate_build_invalid_tree_raises_exit(generator):
 
 
 def test_validate_build_with_data_dir_simple_tree_returns_data():
-    data_dir = pytest.MonkeyPatch()
-    assert validate_build(generate_simple_tree(), data_dir) == (
-        InstructionData(True, Path('src/'), None),
-        InstructionData(False, Path('src/data.txt'), None),
-    )
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True)
+        data_dir = DataDirectory(Path('.ftb/data/'))
+        
+        assert validate_build(generate_simple_tree(), data_dir) == (
+            InstructionData(True, Path('src/'), None),
+            InstructionData(False, Path('src/data.txt'), None),
+        )
+
+
+def test_validate_build_with_data_dir_simple_tree2_returns_data():
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True)
+        data_dir = DataDirectory(Path('.ftb/data/'))
+        
+        assert (generate_simple_tree2(), data_dir) == (
+            InstructionData(True, Path('src/'), None),
+            InstructionData(False, Path('src/data.txt'), None),
+        )
+
+
+def test_validate_build_with_data_dir_gradle_module_tree_returns_data():
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True)
+        data_dir = DataDirectory(Path('.ftb/data/'))
+        assert validate_build(generate_gradle_module_tree(), data_dir) == (
+            InstructionData(True, Path('module1/'), None),
+            InstructionData(False, Path('module1/build.gradle'), Path('.ftb/data/gbuild_module1')),
+            InstructionData(True, Path('module1/src/main/java/'), None),
+            InstructionData(True, Path('module1/src/test/java/'), None),
+        )
 
 
 def test_validate_build_with_data_dir_complex_tree_returns_data():
-    data_dir = pytest.MonkeyPatch()
-    assert validate_build(generate_complex_tree(), data_dir) == (
-        InstructionData(True, Path('.github/workflows/'), None),
-        InstructionData(True, Path('module1/'), None),
-        InstructionData(False, Path('module1/build.gradle'), None),
-        InstructionData(True, Path('module1/src/main/java/com/example/'), None),
-        InstructionData(False, Path('module1/src/main/java/com/example/Main.java'), None),
-        InstructionData(True, Path('module1/src/test/java/com/example/'), None),
-        InstructionData(False, Path('module1/src/test/java/com/example/MainTest.java'), None),
-        InstructionData(False, Path('README.md'), None),
-        InstructionData(False, Path('build.gradle'), None),
-        InstructionData(False, Path('settings.gradle'), None),
-    )
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True)
+        data_dir = DataDirectory(Path('.ftb/data/'))
+        assert validate_build(generate_complex_tree(), data_dir) == (
+            InstructionData(True, Path('.github/workflows/'), None),
+            InstructionData(True, Path('module1/'), None),
+            InstructionData(False, Path('module1/build.gradle'), None),
+            InstructionData(True, Path('module1/src/main/java/com/example/'), None),
+            InstructionData(False, Path('module1/src/main/java/com/example/Main.java'), None),
+            InstructionData(True, Path('module1/src/test/java/com/example/'), None),
+            InstructionData(False, Path('module1/src/test/java/com/example/MainTest.java'), None),
+            InstructionData(False, Path('README.md'), None),
+            InstructionData(False, Path('build.gradle'), None),
+            InstructionData(False, Path('settings.gradle'), None),
+        )
 
 
 @pytest.mark.parametrize(
@@ -123,9 +206,11 @@ def test_validate_build_with_data_dir_complex_tree_returns_data():
     ]
 )
 def test_validate_build_with_data_dir_invalid_tree_raises_exit(generator):
-    data_dir = pytest.MonkeyPatch()
-    try:
-        validate_build(generator, data_dir)
-        assert False
-    except SystemExit as e:
-        assert True
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True)
+        data_dir = DataDirectory(Path('.ftb/data/'))
+        try:
+            validate_build(generator, data_dir)
+            assert False
+        except SystemExit as e:
+            assert True
