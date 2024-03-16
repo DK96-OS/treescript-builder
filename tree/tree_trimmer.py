@@ -1,6 +1,7 @@
 """Tree Trimming Methods.
 """
 from pathlib import Path
+from shutil import move
 
 from tree.instruction_data import InstructionData
 
@@ -45,17 +46,11 @@ def _extract_file(
     Returns:
     bool - Whether the entire operation succeeded.
     """
-    from input.file_validation import read_file
     try:
-        data_str = read_file(path)
-        if data_str is None or len(data_str) == 0:
-            data.touch()
-        else:
-            data.write_text(data_str)
-        path.unlink()
+    	move(path, data)
+    	return True
     except:
         return False
-    return True
 
 
 def _remove_dir(

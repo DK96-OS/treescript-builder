@@ -1,6 +1,7 @@
 """Tree Building Operations.
 """
 from pathlib import Path
+from shutil import copy2
 
 from tree.instruction_data import InstructionData
 
@@ -51,13 +52,11 @@ def _create_file(
     Returns:
     bool - Whether the File operation succeeded.
     """
-    from input.file_validation import read_file
-    data_str = read_file(data)
-    if data_str is None or data_str == '':
-        path.touch()
-    else:
-        path.write_text(data_str)
-    return True
+    try:
+    	copy2(data, path)
+    	return True
+    except:
+    	return False
 
 
 def _make_dir_exist(
