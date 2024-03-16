@@ -23,9 +23,9 @@ def validate_build(
     tuple[InstructionData] - A generator that yields Instructions.
     """
     if data_dir is None:
-        return tuple(_ for _ in _validate_build_generator(tree_data))
+        return tuple(iter(_validate_build_generator(tree_data)))
     else:
-        return tuple(_ for _ in _validate_build_generator_data(tree_data, data_dir))
+        return tuple(iter(_validate_build_generator_data(tree_data, data_dir)))
 
 
 def validate_trim(
@@ -43,9 +43,9 @@ def validate_trim(
     tuple[InstructionData] - A generator that yields Instructions.
     """
     if data_dir is None:
-        return tuple(_ for _ in _validate_trim_generator(tree_data))
+        return tuple(iter(_validate_trim_generator(tree_data)))
     else:
-        return tuple(_ for _ in _validate_trim_generator_data(tree_data, data_dir))
+        return tuple(iter(_validate_trim_generator_data(tree_data, data_dir)))
 
 
 def _validate_build_generator(
@@ -65,7 +65,9 @@ def _validate_build_generator(
                 new_dir = tree_state.process_queue()
                 if new_dir is not None:
                     yield InstructionData(True, new_dir, None)
-                yield InstructionData(False, new_dir / node.name, None)
+                yield InstructionData(
+                    False, tree_state.get_current_path() / node.name, None
+                )
         else:
             # Merge Queue into Stack
             new_dir = tree_state.process_queue()
