@@ -14,19 +14,40 @@ def build_tree(input_data: InputData):
     SystemExit - If a Tree Validation error occurs.
 	"""
     if input_data.is_reversed:
-        from tree.tree_validation import validate_trim
-        if input_data.data_dir is None:
-            instructions = validate_trim(input_data.get_tree_data(), None)
-        else:
-            instructions = validate_trim(input_data.get_tree_data(), input_data.data_dir)
+        from tree.trim_validation import validate_trim
+        instructions = validate_trim(
+            input_data.get_tree_data(),
+            input_data.data_dir
+        )
         from tree.tree_trimmer import trim
         results = trim(instructions)
     else:
-        from tree.tree_validation import validate_build
-        if input_data.data_dir is None:
-            instructions = validate_build(input_data.get_tree_data(), None)
-        else:
-            instructions = validate_build(input_data.get_tree_data(), input_data.data_dir)
+        from tree.build_validation import validate_build
+        instructions = validate_build(
+            input_data.get_tree_data(),
+            input_data.data_dir
+        )
         from tree.tree_builder import build
         results = build(instructions)
-    print(results)
+    #
+    print(_process_results(results))
+
+
+def _process_results(results: tuple[bool, ...]) -> str:
+    """
+    Process and Summarize the Results.
+
+    Parameters:
+    - results (tuple[bool]): A tuple containing the results of the operations.
+
+    Returns:
+    str - A summary of the number of operations that succeeded.
+    """
+    length = len(results)
+    success = sum(iter(results))
+    if success == 0:
+        return f"All {length} operations failed."
+    elif success == length:
+        return f"All {length} operations succeeded."
+    else:
+        return f"{success} out of {length} operations succeeded: {round(100 * success / length, 1)}%"
