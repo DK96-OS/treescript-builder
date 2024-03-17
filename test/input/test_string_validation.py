@@ -66,3 +66,13 @@ def test_validate_data_label_returns_false(test_input):
 )
 def test_validate_data_label_returns_true(test_input):
     assert validate_data_label(test_input) == True
+
+
+def test_validate_dir_name_returns_str():
+    #todo:
+    pass
+
+
+def test_validate_dir_name_returns_none():
+    #todo:
+    pass

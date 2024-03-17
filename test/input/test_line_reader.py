@@ -1,7 +1,7 @@
 """Testing Line Reader Methods.
 """
 import pytest
-from input.line_reader import _calculate_depth, _process_line, read_input_tree
+from input.line_reader import _calculate_depth, _process_line, _validate_node_name, read_input_tree
 from input.tree_data import TreeData
 from test.input import create_depth
 
@@ -132,6 +132,102 @@ def test_process_line_dir_odd_spaces_raises_exit(test_input):
         assert True
 
 
+@pytest.mark.parametrize(
+    'test_input',
+    [
+        "../",
+        "  ../",
+        "../../",
+        "../  ",
+    ]
+)
+def test_process_line_parent_dir_raise_exit(test_input):
+    try:
+        _process_line(1, test_input)
+        assert False
+    except SystemExit as e:
+        assert True
+
+
+@pytest.mark.parametrize(
+    'test_input',
+    [
+        "./",
+        "  ./",
+        "././",
+        "./././",
+    ]
+)
+def test_process_line_current_dir_raise_exit(test_input):
+    try:
+        _process_line(1, test_input)
+        assert False
+    except SystemExit as e:
+        assert True
+
+
+@pytest.mark.parametrize(
+    'test_input',
+    [
+        'a/',
+        '/a',
+        'a\\',
+        '\\a',
+    ]
+)
+def test_validate_node_name_valid_dir_returns_tuple(test_input):
+    assert _validate_node_name(test_input) == (True, 'a')
+
+
+@pytest.mark.parametrize(
+    'test_input',
+    [
+        '.a/',
+        '/.a',
+        '.a\\',
+        '\\.a',
+    ]
+)
+def test_validate_node_name_valid_dir_returns_tuple(test_input):
+    assert _validate_node_name(test_input) == (True, '.a')
+
+
+@pytest.mark.parametrize(
+    'test_input',
+    [
+        'a',
+        '.a',
+        'a.txt',
+    ]
+)
+def test_validate_node_name_valid_file_returns_tuple(test_input):
+    assert _validate_node_name(test_input) == (False, test_input)
+
+
+@pytest.mark.parametrize(
+    'test_input',
+    [
+        "/",
+        "./",
+        "././",
+        "././",
+    ]
+)
+def test_validate_node_name_invalid_dir_returns_none(test_input):
+    assert _validate_node_name(test_input) is None
+
+
+@pytest.mark.parametrize(
+    'test_input',
+    [
+        "",
+        "a" * 81,
+    ]
+)
+def test_validate_node_name_invalid_file_returns_none(test_input):
+    assert _validate_node_name(test_input) is None
+
+
 def test_read_input_tree_all_dirs():
     test_input = """
 src/
@@ -193,26 +289,6 @@ src/
     assert next(generator) == TreeData(2, 0, True, 'src', '')
     assert next(generator) == TreeData(3, 1, False, 'data.txt', '')
     # The next line is a dir slash with no name
-    try:
-        next(generator)
-        assert False
-    except SystemExit as e:
-        assert True
-
-
-@pytest.mark.parametrize(
-    'test_input',
-    [
-        "src/\n  data.txt\n  ../\n    ../\n",
-        "src/\n  data.txt\n  ../../\n",
-        "src/\n  data.txt\n  ./\n",
-    ]
-)
-def test_read_input_tree_dir_escape_raise_exit(test_input):
-    generator = read_input_tree(test_input)
-    assert next(generator) == TreeData(1, 0, True, 'src', '')
-    assert next(generator) == TreeData(2, 1, False, 'data.txt', '')
-    # The next line is a forbidden symbolic link
     try:
         next(generator)
         assert False
