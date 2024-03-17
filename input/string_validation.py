@@ -46,3 +46,36 @@ def validate_data_label(data_label: str) -> bool:
         data_label = data_label.replace('.', '')
     # All Remaining Characters must be alphanumeric
     return data_label.isalnum()
+
+
+def validate_dir_name(dir_name: str, fwd_slash: bool) -> str | None:
+    """
+    Determine that a directory is correctly formatted.
+        This method should be called once for each slash type.
+
+    Parameters:
+    - dir_name (str): The given input to be validated.
+
+    Returns:
+    str | None - The valid directory name, or none.
+
+    Raises:
+    ValueError - 
+    """
+    # Test one of the slashes
+    slash = '/' if fwd_slash else '\\'
+    if slash not in dir_name:
+        return None
+    # Check for slash characters
+    if dir_name.endswith(slash) or dir_name.startswith(slash):
+        name = dir_name.strip(slash)
+        # Check for internal slash characters
+        if slash in name:
+            raise ValueError('Multi-dir line detected')
+    else:
+        # Found slash chars only within the node name (multi-dir line)
+        raise ValueError('Multi-dir line detected')
+    if len(name) == 0:
+        raise ValueError('The name is empty')
+    # todo: Check for illegal characters (parent dir, current dir)
+    return (True, name)

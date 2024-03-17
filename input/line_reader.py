@@ -9,6 +9,7 @@ The Default Input Reader.
 from itertools import groupby
 from sys import exit
 from typing import Generator
+from input.string_validation import validate_dir_name, validate_name
 
 from input.tree_data import TreeData
 
@@ -33,7 +34,10 @@ def read_input_tree(input_tree_data: str) -> Generator[TreeData, None, None]:
     for is_newline, group in groupby(input_tree_data, lambda x: x == "\n"):
         if not is_newline:
             line = ''.join(group)
-            if line.lstrip().startswith('#'):
+            line_stripped = line.lstrip()
+            if len(line_stripped) == 0:
+                continue
+            elif line_stripped.startswith('#'):
                 continue
             yield _process_line(line_number, line)
         else:
@@ -74,19 +78,52 @@ def _process_line(line_number: int, line: str) -> TreeData:
         data_label = args[1]
     else:
         exit(f"Invalid Line: {line_number}")
-    # Check if the line represents a directory.
-    is_dir = name.endswith('/') or name.startswith('/')  
-    is_dir = is_dir or name.endswith('\\') or name.startswith('\\')
-    if is_dir:
-        # Extract the name, removing '/' or '\' if present.
-        name = name.strip('/\\')
+    # Validate the Node Name and Type.
+    node_info = _validate_node_name(name)
+    if node_info is None:
+        exit(f'Invalid Node on Line: {line_number}')
     return TreeData(
         line_number,
         depth,
-        is_dir,
-        name,
+        node_info[0],
+        node_info[1],
         data_label
     )
+
+
+def _validate_node_name(node_name: str) -> tuple[bool, str] | None:
+    """
+    Determine whether this Tree Node is a Directory, and validate the name.
+
+    Parameters:
+    - node_name (str): The argument received for the node name.
+
+    Returns:
+    tuple[bool, str] - Node information, first whether it is a directory, then the valid name of the node.
+    
+    Raises:
+    SystemExit - When the directory name is invalid.
+    """
+    if len(node_name) >= 100:
+        return None
+    try:
+        # Check if the line contains any slash characters
+        fwd_result = validate_dir_name(node_name, True)
+        bwd_result = validate_dir_name(node_name, False)
+        # There can be only one
+        if fwd_result is None and bwd_result is not None:
+            return (True, fwd_result)
+        elif fwd_result is not None and bwd_result is None:
+            return (True, bwd_result)
+        elif fwd_result is not None and bwd_result is not None:
+            return None
+        # Fall-Through to File Node
+    except ValueError as e:
+        return None
+    # Is a File
+    if validate_name(node_name):
+        return (False, node_name)
+    return None    
 
 
 def _calculate_depth(line: str) -> int:
