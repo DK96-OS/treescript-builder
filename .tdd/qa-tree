@@ -1,0 +1,15 @@
+test/
+  input/
+    __init__.py
+    test_argument_parser.py
+    test_data_directory.py
+    test_file_validation.py
+    test_line_reader.py
+    test_string_validation.py
+  tree/
+  	__init__.py
+    test_path_stack.py
+#    test_tree_builder.py
+    test_tree_state.py
+    test_tree_trimmer.py
+#    test_tree_validation.py

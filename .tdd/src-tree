@@ -1,0 +1,18 @@
+input/
+  __init__.py
+  argument_data.py
+  argument_parser.py
+  data_directory.py
+  file_validation.py
+  input_data.py
+  line_reader.py
+  string_validation.py
+  tree_data.py
+tree/
+  __init__.py
+  instruction_data.py
+  path_stack.py
+  tree_builder.py
+  tree_state.py
+  tree_trimmer.py
+  tree_validation.py
