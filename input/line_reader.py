@@ -37,7 +37,7 @@ def read_input_tree(input_tree_data: str) -> Generator[TreeData, None, None]:
                 continue
             yield _process_line(line_number, line)
         else:
-            line_number += 1
+            line_number += 1 #todo: Line number increase by size of group
 
 
 def _process_line(line_number: int, line: str) -> TreeData:
