@@ -188,7 +188,7 @@ def test_validate_node_name_valid_dir_returns_tuple(test_input):
         '\\.a',
     ]
 )
-def test_validate_node_name_valid_dir_returns_tuple(test_input):
+def test_validate_node_name_valid_hidden_dir_returns_tuple(test_input):
     assert _validate_node_name(test_input) == (True, '.a')
 
 
@@ -221,7 +221,7 @@ def test_validate_node_name_invalid_dir_returns_none(test_input):
     'test_input',
     [
         "",
-        "a" * 81,
+        "a" * 101,
     ]
 )
 def test_validate_node_name_invalid_file_returns_none(test_input):

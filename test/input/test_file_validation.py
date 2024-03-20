@@ -3,7 +3,6 @@
 import pytest
 from pathlib import Path
 
-from input.data_directory import DataDirectory
 from input.file_validation import validate_input_file, validate_directory, get_file_extension
 
 
@@ -15,16 +14,26 @@ from input.file_validation import validate_input_file, validate_directory, get_f
     ]
 )
 def test_validate_input_file_returns_data(test_input, expect):
-    with pytest.MonkeyPatch().context() as m:
-        m.setattr(Path, 'exists', lambda c: True)
-        m.setattr(Path, 'read_text', lambda c: "file_data")
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True)
+        c.setattr(Path, 'read_text', lambda _: "file_data")
         assert validate_input_file(test_input) == expect
 
 
 def test_validate_input_file_does_not_exist_raises_exit():
-    with pytest.MonkeyPatch().context() as m:
-        m.setattr(Path, 'exists', lambda c: False)
-        m.setattr(Path, 'read_text', lambda c: "")
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: False)
+        try:
+            validate_input_file("file_name")
+            assert False
+        except SystemExit as e:
+            assert True
+
+
+def test_validate_input_file_is_empty_raises_exit():
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True)
+        c.setattr(Path, 'read_text', lambda _: "")
         try:
             validate_input_file("file_name")
             assert False
@@ -40,25 +49,25 @@ def test_validate_input_file_does_not_exist_raises_exit():
     ]
 )
 def test_validate_input_file_is_empty_returns_none(test_input, expect):
-    with pytest.MonkeyPatch().context() as m:
-        m.setattr(Path, 'exists', lambda c: True)
-        m.setattr(Path, 'read_text', lambda c: expect)
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True)
+        c.setattr(Path, 'read_text', lambda _: expect)
         assert validate_input_file(test_input) == expect
 
 
 def test_validate_directory_does_not_exist_raises_exit():
-    with pytest.MonkeyPatch().context() as m:
-        m.setattr(Path, 'exists', lambda c: False)
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: False)
         try:
-            validate_directory("dir1") == False
+            validate_directory("dir1")
             assert False
         except SystemExit as e:
             assert True
-    
+
 
 def test_validate_directory_exists_returns_data_dir():
-    with pytest.MonkeyPatch().context() as m:
-        m.setattr(Path, 'exists', lambda c: True)
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True)
         data_dir = validate_directory("dir1")
         assert data_dir is not None
         assert data_dir._data_dir == Path('dir1')

@@ -42,7 +42,7 @@ def test_search_label_invalid_label_returns_none(test_input):
     with pytest.MonkeyPatch().context() as m:
         m.setattr(Path, 'exists', lambda c: True)
         instance = DataDirectory(Path('data_dir'))
-        assert instance.search_label(test_input) == None
+        assert instance._search_label(test_input) == None
 
 
 @pytest.mark.parametrize(
@@ -62,7 +62,7 @@ def test_search_label_does_not_exist_returns_none(test_input):
         # When the Label is searched, the Path does not exist
         m.setattr(Path, 'exists', lambda c: False)
         m.setattr(Path, 'glob', lambda c, d: iter([]))
-        assert instance.search_label(test_input) == None
+        assert instance._search_label(test_input) == None
 
 
 @pytest.mark.parametrize(
@@ -79,6 +79,6 @@ def test_search_label_exists_returns_path(test_input):
     with pytest.MonkeyPatch().context() as m:
         m.setattr(Path, 'exists', lambda c: True)
         instance = DataDirectory(data_dir_path)
-        # 
+        #
         m.setattr(Path, 'glob', lambda c, d: iter([data_dir_path / test_input]))
-        assert instance.search_label(test_input) == data_dir_path / test_input
+        assert instance._search_label(test_input) == data_dir_path / test_input
