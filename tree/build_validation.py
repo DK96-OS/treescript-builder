@@ -84,7 +84,7 @@ def _validate_build_generator_data(
                 yield InstructionData(
                     False,
                     tree_state.get_current_path() / node.name,
-                    data_dir.process_tree_data(node)
+                    data_dir.validate_build(node)
                 )
         else:
             # Merge Queue into Stack
@@ -99,7 +99,7 @@ def _validate_build_generator_data(
                 yield InstructionData(
                     False,
                     tree_state.get_current_path() / node.name,
-                    data_dir.process_tree_data(node)
+                    data_dir.validate_build(node)
                 )
     # Always Finish Build Sequence with ProcessQueue
     if (dir := tree_state.process_queue()) is not None:

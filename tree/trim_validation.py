@@ -76,7 +76,7 @@ def _validate_trim_generator_data(
                 yield InstructionData(
                     False,
                     tree_state.get_current_path() / node.name,
-                    data_dir.check_trim(node)
+                    data_dir.validate_trim(node)
                 )
         else:
             # Pop Stack to required Depth
@@ -89,7 +89,7 @@ def _validate_trim_generator_data(
                 yield InstructionData(
                     False,
                     tree_state.get_current_path() / node.name,
-                    data_dir.check_trim(node)
+                    data_dir.validate_trim(node)
                 )
     # Finish Trim Sequence with Pop Stack
     for i in tree_state.process_stack(0):
