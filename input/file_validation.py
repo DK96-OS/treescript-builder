@@ -20,12 +20,15 @@ def validate_input_file(file_name: str) -> str:
     str - The String Contents of the Input File.
 
     Raises:
-    SystemExit - If the File does not exist, or is empty or blank.
+    SystemExit - If the File does not exist, or is empty or blank, or read failed.
     """
     file_path = Path(file_name)
     if not file_path.exists():
         exit("The Input File does not Exist.")
-    data = _get_input(file_path)
+    try:
+        data = file_path.read_text()
+    except IOError as e:
+        exit("Failed to Read from File.")
     if validate_name(data):
         return data
     exit("Input was Empty")
@@ -58,7 +61,7 @@ def get_file_extension(file_name: str) -> Optional[str]:
     """
     Obtain the File Extension, if it exists.
         The Last extension in a multi-part extension is returned.
-    
+
     Parameters:
     - file_name (str): The name of the File.
 
@@ -73,41 +76,3 @@ def get_file_extension(file_name: str) -> Optional[str]:
         return result
     except:
         return None
-
-
-def read_file(
-    path: Path
-) -> Optional[str]:
-    """Read the File at the given Path.
-
-    Parameters:
-    - path (str): The Path to the File to Read.
-
-    Returns:
-    str - The contents of the file. If the read fails, returns None.
-    """
-    try:
-        return path.read_text()
-    except IOError as w:
-        return None
-
-
-def _get_input(file: Path) -> str:
-    """
-    Read the String contents of the File, strips surrounding space characters.
-
-    Parameters:
-    - file (Path): The Path to the File.
-
-    Returns:
-    str - The text contents of the File at the given Path.
-
-    Raises
-    SystemExit - If the file does not exist, or the read operation failed.
-    """
-    if not file.exists():
-        exit("File does not exist.")
-    try:
-        return file.read_text()
-    except IOError as e:
-        exit("Failed to Read from File.")

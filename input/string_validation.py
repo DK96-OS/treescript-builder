@@ -71,7 +71,9 @@ def validate_dir_name(dir_name: str) -> str | None:
         # Is a Dir
         if len(name) == 0:
             raise ValueError('The name is empty')
-        # todo: Check for illegal characters (parent dir, current dir)
+        # Check for invalid characters (parent dir, current dir)
+        if name in ['.', '..']:
+            raise ValueError('Invalid Directory')
         return name
     # Is a File
     return None
@@ -116,10 +118,6 @@ def _filter_slash_chars(dir_name: str) -> str | None:
     Raises:
     ValueError - When the name is not suitable for directories or files.
     """
-    pre_len = len(dir_name)
-    filtered_name = dir_name.replace('\\', '')
-    filtered_name = dir_name.replace('/', '')
-    #
     slash = _validate_slash_char(dir_name)
     if slash is None:
         return None

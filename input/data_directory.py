@@ -2,7 +2,6 @@
 """
 from pathlib import Path
 from sys import exit
-from typing import Optional
 
 from input.string_validation import validate_data_label
 from input.tree_data import TreeData
@@ -20,8 +19,54 @@ class DataDirectory:
         if not data_dir.exists():
             exit('The given Data Directory does not Exist.')
         self._data_dir = data_dir
+        # todo: Create a map of used Data Labels
 
-    def search_label(self, data_label: str) -> Optional[Path]:
+    def validate_build(self, node: TreeData) -> Path | None:
+        """
+        Determine if the Data File supporting this Tree node is available.
+
+        Parameters:
+        - node (TreeData): The TreeData to validate.
+
+        Returns:
+        Path - The Path to the Data File in the Data Directory.
+
+        Raises:
+        SystemExit - When the Data label is invalid, or the Data File does not exist.
+        """
+        if node.data_label == '' or node.is_dir:
+            return None
+        data_path = self._search_label(node.data_label)
+        if data_path is None:
+            exit(f'Data Label ({node.data_label}) not found in Data Directory on line: {node.line_number}')
+        return data_path
+
+    def validate_trim(self, node: TreeData) -> Path | None:
+        """
+        Determine if the File already exists in the Data Directory.
+
+        Parameters:
+        - node (TreeData): The TreeData to validate.
+
+        Returns:
+        Path - The Path to a new File in the Data Directory.
+
+        Raises:
+        SystemExit - When the Data label is invalid, or the Data File already exists.
+        """
+        # Ensure that the name of the Label is valid
+        if node.data_label == '' or node.is_dir:
+            return None
+        if not validate_data_label(node.data_label):
+            exit(f'Invalid Data Label on line: {node.line_number}')
+        # Check if the Data File already exists
+        data_path = self._search_label(node.data_label)
+        if data_path is not None:
+            exit(f'Data File already exists!\n({node.data_label}) on line: {node.line_number}')
+        # Create the Data Label Path in the Directory
+        return self._data_dir / node.data_label
+
+    def _search_label(self, data_label: str) -> Path | None:
         """
         Search for a Data Label in this Data Directory.
 
@@ -39,30 +84,3 @@ class DataDirectory:
             return next(data_files)
         except StopIteration as s:
             return None
-
-    def process_tree_data(self, node: TreeData) -> Optional[Path]:
-        """
-        Process the Data Label 
-        """
-        if node.data_label == '':
-            return None
-        data_path = self.search_label(node.data_label)
-        if data_path is None:
-            exit(f'Data Label on Line {node.line_number} not found in Data Directory: {node.data_label}')
-        return data_path
-
-    def check_trim(self, node: TreeData) -> Path:
-        """
-        Determine if the File already exists in the Data Directory.
-        """
-        if node.data_label == '':
-            exit('Data Label !!!!!!!!!!')
-        #
-        data_path = self.search_label(node.data_label)
-        if data_path is not None:
-            exit('Data already Exists')
-        #
-        if not validate_data_label(node.data_label):
-            exit('Data Label is invalid')
-        #
-        return self._data_dir / node.data_label
