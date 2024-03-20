@@ -1,5 +1,6 @@
 """String Validation Methods.
 """
+from typing import Literal
 
 
 def validate_name(argument) -> bool:
@@ -48,7 +49,7 @@ def validate_data_label(data_label: str) -> bool:
     return data_label.isalnum()
 
 
-def validate_dir_name(dir_name: str, fwd_slash: bool) -> str | None:
+def validate_dir_name(dir_name: str) -> str | None:
     """
     Determine that a directory is correctly formatted.
         This method should be called once for each slash type.
@@ -57,16 +58,71 @@ def validate_dir_name(dir_name: str, fwd_slash: bool) -> str | None:
     - dir_name (str): The given input to be validated.
 
     Returns:
-    str | None - The valid directory name, or none.
+    str | None - The valid directory name, or none if it may be a file.
 
     Raises:
-    ValueError - 
+    ValueError - When the name is not suitable for directories or files.
     """
-    # Test one of the slashes
-    slash = '/' if fwd_slash else '\\'
-    if slash not in dir_name:
-        return None
+    # Keep Name Length Reasonable
+    if (name_length := len(dir_name)) >= 100:
+        raise ValueError(f'Name too Long!: {name_length}')
     # Check for slash characters
+    if (name := _filter_slash_chars(dir_name)) is not None:
+        # Is a Dir
+        if len(name) == 0:
+            raise ValueError('The name is empty')
+        # todo: Check for illegal characters (parent dir, current dir)
+        return name
+    # Is a File
+    return None
+
+
+def _validate_slash_char(dir_name: str) -> Literal['\\', '/'] | None:
+    """
+    Determine which slash char is used by the directory, if it is a directory.
+        Discourages use of both slash chars, by raising ValueError.
+
+    Parameters:
+    - dir_name (str): The given input to be validated.
+
+    Returns:
+    str | None - The slash character used, or none if no chars were found.
+
+    Raises:
+    ValueError - When the name contains both slash characters.
+    """
+    slash = None
+    if '/' in dir_name:
+        slash = '/'
+    if '\\' in dir_name:
+        if slash is not None:
+            raise ValueError('Invalid Directory slash character combination.')
+        slash = '\\'
+    return slash
+
+
+def _filter_slash_chars(dir_name: str) -> str | None:
+    """
+    Remove all of the slash characters and return the directory name.
+        Returns None when there are no slash characters found.
+        Raises ValueError when slash characters are used improperly.
+
+    Parameters:
+    - dir_name (str): The given input to be validated.
+
+    Returns:
+    str | None - The valid directory name, or none if it may be a file.
+
+    Raises:
+    ValueError - When the name is not suitable for directories or files.
+    """
+    pre_len = len(dir_name)
+    filtered_name = dir_name.replace('\\', '')
+    filtered_name = dir_name.replace('/', '')
+    #
+    slash = _validate_slash_char(dir_name)
+    if slash is None:
+        return None
     if dir_name.endswith(slash) or dir_name.startswith(slash):
         name = dir_name.strip(slash)
         # Check for internal slash characters
@@ -75,7 +131,4 @@ def validate_dir_name(dir_name: str, fwd_slash: bool) -> str | None:
     else:
         # Found slash chars only within the node name (multi-dir line)
         raise ValueError('Multi-dir line detected')
-    if len(name) == 0:
-        raise ValueError('The name is empty')
-    # todo: Check for illegal characters (parent dir, current dir)
-    return (True, name)
+    return name
