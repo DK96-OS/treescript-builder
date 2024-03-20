@@ -1,6 +1,6 @@
 """Testing String Validation Methods"""
 import pytest
-from input.string_validation import validate_name, validate_data_label
+from input.string_validation import validate_dir_name, validate_name, validate_data_label
 
 
 @pytest.mark.parametrize(
@@ -69,10 +69,28 @@ def test_validate_data_label_returns_true(test_input):
 
 
 def test_validate_dir_name_returns_str():
-    #todo:
-    pass
+    assert validate_dir_name('dir/') == 'dir'
 
 
-def test_validate_dir_name_returns_none():
-    #todo:
-    pass
+def test_validate_dir_name_backslash_dir_returns_str():
+    assert validate_dir_name('dir\\') == 'dir'
+
+
+def test_validate_dir_name_empty_str_returns_none():
+    assert validate_dir_name('') is None
+
+
+def test_validate_dir_name_space_char_returns_none():
+    assert validate_dir_name(' ') is None
+
+
+def test_validate_dir_name_is_file_returns_none():
+    assert validate_dir_name('file') is None
+
+
+def test_validate_dir_name_inconsistent_slash_chars_raises_error():
+    try:
+        validate_dir_name('\\dir/')
+        assert False
+    except ValueError as e:
+        assert True
