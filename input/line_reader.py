@@ -82,11 +82,12 @@ def _process_line(line_number: int, line: str) -> TreeData:
     node_info = _validate_node_name(name)
     if node_info is None:
         exit(f'Invalid Node on Line: {line_number}')
+    (is_dir, name) = node_info
     return TreeData(
         line_number,
         depth,
-        node_info[0],
-        node_info[1],
+        is_dir,
+        name,
         data_label
     )
 
@@ -104,26 +105,18 @@ def _validate_node_name(node_name: str) -> tuple[bool, str] | None:
     Raises:
     SystemExit - When the directory name is invalid.
     """
-    if len(node_name) >= 100:
-        return None
     try:
         # Check if the line contains any slash characters
-        fwd_result = validate_dir_name(node_name, True)
-        bwd_result = validate_dir_name(node_name, False)
-        # There can be only one
-        if fwd_result is None and bwd_result is not None:
-            return (True, fwd_result)
-        elif fwd_result is not None and bwd_result is None:
-            return (True, bwd_result)
-        elif fwd_result is not None and bwd_result is not None:
-            return None
+        if (dir_name := validate_dir_name(node_name)) is not None:
+            return (True, dir_name)
         # Fall-Through to File Node
     except ValueError as e:
+        # An error in the dir name, such that it cannot be a file either
         return None
     # Is a File
     if validate_name(node_name):
         return (False, node_name)
-    return None    
+    return None
 
 
 def _calculate_depth(line: str) -> int:
