@@ -16,9 +16,9 @@ class ArgumentData:
     The syntactically valid arguments recevied by the Program.
 
     Fields:
-    - input_file_path_str (str): The Path String to the (Tree) Input File.
-    - data_dir_path_str (str, optional): The Path String to the Data Directory.
-    - is_reversed (bool): Whether the Tree Operation is Reversed.
+    - input_file_path_str (str): The Name of the File containing the Tree Structure.
+    - data_dir_path_str (str, optional): The Directory Name containing Files Used in File Tree Operation.
+    - is_reversed (bool): Flag to determine if the File Tree Operation Is To be Oppositely Trimmed.
     """
 
     input_file_path_str: str
