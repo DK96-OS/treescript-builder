@@ -13,23 +13,23 @@ class TestPathStack(unittest.TestCase):
 
     def setUp(self):
         self.instance = PathStack()
-    
+
     def test_get_depth_initial_condition_returns_zero(self):
         self.assertEqual(
             0, self.instance.get_depth()
         )
-    
+
     def test_get_depth_after_push_returns_one(self):
         self.instance.push("src")
         self.assertEqual(
             1, self.instance.get_depth()
         )
-    
+
     def test_pop_initial_condition_returns_none(self):
         self.assertIsNone(
             self.instance.pop()
         )
-    
+
     def test_get_depth_after_push_and_pop_returns_zero(self):
         dir_name = "src"
         self.instance.push(dir_name)
@@ -42,7 +42,7 @@ class TestPathStack(unittest.TestCase):
 
     def test_join_stack_initial_condition_returns_cwd(self):
         self.assertEqual(
-            "./",
+            Path("./"),
             self.instance.join_stack()
         )
 
@@ -50,7 +50,7 @@ class TestPathStack(unittest.TestCase):
         dir_name = "source"
         self.instance.push(dir_name)
         self.assertEqual(
-            "./" + dir_name +"/",
+            Path("./" + dir_name +"/"),
             self.instance.join_stack()
         )
 
@@ -59,7 +59,7 @@ class TestPathStack(unittest.TestCase):
         self.instance.push(dir_name_1)
         self.instance.push(dir_name_2)
         self.assertEqual(
-            "./" + dir_name_1 +"/" + dir_name_2 + "/",
+            Path("./" + dir_name_1 +"/" + dir_name_2 + "/"),
             self.instance.join_stack()
         )
 
