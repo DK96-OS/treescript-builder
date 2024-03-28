@@ -24,6 +24,19 @@ def generate_gradle_module_tree():
     yield TreeData(7, 3, True, 'java', '')
 
 
+def generate_gradle_module_tree_with_data():
+    """
+    Tree Template: a Gradle Module for Java, with the Gradle Build File.
+    """
+    yield TreeData(1, 0, True, 'module1', '')
+    yield TreeData(2, 1, False, 'build.gradle', 'gbuild_module1')
+    yield TreeData(3, 1, True, 'src', '')
+    yield TreeData(4, 2, True, 'main', '')
+    yield TreeData(5, 3, True, 'java', '')
+    yield TreeData(6, 2, True, 'test', '')
+    yield TreeData(7, 3, True, 'java', '')
+
+
 def generate_python_package_tree():
     """
     Tree Template: a Python Package
