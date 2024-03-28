@@ -45,6 +45,8 @@ def validate_data_label(data_label: str) -> bool:
     # Remove Dot Characters
     if '.' in data_label:
         data_label = data_label.replace('.', '')
+    if '!' == data_label:
+        return True
     # All Remaining Characters must be alphanumeric
     return data_label.isalnum()
 

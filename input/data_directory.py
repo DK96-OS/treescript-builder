@@ -36,7 +36,10 @@ class DataDirectory:
         """
         if node.data_label == '' or node.is_dir:
             return None
-        data_path = self._search_label(node.data_label)
+        if node.data_label == '!':
+            data_path = self._search_label(node.name)
+        else:
+            data_path = self._search_label(node.data_label)
         if data_path is None:
             exit(f'Data Label ({node.data_label}) not found in Data Directory on line: {node.line_number}')
         return data_path
@@ -57,14 +60,15 @@ class DataDirectory:
         # Ensure that the name of the Label is valid
         if node.data_label == '' or node.is_dir:
             return None
-        if not validate_data_label(node.data_label):
+        data_label = node.name if node.data_label == '!' else node.data_label
+        if not validate_data_label(data_label):
             exit(f'Invalid Data Label on line: {node.line_number}')
         # Check if the Data File already exists
-        data_path = self._search_label(node.data_label)
+        data_path = self._search_label(data_label)
         if data_path is not None:
-            exit(f'Data File already exists!\n({node.data_label}) on line: {node.line_number}')
+            exit(f'Data File already exists!\n({data_label}) on line: {node.line_number}')
         # Create the Data Label Path in the Directory
-        return self._data_dir / node.data_label
+        return self._data_dir / data_label
 
     def _search_label(self, data_label: str) -> Path | None:
         """
