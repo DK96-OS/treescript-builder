@@ -4,7 +4,7 @@ from input.string_validation import validate_dir_name, validate_name, validate_d
 
 
 @pytest.mark.parametrize(
-    "test_input,expect", 
+    "test_input,expect",
     [
         (None, False),
         (4, False),
@@ -20,7 +20,7 @@ def test_validate_name_returns_false(test_input, expect):
 
 
 @pytest.mark.parametrize(
-    "test_input,expect", 
+    "test_input,expect",
     [
         ("1", True),
         ("a", True),
@@ -36,7 +36,6 @@ def test_validate_name_returns_true(test_input, expect):
     [
         (''),
         (' '),
-        ('!'),
         (','),
         ('-'),
         ('_'),
@@ -66,6 +65,10 @@ def test_validate_data_label_returns_false(test_input):
 )
 def test_validate_data_label_returns_true(test_input):
     assert validate_data_label(test_input) == True
+
+
+def test_validate_data_label_name_shortcut_returns_true():
+    assert validate_data_label('!') == True
 
 
 def test_validate_dir_name_returns_str():
