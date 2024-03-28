@@ -17,6 +17,25 @@ def test_validate_build_simple_tree_returns_data():
     )
 
 
+def test_validate_build_two_nested_dirs_returns_one_instruction():
+    def generate_two_nested_dirs():
+        yield TreeData(1, 0, True, 'module1', '')
+        yield TreeData(2, 1, True, 'src', '')
+    assert validate_build(generate_two_nested_dirs(), None) == (
+        InstructionData(True, Path('module1/src/'), None),
+    )
+
+
+def test_validate_build_three_nested_dirs_returns_one_instruction():
+    def generate_three_nested_dirs():
+        yield TreeData(1, 0, True, 'module1', '')
+        yield TreeData(2, 1, True, 'src', '')
+        yield TreeData(5, 2, True, 'main', '')
+    assert validate_build(generate_three_nested_dirs(), None) == (
+        InstructionData(True, Path('module1/src/main'), None),
+    )
+
+
 def test_validate_build_gradle_module_tree_returns_data():
     assert validate_build(generate_gradle_module_tree(), None) == (
         InstructionData(True, Path('module1/'), None),
@@ -79,7 +98,9 @@ def test_validate_build_with_data_dir_gradle_module_tree_returns_data():
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
         data_dir = DataDirectory(Path('.ftb/data/'))
-        assert validate_build(generate_gradle_module_tree(), data_dir) == (
+        #
+        c.setattr(DataDirectory, 'validate_build', lambda _, x: data_dir._data_dir / x.data_label)
+        assert validate_build(generate_gradle_module_tree_with_data(), data_dir) == (
             InstructionData(True, Path('module1/'), None),
             InstructionData(False, Path('module1/build.gradle'), Path('.ftb/data/gbuild_module1')),
             InstructionData(True, Path('module1/src/main/java/'), None),
@@ -91,6 +112,7 @@ def test_validate_build_with_data_dir_complex_tree_returns_data():
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
         data_dir = DataDirectory(Path('.ftb/data/'))
+        #
         assert validate_build(generate_complex_tree(), data_dir) == (
             InstructionData(True, Path('.github/workflows/'), None),
             InstructionData(True, Path('module1/'), None),
