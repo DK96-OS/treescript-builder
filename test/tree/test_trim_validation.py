@@ -12,37 +12,48 @@ from test.tree.tree_generators import *
 
 def test_validate_trim_simple_tree_returns_data():
     assert validate_trim(generate_simple_tree(), None) == (
-        InstructionData(True, Path('src/'), None),
         InstructionData(False, Path('src/data.txt'), None),
+        InstructionData(True, Path('src/'), None),
     )
 
 
 def test_validate_trim_gradle_module_tree_returns_data():
     assert validate_trim(generate_gradle_module_tree(), None) == (
-        InstructionData(True, Path('module1/'), None),
         InstructionData(False, Path('module1/build.gradle'), None),
         InstructionData(True, Path('module1/src/main/java/'), None),
+        InstructionData(True, Path('module1/src/main/'), None),
         InstructionData(True, Path('module1/src/test/java/'), None),
+        InstructionData(True, Path('module1/src/test/'), None),
+        InstructionData(True, Path('module1/src/'), None),
+        InstructionData(True, Path('module1/'), None),
     )
 
 
 def test_validate_trim_python_package_tree_returns_data():
     assert validate_trim(generate_python_package_tree(), None) == (
-        InstructionData(True, Path('package_name/'), None),
         InstructionData(False, Path('package_name/__init__.py'), None),
         InstructionData(False, Path('package_name/internal_module.py'), None),
+        InstructionData(True, Path('package_name/'), None),
     )
 
 
 def test_validate_trim_complex_tree_returns_data():
     assert validate_trim(generate_complex_tree(), None) == (
         InstructionData(True, Path('.github/workflows/'), None),
-        InstructionData(True, Path('module1/'), None),
+        InstructionData(True, Path('.github/'), None),
         InstructionData(False, Path('module1/build.gradle'), None),
-        InstructionData(True, Path('module1/src/main/java/com/example/'), None),
         InstructionData(False, Path('module1/src/main/java/com/example/Main.java'), None),
-        InstructionData(True, Path('module1/src/test/java/com/example/'), None),
+        InstructionData(True, Path('module1/src/main/java/com/example/'), None),
+        InstructionData(True, Path('module1/src/main/java/com/'), None),
+        InstructionData(True, Path('module1/src/main/java/'), None),
+        InstructionData(True, Path('module1/src/main/'), None),
         InstructionData(False, Path('module1/src/test/java/com/example/MainTest.java'), None),
+        InstructionData(True, Path('module1/src/test/java/com/example/'), None),
+        InstructionData(True, Path('module1/src/test/java/com/'), None),
+        InstructionData(True, Path('module1/src/test/java/'), None),
+        InstructionData(True, Path('module1/src/test/'), None),
+        InstructionData(True, Path('module1/src/'), None),
+        InstructionData(True, Path('module1/'), None),
         InstructionData(False, Path('README.md'), None),
         InstructionData(False, Path('build.gradle'), None),
         InstructionData(False, Path('settings.gradle'), None),
@@ -70,8 +81,8 @@ def test_validate_trim_with_data_dir_simple_tree_returns_data():
         data_dir = DataDirectory(Path('.ftb/data/'))
         #
         assert validate_trim(generate_simple_tree(), data_dir) == (
-            InstructionData(True, Path('src/'), None),
             InstructionData(False, Path('src/data.txt'), None),
+            InstructionData(True, Path('src/'), None),
         )
 
 
@@ -79,11 +90,14 @@ def test_validate_trim_with_data_dir_gradle_module_tree_returns_data():
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
         data_dir = DataDirectory(Path('.ftb/data/'))
-        assert validate_trim(generate_gradle_module_tree(), data_dir) == (
-            InstructionData(True, Path('module1/'), None),
+        assert validate_trim(generate_gradle_module_tree_with_data(), data_dir) == (
             InstructionData(False, Path('module1/build.gradle'), Path('.ftb/data/gbuild_module1')),
             InstructionData(True, Path('module1/src/main/java/'), None),
+            InstructionData(True, Path('module1/src/main/'), None),
             InstructionData(True, Path('module1/src/test/java/'), None),
+            InstructionData(True, Path('module1/src/test/'), None),
+            InstructionData(True, Path('module1/src/'), None),
+            InstructionData(True, Path('module1/'), None),
         )
 
 
@@ -93,12 +107,20 @@ def test_validate_trim_with_data_dir_complex_tree_returns_data():
         data_dir = DataDirectory(Path('.ftb/data/'))
         assert validate_trim(generate_complex_tree(), data_dir) == (
             InstructionData(True, Path('.github/workflows/'), None),
-            InstructionData(True, Path('module1/'), None),
+            InstructionData(True, Path('.github/'), None),
             InstructionData(False, Path('module1/build.gradle'), None),
-            InstructionData(True, Path('module1/src/main/java/com/example/'), None),
             InstructionData(False, Path('module1/src/main/java/com/example/Main.java'), None),
-            InstructionData(True, Path('module1/src/test/java/com/example/'), None),
+            InstructionData(True, Path('module1/src/main/java/com/example/'), None),
+            InstructionData(True, Path('module1/src/main/java/com/'), None),
+            InstructionData(True, Path('module1/src/main/java/'), None),
+            InstructionData(True, Path('module1/src/main/'), None),
             InstructionData(False, Path('module1/src/test/java/com/example/MainTest.java'), None),
+            InstructionData(True, Path('module1/src/test/java/com/example/'), None),
+            InstructionData(True, Path('module1/src/test/java/com/'), None),
+            InstructionData(True, Path('module1/src/test/java/'), None),
+            InstructionData(True, Path('module1/src/test/'), None),
+            InstructionData(True, Path('module1/src/'), None),
+            InstructionData(True, Path('module1/'), None),
             InstructionData(False, Path('README.md'), None),
             InstructionData(False, Path('build.gradle'), None),
             InstructionData(False, Path('settings.gradle'), None),
