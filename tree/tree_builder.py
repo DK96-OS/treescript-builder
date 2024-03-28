@@ -11,8 +11,8 @@ def build(instructions: tuple[InstructionData, ...]) -> tuple[bool, ...]:
     Execute the Instructions in build mode.
 
     Parameters:
-    - instructions(tuple[InstructionData]): The Instructions to execute. 
-    
+    - instructions(tuple[InstructionData]): The Instructions to execute.
+
     Returns:
     tuple[bool] - The success or failure of each instruction.
     """
@@ -25,14 +25,14 @@ def _build(i: InstructionData) -> bool:
 
     Parameters:
     - instruction(InstructionData): The data required to execute the operation.
-    
+
     Returns:
     bool - Whether the given operation succeeded.
     """
     if i.is_dir:
         return _make_dir_exist(i.path)
     elif i.data_path is None:
-        i.path.touch()
+        i.path.touch(exist_ok=True)
         return True
     else:
         return _create_file(i.path, i.data_path)
@@ -53,8 +53,8 @@ def _create_file(
     bool - Whether the File operation succeeded.
     """
     try:
-    	copy2(data, path)
-    	return True
+        copy2(data, path)
+        return True
     except:
     	return False
 
@@ -67,12 +67,12 @@ def _make_dir_exist(
 
     Parameters:
     - path (Path): The Path to the File to be created, and written to.
-   
+
     """
     if path.exists():
         return True
     try:
         path.mkdir(parents=True, exist_ok=True)
-        return True
-    except:
+    except IOError as e:
         return False
+    return True
