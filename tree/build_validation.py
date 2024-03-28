@@ -38,7 +38,7 @@ def _validate_build_generator(
         if node.data_label != '':
             exit(f"Found Data Label on Line {node.line_number} with no Data Directory: {node.data_label}")
         # Calculate Tree Depth Change
-        if tree_state.validate_tree_data(node) == 1:
+        if tree_state.validate_tree_data(node) == 0:
             if node.is_dir:
                 tree_state.add_to_queue(node.name)
             else:
@@ -73,7 +73,7 @@ def _validate_build_generator_data(
     tree_state = TreeState()
     for node in tree_data:
         # Calculate Tree Depth Change
-        if tree_state.validate_tree_data(node) == 1:
+        if tree_state.validate_tree_data(node) == 0:
             if node.is_dir:
                 tree_state.add_to_queue(node.name)
             else:

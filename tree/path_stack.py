@@ -19,7 +19,7 @@ class PathStack:
         """
         self._stack.append(directory_name)
 
-    def pop(self) -> str:
+    def pop(self) -> str | None:
         """
         Pop the top of the Stack, and return the directory name.
 
@@ -30,17 +30,16 @@ class PathStack:
             return None
         return self._stack.pop()
 
-    def join_stack(self) -> str:
+    def join_stack(self) -> Path:
         """
         Combines all elements in the path Stack to form the parent directory.
 
         Returns:
-        String path representing the parent directory.
+        Path representing the current directory.
         """
-        # Add each element in the path
         if len(self._stack) == 0:
-            return "./"
-        return "./" + "/".join(self._stack) + "/"
+            return Path("./")
+        return Path(f"./{'/'.join(self._stack)}/")
 
     def create_path(self, filename: str) -> Path:
         """
@@ -52,9 +51,9 @@ class PathStack:
         Returns:
         Path : The Path to the file.
         """
-        if type(filename) is not str:
-            return Path(self.join_stack())
-        return Path(self.join_stack() + filename)
+        if type(filename) is not str or len(filename) < 1:
+            return self.join_stack()
+        return self.join_stack() / filename
 
     def reduce_depth(self, depth: int) -> bool:
         """

@@ -37,12 +37,9 @@ class TreeState:
         # Calculate the Change in Depth
         if node.depth < 0:
             exit("Invalid Depth Value")
-        state_depth = self.get_current_depth()
-        if state_depth == 0:
-            state_depth = -1
-        delta = node.depth - state_depth
-        if delta > 1:
-            exit(f"You have jumped {delta - 1} steps in the tree on line: {node.line_number}")
+        # Ensure that the depth change is zero or less
+        if (delta := node.depth - self.get_current_depth()) > 0:
+            exit(f"You have jumped {delta} steps in the tree on line: {node.line_number}")
         return delta
 
     def get_current_depth(self) -> int:
@@ -63,9 +60,9 @@ class TreeState:
         str - A Path equivalent to the current Tree State.
         """
         if len(self._queue) > 0:
-        	self.process_queue()
-        return Path(self._stack.join_stack())
-    
+            self.process_queue()
+        return self._stack.join_stack()
+
     def add_to_queue(self, dir_name: str):
         """
         Add a directory to the Queue.
@@ -78,7 +75,7 @@ class TreeState:
     def add_to_stack(self, dir_name: str):
         """
         Add a directory to the Stack.
-        
+
         Parameters:
         - dir_name (str): The name of the Directory.
         """
@@ -98,7 +95,7 @@ class TreeState:
             self._stack.push(element)
         self._queue.clear()
         # Return the new Path as a str
-        return Path(self._stack.join_stack())
+        return self._stack.join_stack()
 
     def process_stack(self, depth: int) -> Generator[Path, None, None]:
         """
@@ -113,9 +110,10 @@ class TreeState:
         if depth < 0:
             exit('Invalid Depth')
         while depth < self._stack.get_depth():
-            yield self._stack.create_path(self._stack.pop())
+            if (entry := self._stack.pop()) is not None:
+                yield self._stack.create_path(entry)
 
-    def reduce_depth(self, depth: int) -> bool: 
+    def reduce_depth(self, depth: int) -> bool:
         """
         Pop an element from the stack.
 
