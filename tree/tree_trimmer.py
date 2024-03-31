@@ -11,8 +11,8 @@ def trim(instructions: tuple[InstructionData, ...]) -> tuple[bool, ...]:
     Execute the Instructions in trim mode.
 
     Parameters:
-    - instructions(tuple[InstructionData]): The Instructions to execute. 
-    
+    - instructions(tuple[InstructionData]): The Instructions to execute.
+
     Returns:
     tuple[bool] - The success or failure of each instruction.
     """
@@ -22,14 +22,14 @@ def trim(instructions: tuple[InstructionData, ...]) -> tuple[bool, ...]:
 def _trim(instruct: InstructionData) -> bool:
     if instruct.is_dir:
         return _remove_dir(instruct.path)
-    elif instruct.data_path is None:
+    if instruct.data_path is None:
         try:
             instruct.path.unlink(missing_ok=True)
             return True
-        except:
+        except IOError as e:
+            print("IO File Error")
             return False
-    else:
-        return _extract_file(instruct.path, instruct.data_path)
+    return _extract_file(instruct.path, instruct.data_path)
 
 
 def _extract_file(
@@ -38,7 +38,7 @@ def _extract_file(
 ) -> bool:
     """
     Moves the File to the Data Directory.
-    
+
     Parameters:
     - path (Path): The path to the File in the Tree.
     - data (Path): A Path to a File in the Data Directory.
@@ -47,8 +47,8 @@ def _extract_file(
     bool - Whether the entire operation succeeded.
     """
     try:
-    	move(path, data)
-    	return True
+        move(path, data)
+        return True
     except:
         return False
 
