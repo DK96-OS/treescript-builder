@@ -3,7 +3,7 @@
 from input.input_data import InputData
 
 
-def build_tree(input_data: InputData):
+def build_tree(input_data: InputData) -> tuple[bool, ...]:
     """
     Build The Tree as defined by the InputData.
 
@@ -30,10 +30,10 @@ def build_tree(input_data: InputData):
         from tree.tree_builder import build
         results = build(instructions)
     #
-    print(_process_results(results))
+    return results
 
 
-def _process_results(results: tuple[bool, ...]) -> str:
+def process_results(results: tuple[bool, ...]) -> str:
     """
     Process and Summarize the Results.
 
@@ -43,7 +43,9 @@ def _process_results(results: tuple[bool, ...]) -> str:
     Returns:
     str - A summary of the number of operations that succeeded.
     """
-    length = len(results)
+    
+    if (length := len(results)) == 0:
+        return 'No operations ran.'
     success = sum(iter(results))
     if success == 0:
         return f"All {length} operations failed."
