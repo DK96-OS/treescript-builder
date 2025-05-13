@@ -5,14 +5,14 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class TreeData:
-    """
-    A DataClass representing a Tree Node.
+    """ A DataClass representing a Tree Node.
 
-    Fields:
-    - depth (int): The depth in the tree.
-    - is_dir (bool): Whether this Node is a directory.
-    - name (str): The Name of the Tree Node.
-    - data_label (str): The Data Label.
+Fields:
+ - line_number (int): The line number of this tree node in the TreeScript file.
+ - depth (int): The depth in the tree, from the root. Starts at zero.
+ - is_dir (bool): Whether this Node is a directory.
+ - name (str): The Name of the Tree Node.
+ - data_label (str): The Data Label, may be empty string.
     """
     
     line_number: int
