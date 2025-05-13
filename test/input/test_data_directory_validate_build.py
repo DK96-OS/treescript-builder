@@ -51,16 +51,43 @@ def test_validate_build_invalid_tree_data_returns_none(test_input):
 @pytest.mark.parametrize(
     "test_input",
     [
-        (TreeData(1, 0, False, "file_name", data_label)),
-        (TreeData(1, 0, False, "file_name", data_label)),
+        (TreeData(1, 0, False, "file&", data_label)),
+        (TreeData(1, 0, False, "#file", data_label)),
+        (TreeData(1, 0, False, "!file", data_label)),
     ]
 )
-def test_validate_build_input_file_raises_exit(test_input):
+def test_validate_build_invalid_filename_raises_exit(test_input):
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
         data_dir = DataDirectory(ftb_path)
         try:
             data_dir.validate_build(test_input)
-            assert False
+            raised_exit = False
         except SystemExit as e:
-            assert True
+            raised_exit = True
+        assert raised_exit
+
+
+@pytest.mark.parametrize(
+    "test_input",
+    [
+        (TreeData(1, 0, False, "file", "any/")),
+        (TreeData(1, 0, False, "file", "/any")),
+        (TreeData(1, 0, False, "file", "a/ny")),
+        (TreeData(1, 0, False, "file", "/")),
+        (TreeData(1, 0, False, "file", "@")),
+        (TreeData(1, 0, False, "file", "%")),
+        (TreeData(1, 0, False, "file", "$")),
+        (TreeData(1, 0, False, "file", "#")),
+    ]
+)
+def test_validate_build_invalid_datalabel_raises_exit(test_input):
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True)
+        data_dir = DataDirectory(ftb_path)
+        try:
+            data_dir.validate_build(test_input)
+            raised_exit = False
+        except SystemExit as e:
+            raised_exit = True
+        assert raised_exit
