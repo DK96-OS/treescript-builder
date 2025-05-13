@@ -1,0 +1,53 @@
+<sorting>
+    <changelist name="Python Root Files" module="root">
+        <files file_ext="py" />
+    </changelist>
+    <changelist name="TreeScript Builder" module="hidden">
+        <files first_dir=".ftb" />
+    </changelist>
+    <changelist name="Changelists Config" module="hidden">
+        <files first_dir=".changelists" />
+        <files filename_prefix="sort" />
+        <files file_ext="xml" />
+    </changelist>
+    <changelist name="TreeScript Builder Data Package">
+        <files path_start="data" />
+        <files file_ext="py" />
+    </changelist>
+    <changelist name="TreeScript Builder Input Package">
+        <files path_start="input" />
+        <files file_ext="py" />
+    </changelist>
+    <changelist name="TreeScript Builder Tree Package">
+        <files path_start="tree" />
+        <files file_ext="py" />
+    </changelist>
+    <changelist name="TreeScript Builder Main Package">
+        <files first_dir="treescript_builder" />
+        <files file_ext="py" />
+    </changelist>
+    <changelist name="Test Main Package">
+        <files first_dir="test" />
+        <files path_end="treescript_builder" />
+        <files file_ext="py" />
+    </changelist>
+    <changelist name="Test Data Package">
+        <files first_dir="test" />
+        <files path_end="data" />
+        <files file_ext="py" />
+    </changelist>
+    <changelist name="Test Input Package">
+        <files first_dir="test" />
+        <files path_end="input" />
+        <files file_ext="py" />
+    </changelist>
+    <changelist name="Test Tree Package">
+        <files first_dir="test" />
+        <files path_end="tree" />
+        <files file_ext="py" />
+    </changelist>
+    <changelist name="GitHub Workflows">
+        <files first_dir=".github" />
+        <files path_end="workflows" />
+    </changelist>
+</sorting>
