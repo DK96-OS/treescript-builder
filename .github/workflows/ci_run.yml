@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ '3.12' ]
+        python-version: [ '3.10', '3.11' '3.12', '3.13' ]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
@@ -22,11 +22,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install Dependencies
+      - name: Install Test Dependencies
         run: python3 -m pip install --user pytest pytest-cov
 
       - name: Run unit tests
-        run: pytest test/ --cov=input --cov=tree --cov-report=html --cov-fail-under=80
+        run: pytest test/ --cov=input --cov=tree --cov-report=html --cov-fail-under=92
 
       - name: Upload Test Coverage Reports
         uses: actions/upload-artifact@v3
