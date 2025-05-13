@@ -1,0 +1,25 @@
+#todo: Finish Creating This Test TreeScript
+test/
+  treescript_builder/
+    __init__.py
+    data/
+      __init__.py
+      data_directory.py dontRunThisYet
+      instruction_data.py
+      path_stack.py
+      tree_data.py
+      tree_state.py
+    input/
+      __init__.py
+      argument_data.py
+      argument_parser.py
+      file_validation.py
+      input_data.py
+      line_reader.py
+      string_validation.py
+    tree/
+      __init__.py
+      build_validation.py
+      tree_builder.py
+      tree_trimmer.py
+      trim_validation.py
