@@ -1,0 +1,44 @@
+input/
+  __init__.py
+  argument_data.py
+  argument_parser.py
+  data_directory.py
+  file_validation.py
+  input_data.py
+  line_reader.py
+  string_validation.py
+  tree_data.py
+test/
+  __init__.py
+  input/
+    __init__.py
+    test_argument_parser.py
+    test_data_directory.py
+    test_data_directory_validate_build.py
+    test_data_directory_validate_trim.py
+    test_file_validation.py
+    test_init.py
+    test_input_data.py
+    test_line_reader.py
+    test_string_validation.py
+  tree/
+    __init__.py
+    test_build_validation.py
+    test_init_build_tree.py
+    test_init_process_results.py
+    test_path_stack.py
+    test_tree_builder.py
+    test_tree_state.py
+    test_tree_trimmer.py
+    test_trim_validation.py
+    tree_generators.py
+tree/
+  __init__.py
+  __main__.py
+  build_validation.py
+  instruction_data.py
+  path_stack.py
+  tree_builder.py
+  tree_state.py
+  tree_trimmer.py
+  trim_validation.py
