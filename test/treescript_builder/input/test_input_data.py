@@ -1,7 +1,7 @@
 """Testing Input Data.
 """
-from input.input_data import InputData
-from input.tree_data import TreeData
+from treescript_builder.data.tree_data import TreeData
+from treescript_builder.input.input_data import InputData
 
 
 def test_get_tree_data_single_dir_returns_data():

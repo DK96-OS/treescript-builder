@@ -1,8 +1,9 @@
 """Testing Argument Parsing Module.
 """
 import pytest
-from input.argument_data import ArgumentData
-from input.argument_parser import parse_arguments
+
+from treescript_builder.input import parse_arguments
+from treescript_builder.input.argument_data import ArgumentData
 
 
 @pytest.mark.xfail(raises=SystemExit, reason="invalid arguments")

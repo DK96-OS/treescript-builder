@@ -2,7 +2,7 @@
 from pathlib import Path
 import pytest
 
-from input import validate_input_arguments
+from treescript_builder.input import validate_input_arguments
 
 
 def test_validate_input_arguments_returns_input_data():

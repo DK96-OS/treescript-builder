@@ -1,6 +1,7 @@
 """Testing String Validation Methods"""
 import pytest
-from input.string_validation import validate_dir_name, validate_name, validate_data_label
+
+from treescript_builder.input.string_validation import validate_name, validate_data_label, validate_dir_name
 
 
 @pytest.mark.parametrize(

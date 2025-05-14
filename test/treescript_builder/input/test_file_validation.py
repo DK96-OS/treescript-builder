@@ -3,7 +3,8 @@
 import pytest
 from pathlib import Path
 
-from input.file_validation import validate_input_file, validate_directory, get_file_extension
+from treescript_builder.input import validate_input_file, validate_directory
+from treescript_builder.input.file_validation import get_file_extension
 
 
 @pytest.mark.parametrize(
@@ -83,7 +84,7 @@ def test_validate_directory_exists_returns_data_dir():
     ]
 )
 def test_get_file_extension_returns_none(test_input):
-    assert get_file_extension(test_input) == None
+    assert get_file_extension(test_input) is None
 
 
 @pytest.mark.parametrize(
