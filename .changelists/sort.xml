@@ -11,15 +11,18 @@
         <files file_ext="xml" />
     </changelist>
     <changelist name="TreeScript Builder Data Package">
-        <files path_start="data" />
+        <files path_end="data" />
+        <files first_dir="treescript_builder" />
         <files file_ext="py" />
     </changelist>
     <changelist name="TreeScript Builder Input Package">
-        <files path_start="input" />
+        <files path_end="input" />
+        <files first_dir="treescript_builder" />
         <files file_ext="py" />
     </changelist>
     <changelist name="TreeScript Builder Tree Package">
-        <files path_start="tree" />
+        <files path_end="tree" />
+        <files first_dir="treescript_builder" />
         <files file_ext="py" />
     </changelist>
     <changelist name="TreeScript Builder Main Package">
