@@ -1,44 +1,44 @@
 input/
-  __init__.py
-  argument_data.py
-  argument_parser.py
-  data_directory.py
-  file_validation.py
-  input_data.py
-  line_reader.py
-  string_validation.py
-  tree_data.py
+  __init__.py l2
+  argument_data.py l3
+  argument_parser.py l4
+  data_directory.py l5
+  file_validation.py l6
+  input_data.py l7
+  line_reader.py l8
+  string_validation.py l9
+  tree_data.py l10
 test/
-  __init__.py
+  __init__.py l12
   input/
-    __init__.py
-    test_argument_parser.py
-    test_data_directory.py
-    test_data_directory_validate_build.py
-    test_data_directory_validate_trim.py
-    test_file_validation.py
-    test_init.py
-    test_input_data.py
-    test_line_reader.py
-    test_string_validation.py
+    __init__.py l14
+    test_argument_parser.py l15
+    test_data_directory.py l16
+    test_data_directory_validate_build.py l17
+    test_data_directory_validate_trim.py l18
+    test_file_validation.py l19
+    test_init.py l20
+    test_input_data.py l21
+    test_line_reader.py l22
+    test_string_validation.py l23
   tree/
-    __init__.py
-    test_build_validation.py
-    test_init_build_tree.py
-    test_init_process_results.py
-    test_path_stack.py
-    test_tree_builder.py
-    test_tree_state.py
-    test_tree_trimmer.py
-    test_trim_validation.py
-    tree_generators.py
+    __init__.py l25
+    test_build_validation.py l26
+    test_init_build_tree.py l27
+    test_init_process_results.py l28
+    test_path_stack.py l29
+    test_tree_builder.py l30
+    test_tree_state.py l31
+    test_tree_trimmer.py l32
+    test_trim_validation.py l33
+    tree_generators.py l34
 tree/
-  __init__.py
-  __main__.py
-  build_validation.py
-  instruction_data.py
-  path_stack.py
-  tree_builder.py
-  tree_state.py
-  tree_trimmer.py
-  trim_validation.py
+  __init__.py l36
+  __main__.py l37
+  build_validation.py l38
+  instruction_data.py l39
+  path_stack.py l40
+  tree_builder.py l41
+  tree_state.py l42
+  tree_trimmer.py l43
+  trim_validation.py l44
