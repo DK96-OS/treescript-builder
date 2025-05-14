@@ -1,6 +1,7 @@
 """Tree Generators used by Test Suites.
 """
 from treescript_builder.data.tree_data import TreeData
+from treescript_builder.input.line_reader import read_input_tree
 
 
 def generate_simple_tree():
@@ -74,7 +75,6 @@ def generate_invalid_tree_line_1():
     """
     The First TreeData generated has a depth that is inconsistent with tree state.
     """
-    from input.line_reader import read_input_tree
     return read_input_tree("  src/\n")
 
 
@@ -82,5 +82,4 @@ def generate_invalid_tree_line_2():
     """
     The Second TreeData generated has a depth that is inconsistent with tree state.
     """
-    from input.line_reader import read_input_tree
     return read_input_tree("src/\n    data.txt")
