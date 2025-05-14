@@ -87,6 +87,27 @@ def sample_treescript_1() -> str:
     return "build/\n  empty.txt\n  sample.tree SampleTree.tree\n"
 
 
+def sample_treescript_2() -> str:
+    return "build/\n  empty.txt\n  sample.tree SampleTree.tree\n\n\n" + "builder/\n  file.txt\n"
+
+
+def sample_treedata_1() -> list[TreeData]:
+    return [
+        TreeData(1, 0, True, "build"),
+        TreeData(2, 1, False, "empty.txt"),
+        TreeData(3, 1, False, "sample.tree", "SampleTree.tree"),
+    ]
+
+def sample_treedata_2() -> list[TreeData]:
+    return [
+        TreeData(1, 0, True, "build"),
+        TreeData(2, 1, False, "empty.txt"),
+        TreeData(3, 1, False, "sample.tree", "SampleTree.tree"),
+        TreeData(6, 0, True, "builder"),
+        TreeData(7, 1, False, "file.txt"),
+    ]
+
+
 def get_test_dir_with_sample1() -> TemporaryDirectory:
     """ Creates a TempDir containing a data directory with two files.
      - The empty.txt file contains nothing.
