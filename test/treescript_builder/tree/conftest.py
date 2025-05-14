@@ -1,20 +1,23 @@
 """Tree Generators used by Test Suites.
 """
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+import pytest
+
 from treescript_builder.data.tree_data import TreeData
 from treescript_builder.input.line_reader import read_input_tree
 
 
 def generate_simple_tree():
-    """
-    Simple Tree: a Directory and a File in that Directory.
+    """ Simple Tree: a Directory and a File in that Directory.
     """
     yield TreeData(1, 0, True, 'src', '')
     yield TreeData(2, 1, False, 'data.txt', '')
 
 
 def generate_gradle_module_tree():
-    """
-    Tree Template: a Gradle Module for Java.
+    """ Tree Template: a Gradle Module for Java.
     """
     yield TreeData(1, 0, True, 'module1', '')
     yield TreeData(2, 1, False, 'build.gradle', '')
@@ -26,8 +29,7 @@ def generate_gradle_module_tree():
 
 
 def generate_gradle_module_tree_with_data():
-    """
-    Tree Template: a Gradle Module for Java, with the Gradle Build File.
+    """ Tree Template: a Gradle Module for Java, with the Gradle Build File.
     """
     yield TreeData(1, 0, True, 'module1', '')
     yield TreeData(2, 1, False, 'build.gradle', 'gbuild_module1')
@@ -39,8 +41,7 @@ def generate_gradle_module_tree_with_data():
 
 
 def generate_python_package_tree():
-    """
-    Tree Template: a Python Package
+    """ Tree Template: a Python Package
     """
     yield TreeData(1, 0, True, 'package_name', '')
     yield TreeData(2, 1, False, '__init__.py', '')
@@ -48,8 +49,7 @@ def generate_python_package_tree():
 
 
 def generate_complex_tree():
-    """
-    Complex Tree: an example Gradle-Java project.
+    """ Complex Tree: an example Gradle-Java project.
     """
     yield TreeData(1, 0, True, '.github', '')
     yield TreeData(2, 1, True, 'workflows', '')
@@ -72,14 +72,32 @@ def generate_complex_tree():
 
 
 def generate_invalid_tree_line_1():
-    """
-    The First TreeData generated has a depth that is inconsistent with tree state.
+    """ The First TreeData generated has a depth that is inconsistent with tree state.
     """
     return read_input_tree("  src/\n")
 
 
 def generate_invalid_tree_line_2():
-    """
-    The Second TreeData generated has a depth that is inconsistent with tree state.
+    """ The Second TreeData generated has a depth that is inconsistent with tree state.
     """
     return read_input_tree("src/\n    data.txt")
+
+
+def sample_treescript_1() -> str:
+    return "build/\n  empty.txt\n  sample.tree SampleTree.tree\n"
+
+
+def get_test_dir_with_sample1() -> TemporaryDirectory:
+    """ Creates a TempDir containing a data directory with two files.
+     - The empty.txt file contains nothing.
+     - The sample.tree file contains TreeScript for the TempDir.
+    """
+    t = TemporaryDirectory()
+    data_dir = (t_path := Path(t.name)) / "data"
+    data_dir.mkdir()
+    # Empty File
+    (data_dir / "empty.txt").touch()
+    # TreeScript Sample File
+    (sample_tree := (data_dir / "sample.tree")).touch()
+    sample_tree.write_text(sample_treescript_1())
+    return t

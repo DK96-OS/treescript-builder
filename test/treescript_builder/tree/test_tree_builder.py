@@ -1,9 +1,11 @@
 """Testing Tree Builder Methods.
 """
-from unittest.mock import MagicMock
-import pytest
 from pathlib import Path
+from unittest.mock import MagicMock
 
+import pytest
+
+from test.treescript_builder.tree.conftest import get_test_dir_with_sample1, sample_treescript_1
 from treescript_builder.data.instruction_data import InstructionData
 from treescript_builder.tree.tree_builder import build
 
@@ -56,3 +58,17 @@ def test_build_one_file_already_exists_touch_returns_true():
 		)
 		m.setattr(Path, 'exists', lambda _: True)
 		assert build(instructions) == (True,)
+
+
+def test_build_file_from_data_dir_get_sample_copies_data():
+	test_dir = get_test_dir_with_sample1()
+	# Define Instruction Targets
+	target_path = (test_dir_path := Path(test_dir.name)) / "target.tree"
+	data_dir_path = test_dir_path / "data" / "sample.tree"
+	# Create InstructionData
+	test_input = (InstructionData(False, target_path, data_dir_path),)
+	# Execute
+	assert build(test_input)
+	# Validate
+	assert target_path.exists()
+	assert len(target_path.read_text()) == len(sample_treescript_1())
