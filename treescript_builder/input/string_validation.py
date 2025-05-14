@@ -1,4 +1,5 @@
 """String Validation Methods.
+ Author: DK96-OS 2024 - 2025
 """
 from typing import Literal
 

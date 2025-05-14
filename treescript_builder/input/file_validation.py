@@ -1,5 +1,6 @@
 """File Validation Methods.
     These Methods all raise SystemExit exceptions.
+ Author: DK96-OS 2024 - 2025
 """
 from pathlib import Path
 from sys import exit
@@ -9,8 +10,7 @@ from treescript_builder.input.string_validation import validate_name
 
 
 def validate_input_file(file_name: str) -> str | None:
-    """
-    Read the Input File, Validate (non-blank) data, and return Input str.
+    """ Read the Input File, Validate (non-blank) data, and return Input str.
 
     Parameters:
     - file_name (str): The Name of the Input File.
@@ -33,8 +33,7 @@ def validate_input_file(file_name: str) -> str | None:
 
 
 def validate_directory(dir_path_str: Optional[str]) -> Path | None:
-    """
-    Ensure that if the Directory is present, it Exists.
+    """ Ensure that if the Directory is present, it Exists.
 
     Parameters:
     - dir_path_str (str, optional): The String representation of the Path to the Directory.
@@ -55,8 +54,7 @@ def validate_directory(dir_path_str: Optional[str]) -> Path | None:
 
 
 def get_file_extension(file_name: str) -> str | None:
-    """
-    Obtain the File Extension, if it exists.
+    """ Obtain the File Extension, if it exists.
         The Last extension in a multi-part extension is returned.
 
     Parameters:

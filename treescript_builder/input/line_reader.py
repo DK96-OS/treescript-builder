@@ -5,6 +5,7 @@ The Default Input Reader.
     The Depth is the Integer number of directories between the current line and the root.
     The Directory Boolean indicates whether the line represents a Directory.
     The Name String is the name of the line.
+ Author: DK96-OS 2024 - 2025
 """
 from itertools import groupby
 from sys import exit

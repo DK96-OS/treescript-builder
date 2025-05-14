@@ -1,8 +1,7 @@
 """Defines and Validates Argument Syntax.
-    
-Encapsulates Argument Parser.
-
-Returns Argument Data, the args provided by the User.
+ - Encapsulates Argument Parser.
+ - Returns Argument Data, the args provided by the User.
+ Author: DK96-OS 2024 - 2025
 """
 from argparse import ArgumentParser
 from sys import exit
@@ -13,11 +12,10 @@ from treescript_builder.input.string_validation import validate_name
 
 
 def parse_arguments(args: Optional[list[str]] = None) -> ArgumentData:
-    """
-    Parse command line arguments.
+    """ Parse command line arguments.
 
     Parameters:
-    - args: A list of argument strings.
+     - args: A list of argument strings.
 
     Returns:
     ArgumentData : Container for Valid Argument Data.
@@ -42,15 +40,14 @@ def _validate_arguments(
     data_dir_name: str,
     is_reverse: bool
 ) -> ArgumentData:
-    """
-    Checks the values received from the ArgParser.
-        Uses Validate Name method from StringValidation.
-        Ensures that Reverse Operations have a Data Directory.
+    """ Checks the values received from the ArgParser.
+        - Uses Validate Name method from StringValidation.
+        - Ensures that Reverse Operations have a Data Directory.
     
     Parameters:
-    - tree_file_name (str): The file name of the tree input.
-    - data_dir_name (str): The Data Directory name.
-    - is_reverse (bool): Whether the builder operation is reversed.
+     - tree_file_name (str): The file name of the tree input.
+     - data_dir_name (str): The Data Directory name.
+     - is_reverse (bool): Whether the builder operation is reversed.
 
     Returns:
     ArgumentData - A DataClass of syntactically correct arguments.
