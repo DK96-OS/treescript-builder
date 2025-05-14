@@ -4,7 +4,8 @@ import pytest
 from pathlib import Path
 
 from test.treescript_builder.tree.conftest import generate_simple_tree, generate_gradle_module_tree, \
-    generate_python_package_tree, generate_complex_tree, generate_gradle_module_tree_with_data
+    generate_python_package_tree, generate_complex_tree, generate_gradle_module_tree_with_data, \
+    generate_invalid_tree_line_1, generate_invalid_tree_line_2
 from treescript_builder.data.data_directory import DataDirectory
 from treescript_builder.data.instruction_data import InstructionData
 from treescript_builder.data.tree_data import TreeData
