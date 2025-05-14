@@ -2,6 +2,7 @@
 
 
 def main():
+    # Author: DK96-OS 2024 - 2025
     from treescript_builder.input import validate_input_arguments
     from treescript_builder.tree import build_tree
     from sys import argv
