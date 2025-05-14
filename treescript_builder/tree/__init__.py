@@ -10,6 +10,9 @@ def build_tree(input_data: InputData) -> tuple[bool, ...]:
 **Parameters:**
  - input_data (str): The InputData produced by the Input Module.
 
+**Returns:**
+ tuple[bool, ...] - The results of each individual Builder operation.
+
 **Raises:**
  SystemExit - If a Tree Validation error occurs.
 	"""
