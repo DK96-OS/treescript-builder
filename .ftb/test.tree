@@ -1,15 +1,17 @@
 # Test Restructuring during Init Phase of TreeScript-Builder Project
 test/
+  __init__.py
   treescript_builder/
     __init__.py l12
     data/
+      __init__.py
       test_data_directory.py l16
       test_data_directory_validate_build.py l17
       test_data_directory_validate_trim.py l18
       test_path_stack.py l29
       test_tree_state.py l31
     input/
-       __init__.py l14
+      __init__.py l14
       test_argument_parser.py l15
       test_file_validation.py l19
       test_init.py l20
