@@ -1,10 +1,9 @@
-"""File Validation Methods.
+""" File Validation Methods.
     These Methods all raise SystemExit exceptions.
  Author: DK96-OS 2024 - 2025
 """
 from pathlib import Path
 from sys import exit
-from typing import Optional
 
 from treescript_builder.input.string_validation import validate_name
 
@@ -32,17 +31,17 @@ def validate_input_file(file_name: str) -> str | None:
     return None
 
 
-def validate_directory(dir_path_str: Optional[str]) -> Path | None:
+def validate_directory(dir_path_str: str | None) -> Path | None:
     """ Ensure that if the Directory is present, it Exists.
 
     Parameters:
     - dir_path_str (str, optional): The String representation of the Path to the Directory.
 
     Returns:
-    DataDirectory (optional) - The DataDirectory, or None if given input is None.
+    Path? - The , or None if given input is None.
 
     Raises:
-    SystemExit - If the given path does not exist.
+    SystemExit - If a given path does not exist.
     """
     if dir_path_str is None:
         return None
@@ -51,23 +50,3 @@ def validate_directory(dir_path_str: Optional[str]) -> Path | None:
     if (path := Path(dir_path_str)).exists():
         return path
     exit("The given Directory does not exist!")
-
-
-def get_file_extension(file_name: str) -> str | None:
-    """ Obtain the File Extension, if it exists.
-        The Last extension in a multi-part extension is returned.
-
-    Parameters:
-    - file_name (str): The name of the File.
-
-    Returns:
-    str or None - The File Extension, or None.
-    """
-    try:
-        index = file_name[::-1].index('.')
-        result = file_name[len(file_name) - index:]
-        if len(result) < 1:
-            return None
-        return result
-    except:
-        return None
