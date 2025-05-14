@@ -20,4 +20,4 @@ Fields:
     depth: int
     is_dir: bool
     name: str
-    data_label: str
+    data_label: str = ''
