@@ -1,7 +1,11 @@
 <sorting>
+    <!-- Root Module will only match files in top project directory -->
     <changelist name="Python Root Files" module="root">
         <files file_ext="py" />
     </changelist>
+
+    <!-- Developer Tools Directories in Hidden Modules -->
+
     <changelist name="TreeScript Builder" module="hidden">
         <files first_dir=".ftb" />
     </changelist>
@@ -10,47 +14,68 @@
         <files filename_prefix="sort" />
         <files file_ext="xml" />
     </changelist>
-    <changelist name="TreeScript Builder Data Package">
+
+    <!-- Source Packages in the TreeScriptBuilder Module -->
+
+    <changelist name="TreeScript Builder Data Package" module="module">
         <files path_end="data" />
         <files first_dir="treescript_builder" />
         <files file_ext="py" />
     </changelist>
-    <changelist name="TreeScript Builder Input Package">
+    <changelist name="TreeScript Builder Input Package" module="module">
         <files path_end="input" />
         <files first_dir="treescript_builder" />
         <files file_ext="py" />
     </changelist>
-    <changelist name="TreeScript Builder Tree Package">
+    <changelist name="TreeScript Builder Tree Package" module="module">
         <files path_end="tree" />
         <files first_dir="treescript_builder" />
         <files file_ext="py" />
     </changelist>
-    <changelist name="TreeScript Builder Main Package">
+    <changelist name="TreeScript Builder Main Package" module="module">
         <files first_dir="treescript_builder" />
         <files file_ext="py" />
     </changelist>
-    <changelist name="Test Main Package">
+
+    <!-- Test Packages -->
+
+    <changelist name="Test Main Package" module="module">
         <files first_dir="test" />
         <files path_end="treescript_builder" />
         <files file_ext="py" />
     </changelist>
-    <changelist name="Test Data Package">
+    <changelist name="Test Data Package" module="module">
         <files first_dir="test" />
         <files path_end="data" />
         <files file_ext="py" />
     </changelist>
-    <changelist name="Test Input Package">
+    <changelist name="Test Input Package" module="module">
         <files first_dir="test" />
         <files path_end="input" />
         <files file_ext="py" />
     </changelist>
-    <changelist name="Test Tree Package">
+    <changelist name="Test Tree Package" module="module">
         <files first_dir="test" />
         <files path_end="tree" />
         <files file_ext="py" />
     </changelist>
-    <changelist name="GitHub Workflows">
+
+    <!-- Temporary Changelist Rules To Support Package Migration -->
+
+    <changelist name="TreeScript Builder Input Package">
+        <files path_end="input" />
+        <files file_ext="py" />
+    </changelist>
+    <changelist name="TreeScript Builder Tree Package">
+        <files path_end="tree" />
+        <files file_ext="py" />
+    </changelist>
+
+    <!-- End Additional Rules. Remove these before Version 1 -->
+
+    <changelist name="GitHub Workflows" module="hidden">
         <files first_dir=".github" />
         <files path_end="workflows" />
+        <files file_ext="yml" />
     </changelist>
 </sorting>
