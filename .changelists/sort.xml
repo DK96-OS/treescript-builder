@@ -15,6 +15,12 @@
         <files file_ext="xml" />
     </changelist>
 
+    <changelist name="GitHub Workflows" module="hidden">
+        <files first_dir=".github" />
+        <files path_end="workflows" />
+        <files file_ext="yml" />
+    </changelist>
+
     <!-- Source Packages in the TreeScriptBuilder Module -->
 
     <changelist name="TreeScript Builder Data Package" module="module">
@@ -60,22 +66,4 @@
         <files file_ext="py" />
     </changelist>
 
-    <!-- Temporary Changelist Rules To Support Package Migration -->
-
-    <changelist name="TreeScript Builder Input Package">
-        <files path_end="input" />
-        <files file_ext="py" />
-    </changelist>
-    <changelist name="TreeScript Builder Tree Package">
-        <files path_end="tree" />
-        <files file_ext="py" />
-    </changelist>
-
-    <!-- End Additional Rules. Remove these before Version 1 -->
-
-    <changelist name="GitHub Workflows" module="hidden">
-        <files first_dir=".github" />
-        <files path_end="workflows" />
-        <files file_ext="yml" />
-    </changelist>
 </sorting>
