@@ -4,8 +4,8 @@ from unittest.mock import MagicMock
 import pytest
 from pathlib import Path
 
-from tree.instruction_data import InstructionData
-from tree.tree_builder import build
+from treescript_builder.data.instruction_data import InstructionData
+from treescript_builder.tree.tree_builder import build
 
 
 def test_build_one_directory_already_exists_returns_true():

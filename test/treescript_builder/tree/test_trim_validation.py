@@ -3,11 +3,11 @@
 import pytest
 from pathlib import Path
 
-from input.data_directory import DataDirectory
-from tree.instruction_data import InstructionData
-from tree.trim_validation import validate_trim
-
-from test.tree.tree_generators import *
+from test.treescript_builder.tree.conftest import generate_simple_tree, generate_gradle_module_tree, \
+    generate_python_package_tree, generate_complex_tree, generate_gradle_module_tree_with_data
+from treescript_builder.data.data_directory import DataDirectory
+from treescript_builder.data.instruction_data import InstructionData
+from treescript_builder.tree.trim_validation import validate_trim
 
 
 def test_validate_trim_simple_tree_returns_data():

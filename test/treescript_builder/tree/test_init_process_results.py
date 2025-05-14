@@ -1,6 +1,6 @@
 """Testing the Tree Init Module 
 """
-from tree import process_results
+from treescript_builder.tree import process_results
 
 
 def test_process_results_empty_tuple_retuns():

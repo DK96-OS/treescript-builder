@@ -4,8 +4,8 @@ from pathlib import Path
 import pytest
 import shutil
 
-from tree.instruction_data import InstructionData
-from tree.tree_trimmer import trim
+from treescript_builder.data.instruction_data import InstructionData
+from treescript_builder.tree.tree_trimmer import trim
 
 
 def mock_raise_ioerror():

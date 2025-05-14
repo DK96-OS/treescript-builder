@@ -1,6 +1,6 @@
 """Tree Generators used by Test Suites.
 """
-from input.tree_data import TreeData
+from treescript_builder.data.tree_data import TreeData
 
 
 def generate_simple_tree():
