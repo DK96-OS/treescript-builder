@@ -1,4 +1,5 @@
 """ Path Stack Management.
+ Author: DK96-OS 2024 - 2025
 """
 from pathlib import Path
 

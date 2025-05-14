@@ -1,17 +1,17 @@
 """Tree State.
     A Key component in Tree Validation for Build operations.
+ Author: DK96-OS 2024 - 2025
 """
 from pathlib import Path
 from sys import exit
-from typing import Generator, Optional
+from typing import Generator
 
 from treescript_builder.data.path_stack import PathStack
 from treescript_builder.data.tree_data import TreeData
 
 
 class TreeState:
-    """
-    Manages the State of the Tree during Validation.
+    """ Manages the State of the Tree during Validation.
     """
 
     def __init__(self):
@@ -20,18 +20,17 @@ class TreeState:
         self._prev_line_number = 0
 
     def validate_tree_data(self, node: TreeData) -> int:
-        """
-        Ensure that the next TreeData is valid, relative to current state.
-            Calculate the change in depth, occurring with this TreeData.
+        """ Ensure that the next TreeData is valid, relative to current state.
+         - Calculate the change in depth, occurring with this TreeData.
 
         Parameters:
-        - node (TreeData): The next TreeData in the sequence to Validate.
+         - node (TreeData): The next TreeData in the sequence to Validate.
 
         Returns:
-        int - The difference between the TreeData depth and the TreeState depth.
+         int - The difference between the TreeData depth and the TreeState depth.
 
         Raises:
-        SystemExit - When the TreeData is invalid, relative to the current TreeState.
+         SystemExit - When the TreeData is invalid, relative to the current TreeState.
         """
         self._update_line_number(node.line_number)
         # Calculate the Change in Depth
@@ -43,51 +42,46 @@ class TreeState:
         return delta
 
     def get_current_depth(self) -> int:
-        """
-        Determine the Current Depth of the Tree.
-            Includes Elements in both the Stack and the Queue.
+        """ Determine the Current Depth of the Tree.
+         - Includes Elements in both the Stack and the Queue.
 
         Returns:
-        int - The total number of elements, combining stack and queue
+         int - The total number of elements, combining stack and queue
         """
         return self._stack.get_depth() + len(self._queue)
 
     def get_current_path(self) -> Path:
-        """
-        Obtain the Current Path of the Tree.
+        """ Obtain the Current Path of the Tree.
 
         Returns:
-        str - A Path equivalent to the current Tree State.
+         str - A Path equivalent to the current Tree State.
         """
         if len(self._queue) > 0:
             self.process_queue()
         return self._stack.join_stack()
 
     def add_to_queue(self, dir_name: str):
-        """
-        Add a directory to the Queue.
+        """ Add a directory to the Queue.
 
         Parameters:
-        - dir_name (str): The name of the Directory to enqueue.
+         - dir_name (str): The name of the Directory to enqueue.
         """
         self._queue.append(dir_name)
 
     def add_to_stack(self, dir_name: str):
-        """
-        Add a directory to the Stack.
+        """ Add a directory to the Stack.
 
         Parameters:
-        - dir_name (str): The name of the Directory.
+         - dir_name (str): The name of the Directory.
         """
         self._stack.push(dir_name)
 
-    def process_queue(self) -> Optional[Path]:
-        """
-        Process the Directories in the Queue.
-            Adds all directories from the Queue to the Stack.
+    def process_queue(self) -> Path | None:
+        """Process the Directories in the Queue.
+         - Adds all directories from the Queue to the Stack.
 
         Returns:
-        Path (optional) - The whole Path from the Stack.
+         Path? - The whole Path from the Stack.
         """
         if len(self._queue) < 1:
             return None
@@ -98,14 +92,13 @@ class TreeState:
         return self._stack.join_stack()
 
     def process_stack(self, depth: int) -> Generator[Path, None, None]:
-        """
-        Pop the Stack to the Desired Depth.
+        """ Pop the Stack to the Desired Depth.
 
         Parameters:
-        - depth (int): The depth to process the stack to.
+         - depth (int): The depth to process the stack to.
 
         Returns:
-        Generator[Path] - Provides a Path for each entry in the Stack.
+         Generator[Path] - Provides a Path for each entry in the Stack.
         """
         if depth < 0:
             exit('Invalid Depth')
@@ -114,26 +107,24 @@ class TreeState:
                 yield self._stack.create_path(entry)
 
     def reduce_depth(self, depth: int) -> bool:
-        """
-        Pop an element from the stack.
+        """ Pop an element from the stack.
 
         Parameters:
-        - depth (int): The Depth to pop the Stack to.
+         - depth (int): The Depth to pop the Stack to.
 
         Returns:
-        bool - Whether the depth reduction succeeded, ie. 0 or more elements popped.
+         bool - Whether the depth reduction succeeded, ie. 0 or more elements popped.
         """
         return self._stack.reduce_depth(depth)
 
     def _update_line_number(self, line_number: int):
-        """
-        Validate the Line Number is always increasing.
+        """ Validate the Line Number is always increasing.
 
         Parameters:
-        - line_number (int): The line number from the next TreeData.
+         - line_number (int): The line number from the next TreeData.
 
         Raises:
-        SystemExit - When the Line Number does not increase.
+         SystemExit - When the Line Number does not increase.
         """
         if self._prev_line_number < line_number:
             self._prev_line_number = line_number

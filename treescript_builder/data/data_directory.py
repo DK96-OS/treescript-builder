@@ -1,4 +1,5 @@
 """Data Directory Management.
+ Author: DK96-OS 2024 - 2025
 """
 from pathlib import Path
 from sys import exit
@@ -8,22 +9,18 @@ from treescript_builder.input.string_validation import validate_data_label
 
 
 class DataDirectory:
-    """
-    Manages Access to the Data Directory.
-        Search for a Data Label, and obtain the Path to the Data File.
+    """ Manages Access to the Data Directory.
+     - Search for a Data Label, and obtain the Path to the Data File.
     """
 
     def __init__(self, data_dir: Path):
-        if not isinstance(data_dir, Path):
-            exit('The Data Directory must be a Path.')
-        if not data_dir.exists():
-            exit('The given Data Directory does not Exist.')
+        if not isinstance(data_dir, Path) or not data_dir.exists():
+            exit('The Data Directory must be a Path that Exists!')
         self._data_dir = data_dir
         # todo: Create a map of used Data Labels
 
     def validate_build(self, node: TreeData) -> Path | None:
-        """
-        Determine if the Data File supporting this Tree node is available.
+        """ Determine if the Data File supporting this Tree node is available.
 
         Parameters:
         - node (TreeData): The TreeData to validate.
@@ -45,8 +42,7 @@ class DataDirectory:
         return data_path
 
     def validate_trim(self, node: TreeData) -> Path | None:
-        """
-        Determine if the File already exists in the Data Directory.
+        """ Determine if the File already exists in the Data Directory.
 
         Parameters:
         - node (TreeData): The TreeData to validate.
@@ -71,8 +67,7 @@ class DataDirectory:
         return self._data_dir / data_label
 
     def _search_label(self, data_label: str) -> Path | None:
-        """
-        Search for a Data Label in this Data Directory.
+        """ Search for a Data Label in this Data Directory.
 
         Parameters:
         - data_label (str): The Data Label to search for.
