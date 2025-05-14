@@ -1,10 +1,10 @@
 """Testing File Validation Methods.
 """
-import pytest
 from pathlib import Path
 
+import pytest
+
 from treescript_builder.input import validate_input_file, validate_directory
-from treescript_builder.input.file_validation import get_file_extension
 
 
 @pytest.mark.parametrize(
@@ -69,30 +69,3 @@ def test_validate_directory_exists_returns_data_dir():
         data_dir = validate_directory("dir1")
         assert data_dir is not None
         assert data_dir == Path('dir1')
-
-
-@pytest.mark.parametrize(
-    "test_input",
-    [
-        (''),
-        (' '),
-        ('file'),
-        ('incorrect.'),
-    ]
-)
-def test_get_file_extension_returns_none(test_input):
-    assert get_file_extension(test_input) is None
-
-
-@pytest.mark.parametrize(
-    "test_input,expect",
-    [
-        ('requirements.txt', 'txt'),
-        ('__init__.py', 'py'),
-        ('data_files.py', 'py'),
-        ('ClassName.java', 'java'),
-        ('archive.tar.gz', 'gz'),
-    ]
-)
-def test_get_file_extension_returns_str(test_input, expect):
-    assert get_file_extension(test_input) == expect
