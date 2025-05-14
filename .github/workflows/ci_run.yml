@@ -29,10 +29,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest==8.3.5 pytest-cov==6.0.0
+          pip install pytest==8.3.5 pytest-cov==6.1.1
 
       - name: Run unit tests
-        run: pytest test/ --cov=input --cov=tree --cov-report=html --cov-fail-under=92
+        run: pytest test/ --cov=treescript_builder --cov-report=html --cov-fail-under=92
 
       - name: Upload Test Coverage Reports
         uses: actions/upload-artifact@v4
