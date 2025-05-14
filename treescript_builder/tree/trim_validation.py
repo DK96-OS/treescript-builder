@@ -1,4 +1,5 @@
 """Tree Validation Methods for the Trim Operation.
+ Author: DK96-OS 2024 - 2025
 """
 from pathlib import Path
 from typing import Generator, Optional
@@ -13,15 +14,14 @@ def validate_trim(
     tree_data: Generator[TreeData, None, None],
     data_dir: Optional[Path]
 ) -> tuple[InstructionData, ...]:
-    """    
-    Validate the Trim Instructions.
+    """ Validate the Trim Instructions.
 
-    Parameters:
-    - tree_data (Generator[TreeData]): The Generator that provides TreeData.
-    - data_dir (DataDirectory, optional): The optional Data Directory.
+**Parameters:**
+ - tree_data (Generator[TreeData]): The Generator that provides TreeData.
+ - data_dir (DataDirectory, optional): The optional Data Directory.
 
-    Returns:
-    tuple[InstructionData] - A generator that yields Instructions.
+**Returns:**
+ tuple[InstructionData] - A generator that yields Instructions.
     """
     return tuple(iter(
         _validate_trim_generator(tree_data)
@@ -41,26 +41,22 @@ def _validate_trim_generator(
                 tree_state.add_to_stack(node.name)
             else:
                 yield InstructionData(
-                    False,
-                    tree_state.get_current_path() / node.name,
-                    None
+                    False, tree_state.get_current_path() / node.name
                 )
         else:
             # Pop Stack to required Depth
             for i in tree_state.process_stack(node.depth):
-                yield InstructionData(True, i, None)
+                yield InstructionData(True, i)
             # Dir or File
             if node.is_dir:
                 tree_state.add_to_stack(node.name)
             else:
                 yield InstructionData(
-                    False,
-                    tree_state.get_current_path() / node.name,
-                    None
+                    False, tree_state.get_current_path() / node.name
                 )
     # Finish Trim Sequence with Pop Stack
     for i in tree_state.process_stack(0):
-        yield InstructionData(True, i, None)
+        yield InstructionData(True, i)
 
 
 def _validate_trim_generator_data(
@@ -82,7 +78,7 @@ def _validate_trim_generator_data(
         else:
             # Pop Stack to required Depth
             for i in tree_state.process_stack(node.depth):
-                yield InstructionData(True, i, None)
+                yield InstructionData(True, i)
             # Dir or File
             if node.is_dir:
                 tree_state.add_to_stack(node.name)
@@ -94,4 +90,4 @@ def _validate_trim_generator_data(
                 )
     # Finish Trim Sequence with Pop Stack
     for i in tree_state.process_stack(0):
-        yield InstructionData(True, i, None)
+        yield InstructionData(True, i)

@@ -1,4 +1,5 @@
 """Tree Trimming Methods.
+ Author: DK96-OS 2024 - 2025
 """
 from pathlib import Path
 from shutil import move
@@ -7,14 +8,13 @@ from treescript_builder.data.instruction_data import InstructionData
 
 
 def trim(instructions: tuple[InstructionData, ...]) -> tuple[bool, ...]:
-    """
-    Execute the Instructions in trim mode.
+    """ Execute the Instructions in trim mode.
 
-    Parameters:
-    - instructions(tuple[InstructionData]): The Instructions to execute.
+**Parameters:**
+ - instructions(tuple[InstructionData]): The Instructions to execute.
 
-    Returns:
-    tuple[bool] - The success or failure of each instruction.
+**Returns:**
+ tuple[bool] - The success or failure of each instruction.
     """
     return tuple(_trim(i) for i in instructions)
 
@@ -36,15 +36,14 @@ def _extract_file(
     path: Path,
     data: Path
 ) -> bool:
-    """
-    Moves the File to the Data Directory.
+    """ Moves the File to the Data Directory.
 
-    Parameters:
-    - path (Path): The path to the File in the Tree.
-    - data (Path): A Path to a File in the Data Directory.
+**Parameters:**
+ - path (Path): The path to the File in the Tree.
+ - data (Path): A Path to a File in the Data Directory.
 
-    Returns:
-    bool - Whether the entire operation succeeded.
+**Returns:**
+ bool - Whether the entire operation succeeded.
     """
     try:
         move(path, data)
@@ -56,14 +55,13 @@ def _extract_file(
 def _remove_dir(
     path: Path,
 ) -> bool:
-    """
-    Tries to Remove a Directory, if it is Empty.
+    """ Tries to Remove a Directory, if it is Empty.
 
-    Parameters:
-    - path (Path): The path to the Directory.
+**Parameters:**
+ - path (Path): The path to the Directory.
 
-    Returns:
-    bool : Whether the Directory was Empty, and has been removed.
+**Returns:**
+ bool : Whether the Directory was Empty, and has been removed.
     """
     try:
         path.rmdir()

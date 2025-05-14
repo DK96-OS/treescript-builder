@@ -1,6 +1,7 @@
 """The Tree Module.
 """
 from treescript_builder.input.input_data import InputData
+from treescript_builder.input.line_reader import read_input_tree
 
 
 def build_tree(input_data: InputData) -> tuple[bool, ...]:
@@ -16,7 +17,7 @@ def build_tree(input_data: InputData) -> tuple[bool, ...]:
     if input_data.is_reversed:
         from treescript_builder.tree.trim_validation import validate_trim
         instructions = validate_trim(
-            input_data.get_tree_data(),
+            read_input_tree(input_data.tree_input),
             input_data.data_dir
         )
         from treescript_builder.tree.tree_trimmer import trim
@@ -24,7 +25,7 @@ def build_tree(input_data: InputData) -> tuple[bool, ...]:
     else:
         from treescript_builder.tree.build_validation import validate_build
         instructions = validate_build(
-            input_data.get_tree_data(),
+            read_input_tree(input_data.tree_input),
             input_data.data_dir
         )
         from treescript_builder.tree.tree_builder import build
