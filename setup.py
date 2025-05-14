@@ -24,7 +24,7 @@ setup(
         ],
     },
     python_requires='>=3.12',
-    keywords=['Files'],
+    keywords=['TreeScript', 'Files', 'Directory'],
     classifiers=[
         'Natural Language :: English',
         'Operating System :: OS Independent',
