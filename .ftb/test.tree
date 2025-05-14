@@ -24,4 +24,4 @@ test/
       test_tree_builder.py l30
       test_tree_trimmer.py l32
       test_trim_validation.py l33
-      tree_generators.py l34
+      conftest.py l34
