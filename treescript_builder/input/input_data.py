@@ -1,9 +1,9 @@
 """Valid Input Data Class.
 """
 from dataclasses import dataclass
-from typing import Optional, Generator
+from pathlib import Path
+from typing import Generator
 
-from treescript_builder.data.data_directory import DataDirectory
 from treescript_builder.data.tree_data import TreeData
 
 
@@ -13,12 +13,12 @@ class InputData:
 
     Fields:
     - tree_input (str): The Tree Input to the FTB operation.
-    - data_dir (str, optional): An Optional Path to the Data Directory.
+    - data_dir (Path, optional): An Optional Path to the Data Directory.
     - is_reversed (bool): Whether this FTB operation is reversed.
     """
 
     tree_input: str
-    data_dir: Optional[DataDirectory]
+    data_dir: Path | None
     is_reversed: bool
 
     def get_tree_data(self) -> Generator[TreeData, None, None]:
