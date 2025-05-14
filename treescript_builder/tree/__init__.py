@@ -5,14 +5,13 @@ from treescript_builder.input.line_reader import read_input_tree
 
 
 def build_tree(input_data: InputData) -> tuple[bool, ...]:
-    """
-    Build The Tree as defined by the InputData.
+    """ Build The Tree as defined by the InputData.
 
-    Parameters:
-    - input_data (str): The InputData produced by the Input Module.
+**Parameters:**
+ - input_data (str): The InputData produced by the Input Module.
 
-    Raises:
-    SystemExit - If a Tree Validation error occurs.
+**Raises:**
+ SystemExit - If a Tree Validation error occurs.
 	"""
     if input_data.is_reversed:
         from treescript_builder.tree.trim_validation import validate_trim
@@ -35,22 +34,20 @@ def build_tree(input_data: InputData) -> tuple[bool, ...]:
 
 
 def process_results(results: tuple[bool, ...]) -> str:
-    """
-    Process and Summarize the Results.
+    """ Process and Summarize the Results.
 
-    Parameters:
-    - results (tuple[bool]): A tuple containing the results of the operations.
+**Parameters:**
+ - results (tuple[bool]): A tuple containing the results of the operations.
 
-    Returns:
-    str - A summary of the number of operations that succeeded.
+**Returns:**
+ str - A summary of the number of operations that succeeded.
     """
-    
     if (length := len(results)) == 0:
         return 'No operations ran.'
-    success = sum(iter(results))
-    if success == 0:
+    if (success := sum(iter(results))) == 0:
         return f"All {length} operations failed."
     elif success == length:
         return f"All {length} operations succeeded."
-    else:
-        return f"{success} out of {length} operations succeeded: {round(100 * success / length, 1)}%"
+    # Compute the Fraction of success operations
+    success_percent = round(100 * success / length, 1)
+    return f"{success} out of {length} operations succeeded: {success_percent}%"
