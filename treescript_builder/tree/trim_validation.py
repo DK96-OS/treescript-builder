@@ -2,7 +2,7 @@
  Author: DK96-OS 2024 - 2025
 """
 from pathlib import Path
-from typing import Generator, Optional
+from typing import Generator
 
 from treescript_builder.data.data_directory import DataDirectory
 from treescript_builder.data.instruction_data import InstructionData
@@ -12,22 +12,26 @@ from treescript_builder.data.tree_state import TreeState
 
 def validate_trim(
     tree_data: Generator[TreeData, None, None],
-    data_dir: Optional[Path]
+    data_dir_path: Path | None = None,
+    verbose: bool = False,
 ) -> tuple[InstructionData, ...]:
     """ Validate the Trim Instructions.
 
 **Parameters:**
  - tree_data (Generator[TreeData]): The Generator that provides TreeData.
- - data_dir (DataDirectory, optional): The optional Data Directory.
+ - data_dir_path (Path?): The optional Path to a Data Directory. Default: None.
+ - verbose (bool): Whether to print DataDirectory information during validation.
 
 **Returns:**
  tuple[InstructionData] - A generator that yields Instructions.
     """
-    return tuple(iter(
-        _validate_trim_generator(tree_data)
-        if data_dir is None else 
-        _validate_trim_generator_data(tree_data, DataDirectory(data_dir) if data_dir is not None else None)
-    ))
+    if data_dir_path is None:
+        return tuple(iter(_validate_trim_generator(tree_data)))
+    else:
+        data = DataDirectory(data_dir_path)
+        if verbose:
+            print(f"Validating Trim With DataDir: {data_dir_path}")
+        return tuple(iter(_validate_trim_generator_data(tree_data, data)))
 
 
 def _validate_trim_generator(

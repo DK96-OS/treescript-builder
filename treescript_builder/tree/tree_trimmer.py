@@ -65,7 +65,6 @@ def _remove_dir(
     """
     try:
         path.rmdir()
-    except:
-        # Was not empty
+    except BaseException as e:
         return False
     return True

@@ -12,22 +12,26 @@ from treescript_builder.data.tree_state import TreeState
 
 def validate_build(
     tree_data: Generator[TreeData, None, None],
-    data_dir: Path | None,
+    data_dir_path: Path | None = None,
+    verbose: bool = False,
 ) -> tuple[InstructionData, ...]:
     """ Validate the Build Instructions.
 
 **Parameters:**
  - tree_data (Generator[TreeData]): The Generator that provides TreeData.
- - data_dir (Path?): The optional Data Directory Path.
+ - data_dir_path (Path?): The optional Data Directory Path. Default: None.
+ - verbose (bool): Whether to print DataDirectory information during validation.
 
 **Returns:**
  tuple[InstructionData] - A generator that yields Instructions.
     """
-    return tuple(iter(
-        _validate_build_generator(tree_data)
-        if data_dir is None else
-        _validate_build_generator_data(tree_data, DataDirectory(data_dir) if data_dir is not None else None)
-    ))
+    if data_dir_path is None:
+        return tuple(iter(_validate_build_generator(tree_data)))
+    else:
+        data = DataDirectory(data_dir_path)
+        if verbose:
+            print(f"Validating Build With DataDir: {data_dir_path}")
+        return tuple(iter(_validate_build_generator_data(tree_data, data)))
 
 
 def _validate_build_generator(

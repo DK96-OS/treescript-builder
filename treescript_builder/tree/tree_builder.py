@@ -52,9 +52,9 @@ def _create_file(
     """
     try:
         copy2(data, path)
-        return True
-    except:
-    	return False
+    except BaseException as e:
+        return False
+    return True
 
 
 def _make_dir_exist(
