@@ -3,7 +3,7 @@
 from pathlib import Path
 from shutil import move
 
-from tree.instruction_data import InstructionData
+from treescript_builder.data.instruction_data import InstructionData
 
 
 def trim(instructions: tuple[InstructionData, ...]) -> tuple[bool, ...]:

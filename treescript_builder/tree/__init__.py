@@ -1,6 +1,6 @@
 """The Tree Module.
 """
-from input.input_data import InputData
+from treescript_builder.input.input_data import InputData
 
 
 def build_tree(input_data: InputData) -> tuple[bool, ...]:
@@ -14,20 +14,20 @@ def build_tree(input_data: InputData) -> tuple[bool, ...]:
     SystemExit - If a Tree Validation error occurs.
 	"""
     if input_data.is_reversed:
-        from tree.trim_validation import validate_trim
+        from treescript_builder.tree.trim_validation import validate_trim
         instructions = validate_trim(
             input_data.get_tree_data(),
             input_data.data_dir
         )
-        from tree.tree_trimmer import trim
+        from treescript_builder.tree.tree_trimmer import trim
         results = trim(instructions)
     else:
-        from tree.build_validation import validate_build
+        from treescript_builder.tree.build_validation import validate_build
         instructions = validate_build(
             input_data.get_tree_data(),
             input_data.data_dir
         )
-        from tree.tree_builder import build
+        from treescript_builder.tree.tree_builder import build
         results = build(instructions)
     #
     return results
