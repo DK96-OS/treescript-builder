@@ -1,5 +1,6 @@
 """Tree Validation Methods for the Trim Operation.
 """
+from pathlib import Path
 from typing import Generator, Optional
 
 from treescript_builder.data.data_directory import DataDirectory
@@ -10,7 +11,7 @@ from treescript_builder.data.tree_state import TreeState
 
 def validate_trim(
     tree_data: Generator[TreeData, None, None],
-    data_dir: Optional[DataDirectory]
+    data_dir: Optional[Path]
 ) -> tuple[InstructionData, ...]:
     """    
     Validate the Trim Instructions.
@@ -25,7 +26,7 @@ def validate_trim(
     return tuple(iter(
         _validate_trim_generator(tree_data)
         if data_dir is None else 
-        _validate_trim_generator_data(tree_data, data_dir)
+        _validate_trim_generator_data(tree_data, DataDirectory(data_dir) if data_dir is not None else None)
     ))
 
 

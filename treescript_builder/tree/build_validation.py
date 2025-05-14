@@ -1,6 +1,7 @@
 """Tree Validation Methods for the Build Operation.
 """
-from typing import Generator, Optional
+from pathlib import Path
+from typing import Generator
 
 from treescript_builder.data.data_directory import DataDirectory
 from treescript_builder.data.instruction_data import InstructionData
@@ -10,14 +11,14 @@ from treescript_builder.data.tree_state import TreeState
 
 def validate_build(
     tree_data: Generator[TreeData, None, None],
-    data_dir: Optional[DataDirectory]
+    data_dir: Path | None,
 ) -> tuple[InstructionData, ...]:
     """
     Validate the Build Instructions.
 
     Parameters:
     - tree_data (Generator[TreeData]): The Generator that provides TreeData.
-    - data_dir (DataDirectory, optional): The optional Data Directory.
+    - data_dir (Path?): The optional Data Directory Path.
 
     Returns:
     tuple[InstructionData] - A generator that yields Instructions.
@@ -25,7 +26,7 @@ def validate_build(
     return tuple(iter(
         _validate_build_generator(tree_data)
         if data_dir is None else
-        _validate_build_generator_data(tree_data, data_dir)
+        _validate_build_generator_data(tree_data, DataDirectory(data_dir) if data_dir is not None else None)
     ))
 
 
