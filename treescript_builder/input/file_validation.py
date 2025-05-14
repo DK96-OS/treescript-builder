@@ -4,9 +4,9 @@
 from pathlib import Path
 from sys import exit
 from typing import Optional
-from input.data_directory import DataDirectory
 
-from input.string_validation import validate_name
+from treescript_builder.data.data_directory import DataDirectory
+from treescript_builder.input.string_validation import validate_name
 
 
 def validate_input_file(file_name: str) -> str:

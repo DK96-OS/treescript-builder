@@ -9,10 +9,9 @@ The Default Input Reader.
 from itertools import groupby
 from sys import exit
 from typing import Generator
-from input.string_validation import validate_dir_name, validate_name
 
-from input.tree_data import TreeData
-
+from treescript_builder.data.tree_data import TreeData
+from treescript_builder.input.string_validation import validate_dir_name, validate_name
 
 SPACE_CHARS = (' ', ' ', ' ', ' ')
 

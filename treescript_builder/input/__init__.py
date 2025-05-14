@@ -2,9 +2,9 @@
     Validate And Format Input Arguments.
     Read Input Tree String from File.
 """
-from input.input_data import InputData
-from input.argument_parser import parse_arguments
-from input.file_validation import validate_input_file, validate_directory
+from treescript_builder.input.argument_parser import parse_arguments
+from treescript_builder.input.file_validation import validate_input_file, validate_directory
+from treescript_builder.input.input_data import InputData
 
 
 def validate_input_arguments(arguments: list[str]) -> InputData:

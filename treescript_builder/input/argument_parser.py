@@ -8,8 +8,8 @@ from argparse import ArgumentParser
 from sys import exit
 from typing import Optional
 
-from input.argument_data import ArgumentData
-from input.string_validation import validate_name
+from treescript_builder.input.argument_data import ArgumentData
+from treescript_builder.input.string_validation import validate_name
 
 
 def parse_arguments(args: Optional[list[str]] = None) -> ArgumentData:

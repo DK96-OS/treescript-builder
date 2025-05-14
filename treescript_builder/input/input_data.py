@@ -1,10 +1,9 @@
 """Valid Input Data Class.
 """
-from typing import Optional, Generator
 from dataclasses import dataclass
+from typing import Optional, Generator
 
-from input.data_directory import DataDirectory
-from input.tree_data import TreeData
+from treescript_builder.data.tree_data import TreeData
 
 
 @dataclass(frozen=True)
@@ -29,5 +28,5 @@ class InputData:
         Returns:
         Generator - Yields one TreeData for each Line of Tree Input.
         """
-        from input.line_reader import read_input_tree
+        from treescript_builder.input.line_reader import read_input_tree
         return read_input_tree(self.tree_input)
