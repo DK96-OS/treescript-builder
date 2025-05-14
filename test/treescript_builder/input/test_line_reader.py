@@ -3,7 +3,6 @@
 import pytest
 
 from test.treescript_builder.input import create_depth
-
 from treescript_builder.data.tree_data import TreeData
 from treescript_builder.input.line_reader import _calculate_depth, _process_line, _validate_node_name, read_input_tree
 

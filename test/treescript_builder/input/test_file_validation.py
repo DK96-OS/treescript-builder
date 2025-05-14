@@ -31,15 +31,12 @@ def test_validate_input_file_does_not_exist_raises_exit():
             assert True
 
 
-def test_validate_input_file_is_empty_raises_exit():
+def test_validate_input_file_is_empty_returns_none():
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
         c.setattr(Path, 'read_text', lambda _: "")
-        try:
-            validate_input_file("file_name")
-            assert False
-        except SystemExit as e:
-            assert True
+        result = validate_input_file("file_name")
+        assert result is None
 
 
 @pytest.mark.parametrize(
@@ -71,7 +68,7 @@ def test_validate_directory_exists_returns_data_dir():
         c.setattr(Path, 'exists', lambda _: True)
         data_dir = validate_directory("dir1")
         assert data_dir is not None
-        assert data_dir._data_dir == Path('dir1')
+        assert data_dir == Path('dir1')
 
 
 @pytest.mark.parametrize(

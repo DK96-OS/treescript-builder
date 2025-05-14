@@ -30,15 +30,13 @@ def test_validate_input_arguments_input_file_does_not_exist_raises_error():
             assert True
 
 
-def test_validate_input_arguments_input_file_is_empty_raises_error():
+def test_validate_input_arguments_input_file_is_empty_returns_input_no_data_dir():
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
         c.setattr(Path, 'read_text', lambda _: '')
-        try:
-            validate_input_arguments(['tree_input'])
-            assert False
-        except SystemExit as e:
-            assert True
+        result = validate_input_arguments(['tree_input'])
+        assert result is not None
+        assert result.data_dir is None
 
 
 def test_validate_input_arguments_unknown_argument_raises_error():
