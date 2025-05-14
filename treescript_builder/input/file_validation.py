@@ -5,11 +5,10 @@ from pathlib import Path
 from sys import exit
 from typing import Optional
 
-from treescript_builder.data.data_directory import DataDirectory
 from treescript_builder.input.string_validation import validate_name
 
 
-def validate_input_file(file_name: str) -> str:
+def validate_input_file(file_name: str) -> str | None:
     """
     Read the Input File, Validate (non-blank) data, and return Input str.
 
@@ -26,15 +25,14 @@ def validate_input_file(file_name: str) -> str:
     if not file_path.exists():
         exit("The Input File does not Exist.")
     try:
-        data = file_path.read_text()
+        if (data := file_path.read_text()) is not None and validate_name(data):
+            return data
     except IOError as e:
         exit("Failed to Read from File.")
-    if validate_name(data):
-        return data
-    exit("Input was Empty")
+    return None
 
 
-def validate_directory(dir_path_str: Optional[str]) -> Optional[DataDirectory]:
+def validate_directory(dir_path_str: Optional[str]) -> Path | None:
     """
     Ensure that if the Directory is present, it Exists.
 
@@ -51,13 +49,12 @@ def validate_directory(dir_path_str: Optional[str]) -> Optional[DataDirectory]:
         return None
     if not validate_name(dir_path_str):
         exit("Data Directory is invalid")
-    path = Path(dir_path_str)
-    if path.exists():
-        return DataDirectory(path)
+    if (path := Path(dir_path_str)).exists():
+        return path
     exit("The given Directory does not exist!")
 
 
-def get_file_extension(file_name: str) -> Optional[str]:
+def get_file_extension(file_name: str) -> str | None:
     """
     Obtain the File Extension, if it exists.
         The Last extension in a multi-part extension is returned.

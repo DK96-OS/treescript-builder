@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from typing import Optional, Generator
 
+from treescript_builder.data.data_directory import DataDirectory
 from treescript_builder.data.tree_data import TreeData
 
 
