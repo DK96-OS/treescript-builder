@@ -30,17 +30,14 @@ def read_input_tree(input_tree_data: str) -> Generator[TreeData, None, None]:
  SystemExit - When any Line cannot be read successfully.
     """
     line_number = 1
-    for is_newline, group in groupby(input_tree_data, lambda x: x == "\n"):
-        if not is_newline:
+    for is_newline, group in groupby(input_tree_data, lambda x: x in ["\n", "\r"]):
+        if is_newline:
+            line_number += sum(1 for _ in group) # Line number increase by size of group
+        else:
             line = ''.join(group)
-            line_stripped = line.lstrip()
-            if len(line_stripped) == 0:
-                continue
-            elif line_stripped.startswith('#'):
+            if len(lstr := line.lstrip()) == 0 or lstr.startswith('#'):
                 continue
             yield _process_line(line_number, line)
-        else:
-            line_number += sum(1 for _ in group) # Line number increase by size of group
 
 
 def _process_line(
