@@ -5,7 +5,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="treescript-builder",
-    version="0.1",
+    version="0.1.1",
     description='Builds File Trees from TreeScript. If DataLabels are present in TreeScript, a DataDirectory argument is required.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
@@ -19,8 +19,8 @@ setup(
     packages=find_packages(exclude=['test', 'test.*']),
     entry_points={
         'console_scripts': [
-            'ftb=tree.__main__:main',
-            'treescript-builder=tree.__main__:main',
+            'ftb=treescript_builder.__main__:main',
+            'treescript-builder=treescript_builder.__main__:main',
         ],
     },
     python_requires='>=3.12',
