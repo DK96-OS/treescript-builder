@@ -20,6 +20,11 @@
         <files path_end="workflows" />
         <files file_ext="yml" />
     </changelist>
+    <changelist name="GitHub Dependabot" module="hidden">
+        <files first_dir=".github" />
+        <files filename_prefix="dependabot" />
+        <files file_ext="yml" />
+    </changelist>
 
     <!-- Source Packages in the TreeScriptBuilder Module -->
 
@@ -45,9 +50,15 @@
 
     <!-- Test Packages -->
 
+    <changelist name="Test Fixtures &amp; Data Providers" module="module">
+        <files first_dir="test" />
+        <files filename_prefix="conftest" />
+        <files file_ext="py" />
+    </changelist>
     <changelist name="Test Main Package" module="module">
         <files first_dir="test" />
         <files path_end="treescript_builder" />
+        <files filename_prefix="test_" />
         <files file_ext="py" />
     </changelist>
     <changelist name="Test Data Package" module="module">

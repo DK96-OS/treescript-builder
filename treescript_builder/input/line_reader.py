@@ -1,10 +1,10 @@
-"""Line Reader.
+""" Line Reader.
 
 The Default Input Reader.
-    Processes a single line at a time, and determines its key properties.
-    The Depth is the Integer number of directories between the current line and the root.
-    The Directory Boolean indicates whether the line represents a Directory.
-    The Name String is the name of the line.
+ - Processes a single line at a time, and determines its key properties.
+ - The Depth is the Integer number of directories between the current line and the root.
+ - The Directory Boolean indicates whether the line represents a Directory.
+ - The Name String is the name of the line.
  Author: DK96-OS 2024 - 2025
 """
 from itertools import groupby
@@ -23,8 +23,8 @@ def read_input_tree(input_tree_data: str) -> Generator[TreeData, None, None]:
 **Parameters:**
  - input_data (InputData): The Input.
 
-**Returns:**
- Generator[TreeData] - Produces TreeData from the Input Data.
+**Yields:**
+ TreeData - Produces TreeData from the Input Data.
 
 **Raises:**
  SystemExit - When any Line cannot be read successfully.

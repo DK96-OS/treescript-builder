@@ -10,7 +10,11 @@ from treescript_builder.input.string_validation import validate_data_label
 
 class DataDirectory:
     """ Manages Access to the Data Directory.
-     - Search for a Data Label, and obtain the Path to the Data File.
+ - Search for a Data Label, and obtain the Path to the Data File.
+
+**Method Summary:**
+ - validate_build(TreeData): Path?
+ - validate_trim(TreeData): Path?
     """
 
     def __init__(self, data_dir: Path):

@@ -1,5 +1,4 @@
-"""Tree State.
-    A Key component in Tree Validation for Build operations.
+""" Tree State: A Key component in Tree Validation for Build operations.
  Author: DK96-OS 2024 - 2025
 """
 from pathlib import Path
@@ -12,6 +11,16 @@ from treescript_builder.data.tree_data import TreeData
 
 class TreeState:
     """ Manages the State of the Tree during Validation.
+
+**Method Summary:**
+ - validate_tree_data(TreeData): int
+ - get_current_depth: int
+ - get_current_path: Path
+ - add_to_queue(str)
+ - add_to_stack(str)
+ - process_queue: Path?
+ - process_stack(int): Generator[Path]
+ - reduce_depth(int): bool
     """
 
     def __init__(self):

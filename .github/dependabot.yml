@@ -10,5 +10,5 @@ updates:
     directory: "/"
     schedule:
       # Check for updates to GitHub Actions every weekday
-      interval: "daily"
+      interval: "weekly"
     open-pull-requests-limit: 2
