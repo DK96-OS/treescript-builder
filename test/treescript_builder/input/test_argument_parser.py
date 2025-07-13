@@ -6,7 +6,6 @@ from treescript_builder.input import parse_arguments
 from treescript_builder.input.argument_data import ArgumentData
 
 
-@pytest.mark.xfail(raises=SystemExit, reason="invalid arguments")
 @pytest.mark.parametrize(
     "test_input",
     [
