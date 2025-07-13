@@ -22,7 +22,9 @@ def validate_input_arguments(arguments: list[str]) -> InputData:
     """
     arg_data = parse_arguments(arguments)
     return InputData(
-        validate_input_file(arg_data.input_file_path_str),
-        validate_directory(arg_data.data_dir_path_str),
-        arg_data.is_reversed
+        tree_input=validate_input_file(arg_data.input_file_path_str),
+        data_dir=validate_directory(arg_data.data_dir_path_str),
+        is_reversed=arg_data.is_reversed,
+        append=not arg_data.overwrite and not arg_data.prepend,
+        prepend=arg_data.prepend,
     )

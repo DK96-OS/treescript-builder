@@ -11,9 +11,13 @@ class InputData:
 
 **Fields:**
  - tree_input (str): The Tree Input to the FTB operation.
- - data_dir (Path?): An Optional Path to the Data Directory.
- - is_reversed (bool): Whether this FTB operation is reversed.
+ - data_dir (Path?): An Optional Path to the Data Directory. Default: None
+ - is_reversed (bool): Whether this FTB operation is reversed. Default: False
+ - append (bool): Whether to append data to the end of files. Default: True
+ - prepend (bool): Whether to insert data at the start of files. Default: False.
     """
     tree_input: str
-    data_dir: Path | None
-    is_reversed: bool
+    data_dir: Path | None = None
+    is_reversed: bool = False
+    append: bool = True
+    prepend: bool = False
