@@ -1,4 +1,4 @@
-"""Testing Argument Parsing Module.
+""" Testing Argument Parsing Module.
 """
 import pytest
 

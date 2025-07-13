@@ -86,11 +86,8 @@ def test_validate_input_file_is_empty_returns_none(test_input, expect):
 def test_validate_directory_does_not_exist_raises_exit():
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: False)
-        try:
+        with pytest.raises(SystemExit):
             validate_directory("dir1")
-            assert False
-        except SystemExit as e:
-            assert True
 
 
 def test_validate_directory_exists_returns_data_dir():

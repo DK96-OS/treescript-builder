@@ -2,7 +2,7 @@
 """
 import pytest
 
-from test.treescript_builder.input import create_depth
+from test.treescript_builder.conftest import create_depth
 from test.treescript_builder.tree.conftest import sample_treescript_1, sample_treedata_1, sample_treedata_2, \
     sample_treescript_2
 from treescript_builder.data.tree_data import TreeData
@@ -77,11 +77,8 @@ def test_process_line_file_returns_data(test_input, expect):
     ]
 )
 def test_process_line_file_odd_spaces_raises_exit(test_input):
-    try:
+    with pytest.raises(SystemExit):
         _process_line(1, test_input)
-        assert False
-    except SystemExit as e:
-        assert True
 
 
 @pytest.mark.parametrize(
@@ -127,11 +124,8 @@ def test_process_line_dir_returns_data(test_input, expect):
     ]
 )
 def test_process_line_dir_odd_spaces_raises_exit(test_input):
-    try:
+    with pytest.raises(SystemExit):
         _process_line(1, test_input)
-        assert False
-    except SystemExit as e:
-        assert True
 
 
 @pytest.mark.parametrize(
@@ -144,11 +138,8 @@ def test_process_line_dir_odd_spaces_raises_exit(test_input):
     ]
 )
 def test_process_line_parent_dir_raise_exit(test_input):
-    try:
+    with pytest.raises(SystemExit):
         _process_line(1, test_input)
-        assert False
-    except SystemExit as e:
-        assert True
 
 
 @pytest.mark.parametrize(
@@ -161,11 +152,8 @@ def test_process_line_parent_dir_raise_exit(test_input):
     ]
 )
 def test_process_line_current_dir_raise_exit(test_input):
-    try:
+    with pytest.raises(SystemExit):
         _process_line(1, test_input)
-        assert False
-    except SystemExit as e:
-        assert True
 
 
 @pytest.mark.parametrize(
