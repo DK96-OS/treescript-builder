@@ -64,8 +64,5 @@ def test_validate_trim_data_file_already_exists_raises_exit(test_input):
         data_dir = DataDirectory(ftb_path)
         #
         c.setattr(Path, 'glob', yield_path)
-        try:
+        with pytest.raises(SystemExit):
             data_dir.validate_trim(test_input)
-            assert False
-        except SystemExit as e:
-            assert True
