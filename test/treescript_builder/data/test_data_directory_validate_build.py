@@ -60,12 +60,8 @@ def test_validate_build_invalid_filename_raises_exit(test_input):
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
         data_dir = DataDirectory(ftb_path)
-        try:
+        with pytest.raises(SystemExit):
             data_dir.validate_build(test_input)
-            raised_exit = False
-        except SystemExit as e:
-            raised_exit = True
-        assert raised_exit
 
 
 @pytest.mark.parametrize(
@@ -85,9 +81,5 @@ def test_validate_build_invalid_datalabel_raises_exit(test_input):
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
         data_dir = DataDirectory(ftb_path)
-        try:
+        with pytest.raises(SystemExit):
             data_dir.validate_build(test_input)
-            raised_exit = False
-        except SystemExit as e:
-            raised_exit = True
-        assert raised_exit

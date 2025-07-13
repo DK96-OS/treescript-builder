@@ -72,11 +72,8 @@ def test_validate_trim_complex_tree_returns_data():
     ]
 )
 def test_validate_trim_invalid_tree_raises_exit(generator):
-    try:
+    with pytest.raises(SystemExit):
         validate_trim(generator, None)
-        assert False
-    except SystemExit as e:
-        assert True
 
 
 def test_validate_trim_with_data_dir_simple_tree_returns_data():
@@ -137,8 +134,5 @@ def test_validate_trim_with_data_dir_complex_tree_returns_data():
 def test_validate_trim_with_data_dir_invalid_tree_raises_exit(generator):
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
-        try:
+        with pytest.raises(SystemExit):
             validate_trim(generator, _DATA_DIR_PATH)
-            assert False
-        except SystemExit as e:
-            assert True

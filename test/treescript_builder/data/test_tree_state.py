@@ -1,4 +1,4 @@
-"""Testing Tree State.
+""" Testing Tree State.
 """
 from pathlib import Path
 
@@ -18,11 +18,8 @@ def test_validate_tree_data_first_dir_returns_0():
 def test_validate_tree_data_invalid_line_number_raises_exit():
     input_data = TreeData(0, 0, True, 'src', '')
     instance = TreeState()
-    try:
+    with pytest.raises(SystemExit):
         instance.validate_tree_data(input_data)
-        assert False
-    except SystemExit as e:
-        assert True
 
 
 def test_validate_tree_data_item_in_queue_returns_0():
@@ -61,11 +58,8 @@ def test_validate_tree_data_decrease_depth_returns_negative():
 def test_validate_tree_data_invalid_depth_raises_exit(depth):
     input_data = TreeData(1, depth, True, 'src', '')
     instance = TreeState()
-    try:
+    with pytest.raises(SystemExit):
         instance.validate_tree_data(input_data)
-        assert False
-    except SystemExit as e:
-        assert True
 
 
 def test_get_current_path_():
@@ -151,11 +145,8 @@ def test_process_queue_multi_item_queue_():
 
 def test_process_stack_negative_depth_raises_exit():
     instance = TreeState()
-    try:
+    with pytest.raises(SystemExit):
         tuple(iter(instance.process_stack(-1)))
-        assert False
-    except SystemExit as e:
-        assert True
 
 
 def test_process_stack_empty_depth_0_yields_nothing():

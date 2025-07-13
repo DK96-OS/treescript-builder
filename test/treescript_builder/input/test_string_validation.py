@@ -1,4 +1,5 @@
-"""Testing String Validation Methods"""
+""" Testing String Validation Methods
+"""
 import pytest
 
 from treescript_builder.input.string_validation import validate_name, validate_data_label, validate_dir_name
@@ -93,8 +94,5 @@ def test_validate_dir_name_is_file_returns_none():
 
 
 def test_validate_dir_name_inconsistent_slash_chars_raises_error():
-    try:
+    with pytest.raises(ValueError):
         validate_dir_name('\\dir/')
-        assert False
-    except ValueError as e:
-        assert True

@@ -15,21 +15,15 @@ from treescript_builder.data.data_directory import DataDirectory
     ]
 )
 def test_data_directory_init_non_path_raise_exit(test_input):
-    try:
+    with pytest.raises(SystemExit):
         DataDirectory(test_input)
-        assert False
-    except SystemExit as e:
-        assert True
 
 
 def test_data_directory_init_dir_does_not_exist_raise_exit():
     with pytest.MonkeyPatch().context() as m:
         m.setattr(Path, 'exists', lambda c: False)
-        try:
+        with pytest.raises(SystemExit):
             DataDirectory(Path('data_dir'))
-            assert False
-        except SystemExit as e:
-            assert True
 
 
 @pytest.mark.parametrize(

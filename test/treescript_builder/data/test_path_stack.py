@@ -7,9 +7,10 @@ from treescript_builder.data.path_stack import PathStack
 
 
 class TestPathStack(unittest.TestCase):
-    """ Test Cases
-    Setup:
-    - Instantiates a new PathStack, stores instance
+    """ Test Cases.
+
+**Setup:**
+ - Instantiates a new PathStack, stores instance
     """
 
     def setUp(self):

@@ -78,11 +78,8 @@ def test_validate_build_complex_tree_returns_data():
     ]
 )
 def test_validate_build_invalid_tree_raises_exit(generator):
-    try:
+    with pytest.raises(SystemExit):
         validate_build(generator, None)
-        assert False
-    except SystemExit as e:
-        assert True
 
 
 def test_validate_build_with_data_dir_simple_tree_returns_data():
@@ -140,8 +137,5 @@ def test_validate_build_with_data_dir_invalid_tree_raises_exit(generator):
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
         data_dir_path = Path('.ftb/data/')
-        try:
+        with pytest.raises(SystemExit):
             validate_build(generator, data_dir_path)
-            assert False
-        except SystemExit as e:
-            assert True
