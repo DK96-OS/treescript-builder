@@ -20,6 +20,11 @@
         <files path_end="workflows" />
         <files file_ext="yml" />
     </changelist>
+    <changelist name="GitHub Dependabot" module="hidden">
+        <files first_dir=".github" />
+        <files filename_prefix="dependabot" />
+        <files file_ext="yml" />
+    </changelist>
 
     <!-- Source Packages in the TreeScriptBuilder Module -->
 
