@@ -11,7 +11,7 @@ from treescript_builder.input.string_validation import validate_name
 
 
 def parse_arguments(
-    args: list[str] | None = None,
+    args: list[str],
 ) -> ArgumentData:
     """ Parse command line arguments.
 
@@ -22,13 +22,11 @@ def parse_arguments(
  ArgumentData - Container for Valid Argument Data.
     """
     if args is None or len(args) == 0:
-        exit("No Arguments given. ")
-    # Initialize the Parser and Parse Immediately
-    try:
+        exit("No Arguments given.")
+    try: # Initialize the Parser and Parse Immediately
         parsed_args = _define_arguments().parse_args(args)
     except SystemExit as e:
         exit("Unable to Parse Arguments.")
-    #
     return _validate_arguments(
         parsed_args.tree_file_name,
         parsed_args.data_dir,
@@ -61,7 +59,6 @@ def _validate_arguments(
         pass
     elif not validate_name(data_dir_name):
         exit("The Data Directory argument was invalid.")
-    #
     return ArgumentData(
         tree_file_name,
         data_dir_name,
