@@ -25,7 +25,7 @@ def parse_arguments(
         exit("No Arguments given.")
     try: # Initialize the Parser and Parse Immediately
         parsed_args = _define_arguments().parse_args(args)
-    except SystemExit as e:
+    except SystemExit:
         exit("Unable to Parse Arguments.")
     return _validate_arguments(
         parsed_args.tree_file_name,
