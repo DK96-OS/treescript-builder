@@ -25,10 +25,9 @@ def _trim(instruct: InstructionData) -> bool:
     if instruct.data_path is None:
         try:
             instruct.path.unlink(missing_ok=True)
-            return True
-        except IOError as e:
-            print("IO File Error")
+        except OSError as e:
             return False
+        return True
     return _extract_file(instruct.path, instruct.data_path)
 
 
@@ -47,9 +46,9 @@ def _extract_file(
     """
     try:
         move(path, data)
-        return True
-    except:
+    except OSError as e:
         return False
+    return True
 
 
 def _remove_dir(
@@ -65,6 +64,6 @@ def _remove_dir(
     """
     try:
         path.rmdir()
-    except BaseException as e:
+    except OSError as e:
         return False
     return True
