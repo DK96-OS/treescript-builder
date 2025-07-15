@@ -5,7 +5,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="treescript-builder",
-    version="0.1.2",
+    version="0.1.3",
     description='Builds File Trees from TreeScript. If DataLabels are present in TreeScript, a DataDirectory argument is required.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
@@ -13,7 +13,7 @@ setup(
 	url='https://github.com/DK96-OS/treescript-builder',
 	project_urls={
         "Issues": "https://github.com/DK96-OS/treescript-builder/issues",
-        "Source Code": "https://github.com/DK96-OS/treescript-builder"
+        "Source Code": "https://github.com/DK96-OS/treescript-builder",
 	},
     license="GPLv3",
     packages=find_packages(exclude=['test', 'test.*']),

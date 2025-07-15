@@ -18,9 +18,8 @@ from treescript_builder.input.argument_data import ArgumentData
     ]
 )
 def test_parse_arguments_raises_value_error(test_input):
-    with pytest.raises(SystemExit) as exit_info:
+    with pytest.raises(SystemExit):
         parse_arguments(test_input)
-    assert exit_info.type == SystemExit
 
 
 @pytest.mark.parametrize(

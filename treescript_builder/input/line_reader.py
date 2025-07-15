@@ -108,7 +108,7 @@ def _validate_node_name(node_name: str) -> tuple[bool, str] | None:
         if (dir_name := validate_dir_name(node_name)) is not None:
             return (True, dir_name)
         # Fall-Through to File Node
-    except ValueError as e:
+    except ValueError:
         # An error in the dir name, such that it cannot be a file either
         return None
     # Is a File

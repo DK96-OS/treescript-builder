@@ -126,7 +126,7 @@ def test_add_to_queue_nonempty_stack_increases_depth(test_input):
 
 def test_process_queue_empty_queue_returns_none():
     instance = TreeState()
-    assert instance.process_queue() == None
+    assert instance.process_queue() is None
 
 
 def test_process_queue_single_item_queue_():

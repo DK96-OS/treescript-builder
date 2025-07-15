@@ -50,7 +50,7 @@ def test_validate_name_returns_true(test_input, expect):
     ]
 )
 def test_validate_data_label_returns_false(test_input):
-    assert validate_data_label(test_input) == False
+    assert not validate_data_label(test_input)
 
 
 @pytest.mark.parametrize(
@@ -66,11 +66,11 @@ def test_validate_data_label_returns_false(test_input):
     ]
 )
 def test_validate_data_label_returns_true(test_input):
-    assert validate_data_label(test_input) == True
+    assert validate_data_label(test_input)
 
 
 def test_validate_data_label_name_shortcut_returns_true():
-    assert validate_data_label('!') == True
+    assert validate_data_label('!')
 
 
 def test_validate_dir_name_returns_str():

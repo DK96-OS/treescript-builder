@@ -20,7 +20,7 @@ def test_build_tree_single_file_build_succeeds_returns_true():
         c.setattr(tree_builder, 'build', mock_build_success)
         result = build_tree(input_data)
     assert len(result) == 1
-    assert result[0] == True
+    assert result[0]
 
 
 def test_build_tree_single_file_build_fails_returns_false():
@@ -29,7 +29,7 @@ def test_build_tree_single_file_build_fails_returns_false():
         c.setattr(tree_builder, 'build', mock_build_fail)
         result = build_tree(input_data)
     assert len(result) == 1
-    assert result[0] == False
+    assert not result[0]
 
 
 
@@ -39,7 +39,7 @@ def test_build_tree_single_file_trim_succeeds_returns_true():
         c.setattr(tree_trimmer, 'trim', mock_build_success)
         result = build_tree(input_data)
     assert len(result) == 1
-    assert result[0] == True
+    assert result[0]
 
 
 def test_build_tree_single_file_trim_fails_returns_false():
@@ -48,4 +48,4 @@ def test_build_tree_single_file_trim_fails_returns_false():
         c.setattr(tree_trimmer, 'trim', mock_build_fail)
         result = build_tree(input_data)
     assert len(result) == 1
-    assert result[0] == False
+    assert not result[0]

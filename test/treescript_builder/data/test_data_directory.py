@@ -10,8 +10,8 @@ from treescript_builder.data.data_directory import DataDirectory
 @pytest.mark.parametrize(
     "test_input",
     [
-        ('data_dir'),
-        (None),
+        'data_dir',
+        None,
     ]
 )
 def test_data_directory_init_non_path_raise_exit(test_input):
@@ -29,24 +29,24 @@ def test_data_directory_init_dir_does_not_exist_raise_exit():
 @pytest.mark.parametrize(
     "test_input",
     [
-        ('*'),
-        ('invalid/label'),
+        '*',
+        'invalid/label',
     ]
 )
 def test_search_label_invalid_label_returns_none(test_input):
     with pytest.MonkeyPatch().context() as m:
         m.setattr(Path, 'exists', lambda c: True)
         instance = DataDirectory(Path('data_dir'))
-        assert instance._search_label(test_input) == None
+        assert instance._search_label(test_input) is None
 
 
 @pytest.mark.parametrize(
     "test_input",
     [
-        ('valid_label'),
-        ('valid-label'),
-        ('script.py'),
-        ('123'),
+        'valid_label',
+        'valid-label',
+        'script.py',
+        '123',
     ]
 )
 def test_search_label_does_not_exist_returns_none(test_input):
@@ -57,16 +57,16 @@ def test_search_label_does_not_exist_returns_none(test_input):
         # When the Label is searched, the Path does not exist
         m.setattr(Path, 'exists', lambda c: False)
         m.setattr(Path, 'glob', lambda c, d: iter([]))
-        assert instance._search_label(test_input) == None
+        assert instance._search_label(test_input) is None
 
 
 @pytest.mark.parametrize(
     "test_input",
     [
-        ('valid_label'),
-        ('valid-label'),
-        ('script.py'),
-        ('123'),
+        'valid_label',
+        'valid-label',
+        'script.py',
+        '123',
     ]
 )
 def test_search_label_exists_returns_path(test_input):
