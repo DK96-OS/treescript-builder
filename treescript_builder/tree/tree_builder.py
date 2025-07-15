@@ -52,7 +52,7 @@ def _create_file(
     """
     try:
         copy2(data, path)
-    except OSError as e:
+    except OSError:
         return False
     return True
 
@@ -72,6 +72,6 @@ def _make_dir_exist(
         return True
     try:
         path.mkdir(parents=True, exist_ok=True)
-    except OSError as e:
+    except OSError:
         return False
     return True
