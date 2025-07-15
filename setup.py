@@ -13,7 +13,7 @@ setup(
 	url='https://github.com/DK96-OS/treescript-builder',
 	project_urls={
         "Issues": "https://github.com/DK96-OS/treescript-builder/issues",
-        "Source Code": "https://github.com/DK96-OS/treescript-builder"
+        "Source Code": "https://github.com/DK96-OS/treescript-builder",
 	},
     license="GPLv3",
     packages=find_packages(exclude=['test', 'test.*']),

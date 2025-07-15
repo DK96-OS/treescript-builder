@@ -85,5 +85,5 @@ class DataDirectory:
         data_files = self._data_dir.glob(data_label)
         try:
             return next(data_files)
-        except StopIteration as s:
+        except StopIteration:
             return None

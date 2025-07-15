@@ -13,7 +13,6 @@ from treescript_builder.data.tree_state import TreeState
 def validate_trim(
     tree_data: Generator[TreeData, None, None],
     data_dir_path: Path | None = None,
-    verbose: bool = False,
 ) -> tuple[InstructionData, ...]:
     """ Validate the Trim Instructions.
 
@@ -29,8 +28,6 @@ def validate_trim(
         return tuple(iter(_validate_trim_generator(tree_data)))
     else:
         data = DataDirectory(data_dir_path)
-        if verbose:
-            print(f"Validating Trim With DataDir: {data_dir_path}")
         return tuple(iter(_validate_trim_generator_data(tree_data, data)))
 
 

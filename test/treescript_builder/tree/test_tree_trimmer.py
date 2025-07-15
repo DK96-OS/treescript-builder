@@ -18,7 +18,7 @@ def test_trim_src_dir_returns_true():
 		i = (InstructionData(True, Path('src/'), None), )
 		results = trim(i)
 		assert len(results) == 1
-		assert results[0] == True
+		assert results[0]
 
 
 def test_trim_file_returns_true():
@@ -27,7 +27,7 @@ def test_trim_file_returns_true():
 		i = (InstructionData(False, Path('data.txt'), None), )
 		results = trim(i)
 		assert len(results) == 1
-		assert results[0] == True
+		assert results[0]
 
 
 def test_trim_file_error_returns_false():
@@ -36,7 +36,7 @@ def test_trim_file_error_returns_false():
 		i = (InstructionData(True, Path('data.txt'), None), )
 		results = trim(i)
 		assert len(results) == 1
-		assert results[0] == False
+		assert not results[0]
 
 
 def mock_move_method(src, dest):
@@ -49,4 +49,4 @@ def test_trim_file_with_data_label_returns_true():
 		i = (InstructionData(False, Path('data.txt'), 'data.csv'), )
 		results = trim(i)
 		assert len(results) == 1
-		assert results[0] == True
+		assert results[0]

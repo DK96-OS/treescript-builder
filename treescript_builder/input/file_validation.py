@@ -26,7 +26,7 @@ def validate_input_file(file_name: str) -> str | None:
     try:
         if (data := file_path.read_text()) is not None and validate_name(data):
             return data
-    except OSError as e:
+    except OSError:
         exit("Failed to Read from File.")
     return None
 
