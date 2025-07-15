@@ -3,7 +3,6 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-import pytest
 
 from treescript_builder.data.tree_data import TreeData
 from treescript_builder.input.line_reader import read_input_tree
@@ -114,7 +113,7 @@ def get_test_dir_with_sample1() -> TemporaryDirectory:
      - The sample.tree file contains TreeScript for the TempDir.
     """
     t = TemporaryDirectory()
-    data_dir = (t_path := Path(t.name)) / "data"
+    data_dir = Path(t.name) / "data"
     data_dir.mkdir()
     # Empty File
     (data_dir / "empty.txt").touch()
