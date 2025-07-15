@@ -33,7 +33,7 @@ def test_validate_input_arguments_returns_input_data():
         result = validate_input_arguments(['tree_input'])
         assert result is not None
         assert result.data_dir is None
-        assert result.is_reversed == False
+        assert not result.is_reversed
         assert result.tree_input == tree_input_data
 
 
