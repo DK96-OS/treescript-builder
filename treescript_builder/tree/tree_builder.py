@@ -1,60 +1,99 @@
-"""Tree Building Operations.
+""" Tree Building Operations.
  Author: DK96-OS 2024 - 2025
 """
 from pathlib import Path
-from shutil import copy2
+from typing import Callable
 
+from treescript_builder.data.file_mode_enum import FileModeEnum
 from treescript_builder.data.instruction_data import InstructionData
+from treescript_builder.tree.path_operations import prepend_to_file, overwrite_file, append_to_file, make_dir_exist
 
 
-def build(instructions: tuple[InstructionData, ...]) -> tuple[bool, ...]:
+def build(
+    instructions: tuple[InstructionData, ...],
+    mode: FileModeEnum,
+) -> tuple[bool, ...]:
     """ Execute the Instructions in build mode.
 
 **Parameters:**
  - instructions(tuple[InstructionData]): The Instructions to execute.
+ - mode (FileModeEnum): 
 
 **Returns:**
  tuple[bool] - The success or failure of each instruction.
     """
-    return tuple(_build(i) for i in instructions)
+    build_method = _get_builder_method(mode)
+    return tuple(
+        make_dir_exist(i.path) if i.is_dir else (
+            i.path.touch(exist_ok=True) if i.data_path is None else build_method(i)
+        )
+        for i in instructions
+    )
 
 
-def _build(i: InstructionData) -> bool:
-    """ Execute a single instruction.
+def _get_builder_method(
+    mode: FileModeEnum,
+) -> Callable[[InstructionData], bool]:
+    match mode:
+        case FileModeEnum.APPEND:
+            return _append
+        case FileModeEnum.OVERWRITE:
+            return _overwrite
+        case FileModeEnum.PREPEND:
+            return _prepend
+        case _:
+            exit()
+
+
+def _append(
+    instruct: InstructionData,
+) -> bool:
+    """ Execute a single instruction in append mode.
 
 **Parameters:**
- - instruction(InstructionData): The data required to execute the operation.
+ - instruct(InstructionData): The data required to execute the operation. 
 
 **Returns:**
  bool - Whether the given operation succeeded.
     """
-    if i.is_dir:
-        return _make_dir_exist(i.path)
-    elif i.data_path is None:
-        i.path.touch(exist_ok=True)
+    if instruct.data_path is None:
+        instruct.path.touch(exist_ok=True)
         return True
-    else:
-        return _create_file(i.path, i.data_path)
+    return append_to_file(instruct.path, instruct.data_path)
 
 
-def _create_file(
-    path: Path,
-    data: Path
+def _overwrite(
+    instruct: InstructionData,
 ) -> bool:
-    """ Create a File at the given path, with data from the Data Directory.
+    """ Execute a single instruction in overwrite mode.
 
 **Parameters:**
- - path (Path): The Path to the File to be created, and written to.
- - data (Path): A Data Directory Path to be copied to the new File.
+ - instruct(InstructionData): The data required to execute the operation. 
+
+**Returns:**
+ bool - Whether the given operation succeeded.
+    """
+    if instruct.data_path is None:
+        instruct.path.touch(exist_ok=True)
+        return True
+    return overwrite_file(instruct.path, instruct.data_path)
+
+
+def _prepend(
+    instruct: InstructionData,
+) -> bool:
+    """ Execute a single instruction in overwrite mode.
+
+**Parameters:**
+ - instruct(InstructionData): The data required to execute the operation. 
 
 **Returns:**
  bool - Whether the File operation succeeded.
     """
-    try:
-        copy2(data, path)
-    except OSError:
-        return False
-    return True
+    if instruct.data_path is None:
+        instruct.path.touch(exist_ok=True)
+        return True
+    return prepend_to_file(instruct.path, instruct.data_path)
 
 
 def _make_dir_exist(

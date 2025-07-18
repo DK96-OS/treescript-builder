@@ -1,13 +1,18 @@
-"""Tree Trimming Methods.
+""" Tree Trimming Methods.
  Author: DK96-OS 2024 - 2025
 """
 from pathlib import Path
 from shutil import move
+from typing import Callable
 
+from treescript_builder.data.file_mode_enum import FileModeEnum
 from treescript_builder.data.instruction_data import InstructionData
 
 
-def trim(instructions: tuple[InstructionData, ...]) -> tuple[bool, ...]:
+def trim(
+    instructions: tuple[InstructionData, ...],
+    mode: FileModeEnum,
+) -> tuple[bool, ...]:
     """ Execute the Instructions in trim mode.
 
 **Parameters:**
@@ -16,7 +21,25 @@ def trim(instructions: tuple[InstructionData, ...]) -> tuple[bool, ...]:
 **Returns:**
  tuple[bool] - The success or failure of each instruction.
     """
-    return tuple(_trim(i) for i in instructions)
+    trim_method = _get_trimmer_method(mode)
+    return tuple(
+        trim_method(i)
+        for i in instructions
+    )
+
+
+def _get_trimmer_method(
+    mode: FileModeEnum,
+) -> Callable[[InstructionData], bool]:
+    match mode:
+        case FileModeEnum.APPEND:
+            return _trim
+        case FileModeEnum.OVERWRITE:
+            return _trim
+        case FileModeEnum.PREPEND:
+            return _trim
+        case _:
+            exit()
 
 
 def _trim(instruct: InstructionData) -> bool:
@@ -60,7 +83,7 @@ def _remove_dir(
  - path (Path): The path to the Directory.
 
 **Returns:**
- bool : Whether the Directory was Empty, and has been removed.
+ bool - Whether the Directory was Empty, and has been removed.
     """
     try:
         path.rmdir()

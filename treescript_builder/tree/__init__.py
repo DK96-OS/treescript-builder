@@ -23,7 +23,7 @@ def build_tree(input_data: InputData) -> tuple[bool, ...]:
             input_data.data_dir
         )
         from treescript_builder.tree.tree_trimmer import trim
-        results = trim(instructions)
+        results = trim(instructions, input_data.mode)
     else:
         from treescript_builder.tree.build_validation import validate_build
         instructions = validate_build(
@@ -31,7 +31,7 @@ def build_tree(input_data: InputData) -> tuple[bool, ...]:
             input_data.data_dir
         )
         from treescript_builder.tree.tree_builder import build
-        results = build(instructions)
+        results = build(instructions, input_data.mode)
     #
     return results
 
