@@ -13,13 +13,14 @@ def trim(
     instructions: tuple[InstructionData, ...],
     mode: FileModeEnum,
 ) -> tuple[bool, ...]:
-    """ Execute the Instructions in trim mode.
+    """ Trim a File Tree using the Instructions in the given File Mode.
 
 **Parameters:**
- - instructions(tuple[InstructionData]): The Instructions to execute.
+ - instructions(tuple[InstructionData]): The Instructions containing File Tree information and Data paths.
+ - mode (FileModeEnum): The type of modification to apply with existing file contents.
 
 **Returns:**
- tuple[bool] - The success or failure of each instruction.
+ tuple[bool, ...] - The success or failure of each instruction.
     """
     trim_method = _get_trimmer_method(mode)
     return tuple(

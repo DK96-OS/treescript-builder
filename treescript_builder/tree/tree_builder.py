@@ -11,21 +11,21 @@ from treescript_builder.tree.path_operations import prepend_to_file, overwrite_f
 
 def build(
     instructions: tuple[InstructionData, ...],
-    mode: FileModeEnum,
+    mode: FileModeEnum = FileModeEnum.OVERWRITE,
 ) -> tuple[bool, ...]:
-    """ Execute the Instructions in build mode.
+    """ Build a File Tree from the Instructions in the given Mode.
 
 **Parameters:**
  - instructions(tuple[InstructionData]): The Instructions to execute.
- - mode (FileModeEnum): 
+ - mode (FileModeEnum): The type of modification to apply with existing file contents.
 
 **Returns:**
- tuple[bool] - The success or failure of each instruction.
+ tuple[bool, ...] - The success or failure of each instruction.
     """
     build_method = _get_builder_method(mode)
     return tuple(
         make_dir_exist(i.path) if i.is_dir else (
-            i.path.touch(exist_ok=True) if i.data_path is None else build_method(i)
+            i.path.touch(exist_ok=True) is None if i.data_path is None else build_method(i)
         )
         for i in instructions
     )
