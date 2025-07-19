@@ -1,4 +1,4 @@
-"""Tree Validation Methods for the Build Operation.
+""" Tree Validation Methods for the Build Operation.
  Author: DK96-OS 2024 - 2025
 """
 from pathlib import Path
@@ -23,15 +23,15 @@ def validate_build(
 **Returns:**
  tuple[InstructionData] - A generator that yields Instructions.
     """
-    if data_dir_path is None:
-        return tuple(iter(_validate_build_generator(tree_data)))
-    else:
-        data = DataDirectory(data_dir_path)
-        return tuple(iter(_validate_build_generator_data(tree_data, data)))
+    return tuple(iter(
+        _validate_build_generator(tree_data) if data_dir_path is None
+        else
+        _validate_build_generator_data(tree_data, DataDirectory(data_dir_path))
+    ))
 
 
 def _validate_build_generator(
-    tree_data: Generator[TreeData, None, None]
+    tree_data: Generator[TreeData, None, None],
 ) -> Generator[InstructionData, None, None]:
     tree_state = TreeState()
     for node in tree_data:
@@ -69,7 +69,7 @@ def _validate_build_generator(
 
 def _validate_build_generator_data(
     tree_data: Generator[TreeData, None, None],
-    data_dir: DataDirectory
+    data_dir: DataDirectory,
 ) -> Generator[InstructionData, None, None]:
     tree_state = TreeState()
     for node in tree_data:
