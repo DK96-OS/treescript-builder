@@ -7,20 +7,21 @@ from shutil import copy2
 
 
 def make_dir_exist(
-    path: Path
+    dir_path: Path,
 ) -> bool:
     """ Ensure that the Directory at the given Path exists.
+ - Creates Parent Directories when necessary.
 
 **Parameters:**
- - path (Path): The Path to the File to be created, and written to.
+ - dir_path (Path): The Path to the Directory (and parent directories) to be created.
 
 **Returns:**
- bool - True if the Operation Succeeded, or if the Path already exists.
+ bool - True if the Operation Succeeded, and the directory now exists.
     """
-    if path.exists():
+    if dir_path.exists():
         return True
     try:
-        path.mkdir(parents=True, exist_ok=True)
+        dir_path.mkdir(parents=True, exist_ok=True)
     except OSError:
         return False
     return True
@@ -30,15 +31,16 @@ def append_to_file(
     target_file: Path,
     source_file: Path | None,
 ) -> bool:
-    """ Append to the end of the file.
+    """ Append data, adds text to the end of the target file.
+ - If source_file is none, creates the target file if it doesn't exist.
 
 **Parameters:**
- - path (Path): The Path to the file to be appended to.
- - data (Path): A Data Directory File Path to copy from.
+ - target_file (Path): The Path to the file to be appended to.
+ - source_file (Path): A Data Directory File Path to read text data from.
 
 **Returns:**
  bool - Whether the File operation succeeded.
-        """
+    """
     try:
         if source_file is None:
             target_file.touch(exist_ok=True)
@@ -53,13 +55,14 @@ def append_to_file(
 
 def prepend_to_file(
     target_file: Path,
-    source_file: Path | None,       
+    source_file: Path | None,
 ) -> bool:
-    """ Prepend, adding text to the start of the file.
+    """ Prepend data, adds text to the start of the target file.
+ - If source_file is none, creates the target file if it doesn't exist.
 
 **Parameters:**
- - path (Path): The Path to the file to be appended to.
- - data (Path): A Data Directory File Path to copy from.
+ - target_file (Path): The Path to the file to be appended to.
+ - source_file (Path): A Data Directory File Path to read text data from.
  
 **Returns:**
  bool - Whether the File operation succeeded.
@@ -83,10 +86,11 @@ def overwrite_file(
     source_file: Path | None,
 ) -> bool:
     """ Create or overwrite a File at the given path, with data from the Data Directory source file.
+ - If source_file is none, creates the file if it does not exist.
 
 **Parameters:**
- - path (Path): The Path to the File to be created, and written to.
- - data (Path): A Data Directory Path to be copied to the new File.
+ - target_file (Path): The Path to the File to be created, and written to.
+ - source_file (Path): A Data Directory File Path to be copied, overwriting the target File.
 
 **Returns:**
  bool - Whether the File operation succeeded.
