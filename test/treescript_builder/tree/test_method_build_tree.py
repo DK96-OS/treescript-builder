@@ -1,4 +1,4 @@
-"""Testing the Tree Module Init Build Tree Method
+""" Testing the Tree Module Init Build Tree Method.
 """
 import pytest
 
@@ -6,11 +6,11 @@ from treescript_builder.input import InputData
 from treescript_builder.tree import build_tree, tree_builder, tree_trimmer
 
 
-def mock_build_success(arg):
+def mock_build_success(arg, file_mode):
     return (True, )
 
 
-def mock_build_fail(arg):
+def mock_build_fail(arg, file_mode):
     return (False, )
 
 
@@ -30,7 +30,6 @@ def test_build_tree_single_file_build_fails_returns_false():
         result = build_tree(input_data)
     assert len(result) == 1
     assert not result[0]
-
 
 
 def test_build_tree_single_file_trim_succeeds_returns_true():
