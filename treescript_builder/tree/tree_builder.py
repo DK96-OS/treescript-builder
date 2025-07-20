@@ -23,12 +23,22 @@ def build(
  tuple[bool, ...] - The success or failure of each instruction.
     """
     build_method = _get_builder_method(mode)
-    return tuple(
-        make_dir_exist(i.path) if i.is_dir else (
-            i.path.touch(exist_ok=True) is None if i.data_path is None else build_method(i)
-        )
-        for i in instructions
-    )
+    return tuple(_build_instruction(i, build_method) for i in instructions)
+
+
+def _build_instruction(
+    i: InstructionData,
+    build_method: Callable[[InstructionData], bool],
+) -> bool:
+    if i.data_path is not None:
+        return build_method(i)
+    if i.is_dir:
+        return make_dir_exist(i.path)
+    try:    
+        i.path.touch(exist_ok=True)
+    except OSError:
+        return False
+    return True
 
 
 def _get_builder_method(
@@ -94,23 +104,3 @@ def _prepend(
         instruct.path.touch(exist_ok=True)
         return True
     return prepend_to_file(instruct.path, instruct.data_path)
-
-
-def _make_dir_exist(
-    path: Path
-) -> bool:
-    """ Ensure that the Directory at the given Path exists.
-
-**Parameters:**
- - path (Path): The Path to the File to be created, and written to.
-
-**Returns:**
- bool - True if the Operation Succeeded, or if the Path already exists.
-    """
-    if path.exists():
-        return True
-    try:
-        path.mkdir(parents=True, exist_ok=True)
-    except OSError:
-        return False
-    return True

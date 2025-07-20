@@ -18,9 +18,9 @@ def make_dir_exist(
 **Returns:**
  bool - True if the Operation Succeeded, and the directory now exists.
     """
-    if dir_path.exists():
-        return True
     try:
+        if dir_path.exists():
+            return True
         dir_path.mkdir(parents=True, exist_ok=True)
     except OSError:
         return False
