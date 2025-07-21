@@ -1,7 +1,6 @@
 """ Tree Building Operations.
  Author: DK96-OS 2024 - 2025
 """
-from pathlib import Path
 from typing import Callable
 
 from treescript_builder.data.file_mode_enum import FileModeEnum
@@ -27,15 +26,15 @@ def build(
 
 
 def _build_instruction(
-    i: InstructionData,
+    instruct: InstructionData,
     build_method: Callable[[InstructionData], bool],
 ) -> bool:
-    if i.data_path is not None:
-        return build_method(i)
-    if i.is_dir:
-        return make_dir_exist(i.path)
+    if instruct.data_path is not None:
+        return build_method(instruct)
+    if instruct.is_dir:
+        return make_dir_exist(instruct.path)
     try:    
-        i.path.touch(exist_ok=True)
+        instruct.path.touch(exist_ok=True)
     except OSError:
         return False
     return True
