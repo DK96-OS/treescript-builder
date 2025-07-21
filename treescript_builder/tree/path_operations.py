@@ -36,7 +36,7 @@ def append_to_file(
 
 **Parameters:**
  - target_file (Path): The Path to the file to be appended to.
- - source_file (Path): A Data Directory File Path to read text data from.
+ - source_file (Path?): A Data Directory File Path to read text data from.
 
 **Returns:**
  bool - Whether the File operation succeeded.
@@ -62,7 +62,7 @@ def prepend_to_file(
 
 **Parameters:**
  - target_file (Path): The Path to the file to be appended to.
- - source_file (Path): A Data Directory File Path to read text data from.
+ - source_file (Path?): A Data Directory File Path to read text data from.
  
 **Returns:**
  bool - Whether the File operation succeeded.
@@ -90,7 +90,7 @@ def overwrite_file(
 
 **Parameters:**
  - target_file (Path): The Path to the File to be created, and written to.
- - source_file (Path): A Data Directory File Path to be copied, overwriting the target File.
+ - source_file (Path?): A Data Directory File Path to be copied, overwriting the target File.
 
 **Returns:**
  bool - Whether the File operation succeeded.

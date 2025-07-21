@@ -13,10 +13,11 @@ def build(
     mode: FileModeEnum = FileModeEnum.OVERWRITE,
 ) -> tuple[bool, ...]:
     """ Build a File Tree from the Instructions in the given Mode.
+ - This Method has a default mode of Overwrite.
 
 **Parameters:**
  - instructions(tuple[InstructionData]): The Instructions to execute.
- - mode (FileModeEnum): The type of modification to apply with existing file contents.
+ - mode (FileModeEnum): The type of modification to apply with existing file contents. Default: Overwrite.
 
 **Returns:**
  tuple[bool, ...] - The success or failure of each instruction.
