@@ -3,7 +3,7 @@
  Author: DK96-OS 2024 - 2025
 """
 from pathlib import Path
-from shutil import copy2
+from shutil import copy2, move
 
 
 def make_dir_exist(
@@ -100,6 +100,27 @@ def overwrite_file(
             target_file.touch(exist_ok=True)
         else:
             copy2(source_file, target_file)
+    except OSError:
+        return False
+    return True
+
+
+def extract_file(
+    initial_path: Path,
+    final_path: Path
+) -> bool:
+    """ Moves a File from one path to another.
+ - Used by trim when extracting a file from the FileTree to the DataDirectory.
+
+**Parameters:**
+ - initial_path (Path): The path to the File in the Tree.
+ - final_path (Path): A Path to the Data Directory.
+
+**Returns:**
+ bool - Whether the entire operation succeeded.
+    """
+    try:
+        move(initial_path, final_path)
     except OSError:
         return False
     return True
