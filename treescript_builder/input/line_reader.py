@@ -21,7 +21,7 @@ def read_input_tree(input_tree_data: str) -> Generator[TreeData, None, None]:
     """ Generate structured Tree Data from the Input Data String.
 
 **Parameters:**
- - input_data (InputData): The Input.
+ - input_tree_data (str): The Input.
 
 **Yields:**
  TreeData - Produces TreeData from the Input Data.
@@ -106,14 +106,14 @@ def _validate_node_name(node_name: str) -> tuple[bool, str] | None:
     try:
         # Check if the line contains any slash characters
         if (dir_name := validate_dir_name(node_name)) is not None:
-            return (True, dir_name)
+            return True, dir_name
         # Fall-Through to File Node
     except ValueError:
         # An error in the dir name, such that it cannot be a file either
         return None
     # Is a File
     if validate_name(node_name):
-        return (False, node_name)
+        return False, node_name
     return None
 
 

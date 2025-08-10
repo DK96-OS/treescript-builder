@@ -15,9 +15,11 @@ class InputData:
  - tree_input (str): The Tree Input to the FTB operation.
  - data_dir (Path?): An Optional Path to the Data Directory. Default: None
  - is_reversed (bool): Whether this FTB operation is reversed. Default: False
- - mode (FileModeEnum): The Mode of File Operation. Default: FileModeEnum.APPEND. Other options: PREPEND, OVERWRITE.
+ - mode (FileModeEnum): The Mode of File Operation. Default: FileModeEnum.APPEND. Other options: CANCEL, MOVE, PREPEND, OVERWRITE.
+ - verbosity_level (int): The amount of information to print out. Zero prints nothing. Default: 0.
     """
     tree_input: str
     data_dir: Path | None = None
     is_reversed: bool = False
     mode: FileModeEnum = FileModeEnum.APPEND
+    verbosity_level: int = 0

@@ -28,14 +28,30 @@ def validate_input_arguments(arguments: list[str]) -> InputData:
         data_dir=validate_directory(arg_data.data_dir_path_str),
         is_reversed=arg_data.is_reversed,
         mode=_determine_file_mode_from_arg_data(arg_data),
+        verbosity_level=_determine_verbosity_level_from_arg_data(arg_data),
     )
 
 
 def _determine_file_mode_from_arg_data(
     arg_data: ArgumentData,
 ) -> FileModeEnum:
+    # Checks ArgumentData flags, and returns the highest priority FileMode.
+    # Note that any option flag provided will override the default: Append.
     if arg_data.prepend:
         return FileModeEnum.PREPEND
+    elif arg_data.cancel:
+        return FileModeEnum.CANCEL
     elif arg_data.overwrite:
         return FileModeEnum.OVERWRITE
+    elif arg_data.move:
+        return FileModeEnum.MOVE
     return FileModeEnum.APPEND
+
+
+def _determine_verbosity_level_from_arg_data(
+    arg_data: ArgumentData,
+) -> int:
+    if (verbosity_level := arg_data.verbosity) > 0:
+        return verbosity_level
+    # FileMode.CANCEL has a Minimum Verbosity Level 1.
+    return 1 if arg_data.cancel else 0
