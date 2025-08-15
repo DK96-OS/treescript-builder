@@ -186,7 +186,8 @@ def test_parse_arguments_invalid_option_combinations_raises_exit(test_input):
     ]
 )
 def test_parse_arguments_invalid_file_mode_option_combinations_raises_exit(test_input):
-    with pytest.raises(SystemExit, check=lambda x:argument_parser._INVALID_ARGUMENTS_COMBINATION_STR.__eq__(x)):
+    from re import escape
+    with pytest.raises(SystemExit, match=escape(argument_parser._INVALID_ARGUMENTS_COMBINATION_STR)):
         parse_arguments(test_input)
 
 
