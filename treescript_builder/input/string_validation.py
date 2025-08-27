@@ -60,7 +60,7 @@ def validate_dir_name(dir_name: str) -> str | None:
  - dir_name (str): The given input to be validated.
 
 **Returns:**
- str | None - The valid directory name, or none if it may be a file.
+ str? - The valid directory name, or none if it may be a file.
 
 **Raises:**
  ValueError - When the name is not suitable for directories or files.
@@ -89,7 +89,7 @@ def _validate_slash_char(dir_name: str) -> Literal['\\', '/'] | None:
  - dir_name (str): The given input to be validated.
 
 **Returns:**
- str | None - The slash character used, or none if no chars were found.
+ str? - The slash character used, or none if no chars were found.
 
 **Raises:**
  ValueError - When the name contains both slash characters.
@@ -113,7 +113,7 @@ def _filter_slash_chars(dir_name: str) -> str | None:
  - dir_name (str): The given input to be validated.
 
 **Returns:**
- str | None - The valid directory name, or none if it may be a file.
+ str? - The valid directory name, or none if it may be a file.
 
 **Raises:**
  ValueError - When the name is not suitable for directories or files.
