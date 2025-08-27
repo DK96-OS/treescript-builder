@@ -38,6 +38,11 @@
         <files first_dir="treescript_builder" />
         <files file_ext="py" />
     </changelist>
+    <changelist name="TreeScript Builder Operations Package" module="module">
+        <files path_end="operations" />
+        <files first_dir="treescript_builder" />
+        <files file_ext="py" />
+    </changelist>
     <changelist name="TreeScript Builder Tree Package" module="module">
         <files path_end="tree" />
         <files first_dir="treescript_builder" />
@@ -69,6 +74,11 @@
     <changelist name="Test Input Package" module="module">
         <files first_dir="test" />
         <files path_end="input" />
+        <files file_ext="py" />
+    </changelist>
+    <changelist name="Test Operations Package" module="module">
+        <files first_dir="test" />
+        <files path_end="operations" />
         <files file_ext="py" />
     </changelist>
     <changelist name="Test Tree Package" module="module">
