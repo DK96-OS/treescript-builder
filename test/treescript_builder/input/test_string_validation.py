@@ -49,14 +49,25 @@ def test_validate_name_filenames_returns_true():
         '_',
         '.',
         '..',
-        r'.\.',
         '*',
-        'paths/are/invalid',
-        'paths\\are\\invalid',
+        '**',
         '=',
     ]
 )
 def test_validate_data_label_returns_false(test_input):
+    assert not validate_data_label(test_input)
+
+
+@pytest.mark.parametrize(
+    "test_input", [
+        '..\\',
+        '../',
+        r'.\.',
+        'paths/are/invalid',
+        'paths\\are\\invalid',
+    ]
+)
+def test_validate_data_label_contains_slash_char_returns_false(test_input):
     assert not validate_data_label(test_input)
 
 
