@@ -115,7 +115,7 @@ def _validate_slash_char(dir_name: str) -> Literal['\\', '/'] | None:
         # Also check for other slash
     if '\\' in dir_name:
         if slash is not None:
-            raise ValueError(r'Invalid character combination: forward and back slash in the same path.')
+            raise ValueError('Invalid character combination: forward and back slash in the same path.')
         slash = '\\'
     return slash
 
