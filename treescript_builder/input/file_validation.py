@@ -9,6 +9,15 @@ from sys import exit
 from treescript_builder.input.string_validation import validate_name
 
 
+_FILE_SIZE_LIMIT = 32 * 1024 # 32 KB
+_FILE_SIZE_LIMIT_ERROR_MSG = "File larger than 32 KB Limit."
+_FILE_SYMLINK_DISABLED_MSG = "Symlink file paths are disabled."
+
+_FILE_DOES_NOT_EXIST_MSG = "The File does not Exist."
+_FILE_READ_OSERROR_MSG = "Failed to Read from File."
+_FILE_VALIDATION_ERROR_MSG = "Invalid Input File Contents."
+
+
 def validate_input_file(file_name: str) -> str | None:
     """ Read the Input File, Validate (non-blank) data, and return Input str.
  - Max FileSize is 32 KB.
@@ -24,19 +33,20 @@ def validate_input_file(file_name: str) -> str | None:
  SystemExit - If the File does not exist, or is empty, blank, over 32 KB, or if the read or validation operation failed.
     """
     file_path = Path(file_name)
-    if not file_path.exists():
-        exit("The File does not Exist.")
     try:
+        if not file_path.exists():
+            exit(_FILE_DOES_NOT_EXIST_MSG)
         if S_ISLNK((stat := file_path.lstat()).st_mode):
-            exit("Symlink file paths are disabled.")
-        elif stat.st_size > 32 * 1024**2: # 32 KB Limit
-            exit("Input File is Larger than the 32 KB Limit.")
+            exit(_FILE_SYMLINK_DISABLED_MSG)
+        if stat.st_size > _FILE_SIZE_LIMIT:
+            exit(_FILE_SIZE_LIMIT_ERROR_MSG)
         if (data := file_path.read_text()) is not None:
             if validate_name(data):
                 return data
-            exit("Invalid Input File Contents.")
+            exit(_FILE_VALIDATION_ERROR_MSG)
+        # Fallthrough: return None
     except OSError:
-        exit("Failed to Read from File.")
+        exit(_FILE_READ_OSERROR_MSG)
     return None
 
 
