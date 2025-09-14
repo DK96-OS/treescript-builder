@@ -20,9 +20,7 @@ def validate_name(argument) -> bool:
         return False
     elif len(argument := argument.strip()) < 1:
         return False
-    elif not argument.isascii():
-        return False
-    return True
+    return argument.isascii()
 
 
 def validate_data_label(data_label: str) -> bool:
