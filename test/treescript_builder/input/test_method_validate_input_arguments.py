@@ -26,25 +26,22 @@ def test_validate_input_arguments_input_file_does_not_exist_raises_error():
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: False)
         c.setattr(Path, 'lstat', lambda _: MockPathStat(file_validation._FILE_SIZE_LIMIT))
-        c.setattr(Path, 'read_text', lambda _: tree_input_data)
         with pytest.raises(SystemExit):
             validate_input_arguments(['tree_input'])
 
 
-def test_validate_input_arguments_input_file_is_empty_returns_input_no_data_dir():
+def test_validate_input_arguments_input_file_is_empty_raises_exit():
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
         c.setattr(Path, 'lstat', lambda _: MockPathStat(file_validation._FILE_SIZE_LIMIT))
         c.setattr(Path, 'read_text', lambda _: '')
-        result = validate_input_arguments(['tree_input'])
-        assert result is not None
-        assert result.data_dir is None
+        with pytest.raises(SystemExit, match=file_validation._FILE_VALIDATION_ERROR_MSG):
+            validate_input_arguments(['tree_input'])
 
 
 def test_validate_input_arguments_unknown_argument_raises_error():
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
         c.setattr(Path, 'lstat', lambda _: MockPathStat(file_validation._FILE_SIZE_LIMIT))
-        c.setattr(Path, 'read_text', lambda _: tree_input_data)
         with pytest.raises(SystemExit):
             validate_input_arguments(['tree_input', 'random-arg'])
