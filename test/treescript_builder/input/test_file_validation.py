@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 from test.treescript_builder.conftest import raise_exception
+from test.treescript_builder.input.conftest import generate_filenames
 from treescript_builder.input import validate_input_file, validate_directory
 
 
@@ -61,7 +62,7 @@ def test_validate_input_file_valueerror_raises_valueerror():
             validate_input_file("file_name")
 
 
-def test_validate_input_file_is_empty_returns_none_1():
+def test_validate_input_file_is_empty_returns_none():
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
         c.setattr(Path, 'read_text', lambda _: "")
@@ -69,18 +70,13 @@ def test_validate_input_file_is_empty_returns_none_1():
         assert result is None
 
 
-@pytest.mark.parametrize(
-    "test_input,expect",
-    [
-        ("file_name", "file_data"),
-        ("file_name12", "file_data"),
-    ]
-)
-def test_validate_input_file_is_empty_returns_none(test_input, expect):
+def test_validate_input_file_filenames_returns_data():
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
-        c.setattr(Path, 'read_text', lambda _: expect)
-        assert validate_input_file(test_input) == expect
+        for n, filename in enumerate(generate_filenames(), 1):
+            expected_file_contents: str = f"{filename}{n}"
+            c.setattr(Path, 'read_text', lambda _: expected_file_contents)
+            assert expected_file_contents == validate_input_file(filename)
 
 
 def test_validate_directory_does_not_exist_raises_exit():
