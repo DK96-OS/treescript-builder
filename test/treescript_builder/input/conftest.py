@@ -16,12 +16,12 @@ def generate_basenames():
     yield from NUMERICAL_CHARS
     yield from UPPER_CASE_LETTERS
     yield from LOWER_CASE_LETTERS
-    for u in UPPER_CASE_LETTERS:
-        for l in LOWER_CASE_LETTERS:
-            for n in NUMERICAL_CHARS:
-                yield f"{u}{l}{n}"
-                yield f"{u}{l}-{n}"
-                yield f"{u}{l}_{n}"
+    for uc_letter in UPPER_CASE_LETTERS:
+        for lc_letter in LOWER_CASE_LETTERS:
+            for num_char in NUMERICAL_CHARS:
+                yield f"{uc_letter}{lc_letter}{num_char}"
+                yield f"{uc_letter}{lc_letter}-{num_char}"
+                yield f"{uc_letter}{lc_letter}_{num_char}"
 
 
 def generate_filenames():
