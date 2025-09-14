@@ -1,6 +1,7 @@
 """ String Validation Methods.
  Author: DK96-OS 2024 - 2025
 """
+from itertools import permutations, repeat
 from typing import Literal
 
 
@@ -34,9 +35,12 @@ def validate_data_label(data_label: str) -> bool:
 **Returns:**
  bool - Whether the String is a valid Data Label.
     """
-    if '!' == data_label: # 33
-        return True
-    if len(data_label) > 99:
+    if len(data_label) < 3:
+        if '!' == data_label: # 33
+            return True
+        if data_label == '' or _has_invalid_data_label_chars(data_label):
+            return False
+    elif len(data_label) > 99:
         return False
     for ch in data_label:
         n = ord(ch)
@@ -44,9 +48,25 @@ def validate_data_label(data_label: str) -> bool:
         # 48 - 57
         # 65 - 90
         # 97 - 122
-        if not (n != 47 and 45 <= n <= 57 if n < 65 else n <= 90 or n <= 122 and n == 95 or 97 <= n):
+        if not (n != 47 and 45 <= n <= 57 if n < 65 else n <= 90 or n <= 122 and (n == 95 or 97 <= n)):
             return False
     return True
+
+
+def _has_invalid_data_label_chars(data_label: str) -> bool:
+    """ Checks for following data label characters, which are not allowed in small strings of length one or two.
+ - The dot strings are not allowed because they may escape the DataDirectory.
+ - The other special characters are simply disabled for DataLabels of Length 1 and 2.
+ 
+**Parameters:**
+ - data_label (str): The Data Label to check, which should be of length 2 or 1.
+
+**Returns:**
+ bool - True, if the given parameter is invalid, given the specific filtering criteria.
+    """
+    return data_label in (invalid_chars := ('.', '_', '-')) or \
+        data_label in (''.join(repeat(x, 2)) for x in invalid_chars) or \
+        data_label in permutations(invalid_chars, 2)
 
 
 def validate_dir_name(dir_name: str) -> str | None:
