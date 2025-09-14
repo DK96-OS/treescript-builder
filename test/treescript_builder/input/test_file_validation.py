@@ -6,14 +6,9 @@ from pathlib import Path
 import pytest
 
 from test.treescript_builder.conftest import raise_exception
-from test.treescript_builder.input.conftest import generate_filenames
+from test.treescript_builder.input.conftest import generate_filenames, MockPathStat
 from treescript_builder.input import validate_input_file, validate_directory, file_validation
 
-
-class MockPathStat:
-    def __init__(self, file_size: int = 400):
-        self.st_mode = 2
-        self.st_size = file_size
 
 
 @pytest.mark.parametrize(
