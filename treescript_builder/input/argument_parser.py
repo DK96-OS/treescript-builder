@@ -55,9 +55,7 @@ def _validate_arguments(
     if not validate_name(tree_file_name):
         exit("The Tree File argument was invalid.")
     # Validate Data Directory Name Syntax if Present
-    if data_dir_name is None:
-        pass
-    elif not validate_name(data_dir_name):
+    if data_dir_name is not None and not validate_name(data_dir_name):
         exit("The Data Directory argument was invalid.")
     return ArgumentData(
         tree_file_name,

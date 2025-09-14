@@ -38,15 +38,13 @@ def validate_directory(dir_path_str: str | None) -> Path | None:
 - dir_path_str (str, optional): The String representation of the Path to the Directory.
 
 **Returns:**
- Path? - The , or None if given input is None.
+ Path? - The Path to the DataDirectory,, or None if given input is None.
 
 **Raises:**
  SystemExit - If a given path does not exist.
     """
     if dir_path_str is None:
         return None
-    if not validate_name(dir_path_str):
-        exit("Data Directory is invalid")
     if (path := Path(dir_path_str)).exists():
         return path
     exit("The given Directory does not exist!")

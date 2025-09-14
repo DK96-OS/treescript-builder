@@ -9,6 +9,7 @@ def validate_name(argument) -> bool:
     """ Determine whether an argument is a non-empty string.
  - Does not count whitespace.
  - Uses the strip method to remove empty space.
+ - Applies the Python isprintable str method.
 
 **Parameters:**
  - argument (str): The given argument, which needs validation.
@@ -18,7 +19,9 @@ def validate_name(argument) -> bool:
     """
     if argument is None or not isinstance(argument, str):
         return False
-    elif len(argument.strip()) < 1:
+    elif len(argument := argument.strip()) < 1:
+        return False
+    elif not argument.isprintable():
         return False
     return True
 
@@ -28,6 +31,7 @@ def validate_data_label(data_label: str) -> bool:
  - Allows the approved non-alphanumeric chars.
  - The exclamation point (!) is a valid DataLabel, if by itself.
  - If a slash char is found in the string, it is invalid.
+ - Small strings (length <= 2) consisting of only punctuation are invalid.
 
 **Parameters:**
  - data_label (str): The String to check for validity.
@@ -38,35 +42,19 @@ def validate_data_label(data_label: str) -> bool:
     if len(data_label) < 3:
         if '!' == data_label: # 33
             return True
-        if data_label == '' or _has_invalid_data_label_chars(data_label):
+        if data_label == '' or _is_invalid_small_tree_string(data_label):
             return False
     elif len(data_label) > 99:
         return False
     for ch in data_label:
         n = ord(ch)
-        # ALLOWED: Special(-._) # 45, 46, 95
-        # 48 - 57
-        # 65 - 90
-        # 97 - 122
+        # ALLOWED: Special Punctuation (-._) Codes: 45, 46, 95
+        # Numbers: 48 - 57
+        # UpperCase: 65 - 90
+        # LowerCase: 97 - 122
         if not (n != 47 and 45 <= n <= 57 if n < 65 else n <= 90 or n <= 122 and (n == 95 or 97 <= n)):
             return False
     return True
-
-
-def _has_invalid_data_label_chars(data_label: str) -> bool:
-    """ Checks for following data label characters, which are not allowed in small strings of length one or two.
- - The dot strings are not allowed because they may escape the DataDirectory.
- - The other special characters are simply disabled for DataLabels of Length 1 and 2.
- 
-**Parameters:**
- - data_label (str): The Data Label to check, which should be of length 2 or 1.
-
-**Returns:**
- bool - True, if the given parameter is invalid, given the specific filtering criteria.
-    """
-    return data_label in (invalid_chars := ('.', '_', '-')) or \
-        data_label in (''.join(repeat(x, 2)) for x in invalid_chars) or \
-        data_label in permutations(invalid_chars, 2)
 
 
 def validate_dir_name(dir_name: str) -> str | None:
@@ -91,6 +79,22 @@ def validate_dir_name(dir_name: str) -> str | None:
         return name
     else: # Is a File
         return None
+
+
+def _is_invalid_small_tree_string(tree_string: str) -> bool:
+    """ Checks strings of length 1 or 2 for invalid combinations of chars that are generally valid in larger strings..
+ - The dot strings are not allowed because they may escape the DataDirectory.
+ - The permutations including line characters are not allowed, to help prevent mistakes (typos) and so on.
+ 
+**Parameters:**
+ - data_label (str): The Data Label to check, which should be of length 2 or 1.
+
+**Returns:**
+ bool - True, if the given parameter is invalid, given the specific filtering criteria.
+    """
+    return tree_string in (invalid_chars := ('.', '_', '-')) or \
+        tree_string in (''.join(repeat(x, 2)) for x in invalid_chars) or \
+        tree_string in permutations(invalid_chars, 2)
 
 
 def _validate_slash_char(dir_name: str) -> Literal['\\', '/'] | None:
