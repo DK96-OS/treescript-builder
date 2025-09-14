@@ -86,9 +86,23 @@ def test_validate_directory_does_not_exist_raises_exit():
             validate_directory("dir1")
 
 
+def test_validate_directory_exists_is_dir_returns_path():
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True)
+        c.setattr(Path, 'is_dir', lambda _: True)
+        assert Path('dir1') == validate_directory("dir1")
+
+
+def test_validate_directory_exists_not_dir_raises_exit():
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True)
+        c.setattr(Path, 'is_dir', lambda _: False)
+        with pytest.raises(SystemExit):
+            validate_directory("dir1")
+
+
 def test_validate_directory_exists_returns_data_dir():
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
-        data_dir = validate_directory("dir1")
-        assert data_dir is not None
-        assert data_dir == Path('dir1')
+        c.setattr(Path, 'is_dir', lambda _: True)
+        assert Path('dir1') == validate_directory("dir1")
