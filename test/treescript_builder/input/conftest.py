@@ -47,3 +47,9 @@ def generate_invalid_data_label_chars():
     for ir in invalid_ranges:
         for x in range(ir[0], ir[1] + 1):
             yield chr(x)
+
+
+class MockPathStat:
+    def __init__(self, file_size: int = 400):
+        self.st_mode = 2
+        self.st_size = file_size
