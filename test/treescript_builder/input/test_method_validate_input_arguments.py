@@ -1,4 +1,4 @@
-""" Testing Init Module
+""" Testing Input Package Method: validate_input_arguments.
 """
 from pathlib import Path
 
