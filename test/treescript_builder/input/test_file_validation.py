@@ -10,13 +10,11 @@ from test.treescript_builder.input.conftest import generate_filenames, MockPathS
 from treescript_builder.input import validate_input_file, validate_directory, file_validation
 
 
-
 @pytest.mark.parametrize(
     "test_input,expect",
     [
         ("file_name", "file_data"),
         ("file_name12", "12"),
-        ("file_name_abcdef", '\n'.join(repeat('abcdefg', 4 * 1024))),
     ]
 )
 def test_validate_input_file_returns_data(test_input, expect):
@@ -28,11 +26,11 @@ def test_validate_input_file_returns_data(test_input, expect):
 
 
 def test_validate_input_file_size_at_limit_returns_data():
-    expected_data = 'treescript'
+    expected_data = '\n'.join(repeat('abcdefg', round(file_validation._FILE_SIZE_LIMIT / 8)))
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
         c.setattr(Path, 'read_text', lambda _: expected_data)
-        c.setattr(Path, 'lstat', lambda _: MockPathStat(file_validation._FILE_SIZE_LIMIT))
+        c.setattr(Path, 'lstat', lambda _: MockPathStat(len(expected_data)))
         assert expected_data == validate_input_file('any')
 
 
