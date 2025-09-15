@@ -30,14 +30,17 @@ def parse_arguments(
     except SystemExit:
         exit("Unable to Parse Arguments.")
     return _validate_arguments(
-        parsed_args.tree_file_name,
-        parsed_args.data_dir,
-        parsed_args.reverse,
-        parsed_args.overwrite,
-        parsed_args.prepend,
-        parsed_args.cancel,
-        parsed_args.move,
-        parsed_args.verbosity
+        tree_file_name=parsed_args.tree_file_name,
+        data_dir_name=parsed_args.data_dir,
+        is_reverse=parsed_args.trim,
+        move=parsed_args.move_files,
+        text_append=parsed_args.append,
+        text_prepend=parsed_args.prepend,
+        control_validate=parsed_args.validate,
+        control_overwrite=parsed_args.overwrite,
+        control_exact_build=parsed_args.exact,
+        control_continue=parsed_args.__dict__['continue'],
+        verbosity=parsed_args.verbosity,
     )
 
 
@@ -47,15 +50,22 @@ _REQUIRED_ARGUMENT_NOT_FOUND_STR: str = "The TreeScript file path argument is re
 _INVALID_TREESCRIPT_FILE_STR: str = "TreeScript file argument was invalid."
 _INVALID_ARGUMENTS_COMBINATION_STR: str = "Invalid Option Combination.\n\nProvide only one of these options:\n--cancel, --move, --overwrite, --prepend.\n(Default: Append)"
 
+_INVALID_TEXT_MODE_ARGUMENTS_STR: str = 'Invalid TextMode argument(s).'
+_INVALID_CONTROL_MODE_ARGUMENTS_STR: str = 'Invalid Control argument(s).'
+_INVALID_DATA_DIR_ARGUMENT_STR: str = 'Invalid DataDirectory argument.'
+
 
 def _validate_arguments(
     tree_file_name: str | None,
     data_dir_name: str | None,
     is_reverse: bool | None,
-    overwrite: bool | None,
-    prepend: bool | None,
-    cancel: bool | None,
     move: bool | None,
+    text_append: bool | None,
+    text_prepend: bool | None,
+    control_validate: bool | None,
+    control_overwrite: bool | None,
+    control_exact_build: bool | None,
+    control_continue: bool | None,
     verbosity: int | None,
 ) -> ArgumentData:
     """ Checks the values received from the ArgParser.
@@ -82,33 +92,44 @@ def _validate_arguments(
         exit(_INVALID_TREESCRIPT_FILE_STR)
     # Typecheck Boolean Flags and Verbosity Counter, if the values are present.
     if is_reverse is not None and not isinstance(is_reverse, bool) or\
-            overwrite is not None and not isinstance(overwrite, bool) or\
-            prepend is not None and not isinstance(prepend, bool) or\
-            cancel is not None and not isinstance(cancel, bool) or\
             move is not None and not isinstance(move, bool) or\
+            text_append is not None and not isinstance(text_append, bool) or\
+            text_prepend is not None and not isinstance(text_prepend, bool) or\
+            control_validate is not None and not isinstance(control_validate, bool) or\
+            control_overwrite is not None and not isinstance(control_overwrite, bool) or\
+            control_exact_build is not None and not isinstance(control_exact_build, bool) or\
+            control_continue is not None and not isinstance(control_continue, bool) or\
             verbosity is not None and not isinstance(verbosity, int):
         raise TypeError
-    # Validate The Option Combination
-    mutually_exclusive_options: tuple[bool, ...] = (overwrite, prepend, cancel, move)
-    if (option_sum := sum(1 if X else 0 for X in mutually_exclusive_options)) > 1:
-        exit(_INVALID_ARGUMENTS_COMBINATION_STR) # Maximum of 1 option in this group
-    elif option_sum == 0:
-        pass # Default FileMode: Append
+    # Validate TextMode: Maximum of 1.
+    if text_prepend and text_append:
+        # Cannot do both Append and Prepend in one operation.
+        raise exit(_INVALID_TEXT_MODE_ARGUMENTS_STR)
+    # Validate ControlMode Arguments
+    if control_exact_build:
+        # Ensure Overwrite is present if exact_build is used.
+        if control_overwrite or text_append or text_prepend:
+            pass # Overwrite is present in args, or implied.
+        else: # exact_build without overwrite is an invalid combination.
+            raise exit(_INVALID_CONTROL_MODE_ARGUMENTS_STR)
     # Validate Verbosity level
     if (verbosity := min(verbosity, 2)) < 0:
         raise ValueError
     # Validate DataDirectory Name if Present
     if data_dir_name is not None and not validate_name(data_dir_name):
-        exit("The Data Directory argument was invalid.")
+        exit(_INVALID_DATA_DIR_ARGUMENT_STR)
     # Ready.
     return ArgumentData(
         input_file_path_str=tree_file_name,
         data_dir_path_str=data_dir_name,
-        is_reversed=is_reverse,
-        overwrite=overwrite,
-        prepend=prepend,
-        cancel=cancel,
-        move=move,
+        trim_tree=is_reverse,
+        move_files=move,
+        text_append=text_append,
+        text_prepend=text_prepend,
+        control_validate=control_validate,
+        control_overwrite=control_overwrite,
+        control_exact_build=control_exact_build,
+        control_continue=control_continue,
         verbosity=verbosity,
     )
 
@@ -127,7 +148,7 @@ def _define_arguments() -> ArgumentParser:
     parser.add_argument(
         'tree_file_name',
         type=str,
-        help='The File containing the Tree Node Structure'
+        help='The File containing TreeScript.'
     )
     # Optional arguments
     parser.add_argument(
@@ -136,46 +157,60 @@ def _define_arguments() -> ArgumentParser:
         help='The Data Directory'
     )
     parser.add_argument(
-        '-r',
-        '--reverse',
-        '--trim', # There is no '-t' shortcut! The '-r' is enough.
+        '-t',
+        '--trim',
         action='store_true',
         default=False,
-        help='The Trim operation is the reverse of the FileTree Build operation. Only -r shortcut is provided.'
-    )
-    parser.add_argument(
-        '-o',
-        '--overwrite',
-        action='store_true',
-        default=False,
-        help='Flag to overwrite files with data.'
-    )
-    parser.add_argument(
-        '-p',
-        '--prepend',
-        action='store_true',
-        default=False,
-        help='Flag to insert data at the start of files.'
-    )
-    parser.add_argument(
-        '-c',
-        '--cancel',
-        action='store_true',
-        default=False,
-        help='Flag to cancel any file operation where the target file already contains data.'
+        help='The Trim operation is the inverse of the FileTree Build operation.'
     )
     parser.add_argument(
         '-m',
-        '--move',
+        '--move_files',
         action='store_true',
         default=False,
-        help='Flag to move all files instead of copying.'
+        help='Flag to move files instead of copying.'
+    )
+    parser.add_argument(
+        '--append',
+        action='store_true',
+        default=False,
+        help='Flag to insert text data at the end of files.'
+    )
+    parser.add_argument(
+        '--prepend',
+        action='store_true',
+        default=False,
+        help='Flag to insert text data at the start of files.'
+    )
+    parser.add_argument(
+        '--validate',
+        action='store_true',
+        default=False,
+        help='ControlMode option that increases the scope of the validation phase, then runs the build in Cancel ControlMode. Raises Minimum Verbosity to 1.'
+    )
+    parser.add_argument(
+        '--overwrite',
+        action='store_true',
+        default=False,
+        help='ControlMode option to enable overwriting Target files if they already exist. Raises Minimum Verbosity to 1.'
+    )
+    parser.add_argument(
+        '--exact',
+        action='store_true',
+        default=False,
+        help='ControlMode option to override build safety feature, allowing overwriting Target files even if Data is empty.'
+    )
+    parser.add_argument(
+        '--continue',
+        action='store_true',
+        default=False,
+        help='ControlMode option to continue the build if an error occurs. Raises Minimum Verbosity to 1.'
     )
     parser.add_argument(
         '-v',
         '--verbosity',
         action='count',
         default=0,
-        help='Verbose Levels of CLI output.\n - L0: No Output.\n - L1: Failed FileTree Operations.\n - L2: All FileTree Operations.'
+        help='Levels of Verbosity in Command Line output. Note: Exits and Exceptions are unaffected by this argument.\n - L0: No Output.\n - L1: Failed FileTree Operations.\n - L2: All FileTree Operations.'
     )
     return parser
