@@ -1,6 +1,6 @@
 <sorting>
     <!-- Root Module will only match files in top project directory -->
-    <changelist name="Python Root Files" module="root">
+    <changelist name="Root Project Python Files" module="root">
         <files file_ext="py" />
     </changelist>
 
