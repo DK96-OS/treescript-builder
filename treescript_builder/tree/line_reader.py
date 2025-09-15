@@ -14,20 +14,23 @@ from typing import Generator
 from treescript_builder.data.tree_data import TreeData
 from treescript_builder.input.string_validation import validate_dir_name, validate_name
 
+
 SPACE_CHARS = (' ', ' ', ' ', ' ')
 
 
-def read_input_tree(input_tree_data: str) -> Generator[TreeData, None, None]:
+def read_input_tree(
+    input_tree_data: str,
+) -> Generator[TreeData, None, None]:
     """ Generate structured Tree Data from the Input Data String.
 
 **Parameters:**
- - input_data (InputData): The Input.
+ - input_tree_data (str): The Input string, which should contain TreeScript.
 
 **Yields:**
  TreeData - Produces TreeData from the Input Data.
 
 **Raises:**
- SystemExit - When any Line cannot be read successfully.
+ SystemExit - When any Line cannot be read as TreeScript successfully.
     """
     line_number = 1
     for is_newline, group in groupby(input_tree_data, lambda x: x in ["\n", "\r"]):
@@ -58,8 +61,7 @@ def _process_line(
  SystemExit - When Line cannot be read successfully.
     """
     # Calculate the Depth
-    depth = _calculate_depth(line)
-    if depth < 0:
+    if (depth := _calculate_depth(line)) < 0:
         exit(f"Invalid Space Count in Line: {line_number}")
     # Remove Space
     args = line.strip()
@@ -78,16 +80,14 @@ def _process_line(
     else:
         exit(f"Invalid Line: {line_number}")
     # Validate the Node Name and Type.
-    node_info = _validate_node_name(name)
-    if node_info is None:
+    if (node_info := _validate_node_name(name)) is None:
         exit(f'Invalid Node on Line: {line_number}')
-    (is_dir, name) = node_info
     return TreeData(
-        line_number,
-        depth,
-        is_dir,
-        name,
-        data_label
+        line_number=line_number,
+        depth=depth,
+        is_dir=node_info[0],
+        name=node_info[1],
+        data_label=data_label,
     )
 
 
@@ -106,14 +106,14 @@ def _validate_node_name(node_name: str) -> tuple[bool, str] | None:
     try:
         # Check if the line contains any slash characters
         if (dir_name := validate_dir_name(node_name)) is not None:
-            return (True, dir_name)
+            return True, dir_name
         # Fall-Through to File Node
     except ValueError:
         # An error in the dir name, such that it cannot be a file either
         return None
     # Is a File
     if validate_name(node_name):
-        return (False, node_name)
+        return False, node_name
     return None
 
 

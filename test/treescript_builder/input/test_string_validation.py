@@ -6,47 +6,49 @@ from treescript_builder.input.string_validation import validate_name, validate_d
 
 
 @pytest.mark.parametrize(
-    "test_input,expect",
+    "test_input",
     [
-        (None, False),
-        (4, False),
-        ({}, False),
-        ([], False),
-        ("", False),
-        (" ", False),
-        ("\n", False),
+        None,
+        4,
+        {},
+        [],
+        "",
+        " ",
+        "\n",
     ]
 )
-def test_validate_name_returns_false(test_input, expect):
-    assert validate_name(test_input) == expect
-
-
-@pytest.mark.parametrize(
-    "test_input,expect",
-    [
-        ("1", True),
-        ("a", True),
-        ("test", True),
-    ]
-)
-def test_validate_name_returns_true(test_input, expect):
-    assert validate_name(test_input) == expect
+def test_validate_name_returns_false(test_input):
+    assert not validate_name(test_input)
 
 
 @pytest.mark.parametrize(
     "test_input",
     [
-        (''),
-        (' '),
-        (','),
-        ('-'),
-        ('_'),
-        ('.'),
-        ('..'),
-        ('*'),
-        ('paths/are/invalid'),
-        ('paths\\are\\invalid'),
-        ('='),
+        "1",
+        "a",
+        "test",
+        "dir/file.txt",
+        "dir/dir2/file",
+    ]
+)
+def test_validate_name_returns_true(test_input):
+    assert validate_name(test_input)
+
+
+@pytest.mark.parametrize(
+    "test_input",
+    [
+        '',
+        ' ',
+        ',',
+        '-',
+        '_',
+        '.',
+        '..',
+        '*',
+        'paths/are/invalid',
+        'paths\\are\\invalid',
+        '=',
     ]
 )
 def test_validate_data_label_returns_false(test_input):
@@ -56,13 +58,13 @@ def test_validate_data_label_returns_false(test_input):
 @pytest.mark.parametrize(
     "test_input",
     [
-        ('1'),
-        ('Name'),
-        ('hello_file'),
-        ('hello-file'),
-        ('ClassName.java'),
-        ('FileNumber23'),
-        ('FileNumber23.txt'),
+        '1',
+        'Name',
+        'hello_file',
+        'hello-file',
+        'ClassName.java',
+        'FileNumber23',
+        'FileNumber23.txt',
     ]
 )
 def test_validate_data_label_returns_true(test_input):

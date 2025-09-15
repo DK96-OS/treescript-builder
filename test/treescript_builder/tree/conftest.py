@@ -1,9 +1,10 @@
-"""Tree Generators used by Test Suites.
+""" Tree Generators used by Test Suites.
 """
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import Generator
 
-
+from treescript_builder.data.instruction_data import InstructionData
 from treescript_builder.data.tree_data import TreeData
 from treescript_builder.input.line_reader import read_input_tree
 
@@ -13,6 +14,11 @@ def generate_simple_tree():
     """
     yield TreeData(1, 0, True, 'src', '')
     yield TreeData(2, 1, False, 'data.txt', '')
+
+
+def generate_simple_tree_instructions():
+    yield InstructionData(True, Path('src/'), None)
+    yield InstructionData(False, Path('src/data.txt'), None)
 
 
 def generate_gradle_module_tree():
@@ -27,6 +33,13 @@ def generate_gradle_module_tree():
     yield TreeData(7, 3, True, 'java', '')
 
 
+def generate_gradle_module_tree_instructions():
+    yield InstructionData(True, Path('module1/'), None)
+    yield InstructionData(False, Path('module1/build.gradle'), None)
+    yield InstructionData(True, Path('module1/src/main/java/'), None)
+    yield InstructionData(True, Path('module1/src/test/java/'), None)
+
+
 def generate_gradle_module_tree_with_data():
     """ Tree Template: a Gradle Module for Java, with the Gradle Build File.
     """
@@ -39,7 +52,14 @@ def generate_gradle_module_tree_with_data():
     yield TreeData(7, 3, True, 'java', '')
 
 
-def generate_python_package_tree():
+def generate_gradle_module_tree_instructions_with_data():
+    yield InstructionData(True, Path('module1/'), None)
+    yield InstructionData(False, Path('module1/build.gradle'), Path('.ftb/data/gbuild_module1'))
+    yield InstructionData(True, Path('module1/src/main/java/'), None)
+    yield InstructionData(True, Path('module1/src/test/java/'), None)
+
+
+def generate_python_package_tree() -> Generator[TreeData, None, None]:
     """ Tree Template: a Python Package
     """
     yield TreeData(1, 0, True, 'package_name', '')
@@ -47,7 +67,7 @@ def generate_python_package_tree():
     yield TreeData(3, 1, False, 'internal_module.py', '')
 
 
-def generate_complex_tree():
+def generate_complex_tree() -> Generator[TreeData, None, None]:
     """ Complex Tree: an example Gradle-Java project.
     """
     yield TreeData(1, 0, True, '.github', '')
@@ -68,6 +88,19 @@ def generate_complex_tree():
     yield TreeData(16, 0, False, 'README.md', '')
     yield TreeData(17, 0, False, 'build.gradle', '')
     yield TreeData(18, 0, False, 'settings.gradle', '')
+
+
+def generate_complex_tree_instructions():
+    yield InstructionData(True, Path('.github/workflows/'), None)
+    yield InstructionData(True, Path('module1/'), None)
+    yield InstructionData(False, Path('module1/build.gradle'), None)
+    yield InstructionData(True, Path('module1/src/main/java/com/example/'), None)
+    yield InstructionData(False, Path('module1/src/main/java/com/example/Main.java'), None)
+    yield InstructionData(True, Path('module1/src/test/java/com/example/'), None)
+    yield InstructionData(False, Path('module1/src/test/java/com/example/MainTest.java'), None)
+    yield InstructionData(False, Path('README.md'), None)
+    yield InstructionData(False, Path('build.gradle'), None)
+    yield InstructionData(False, Path('settings.gradle'), None)
 
 
 def generate_invalid_tree_line_1():
@@ -96,6 +129,7 @@ def sample_treedata_1() -> list[TreeData]:
         TreeData(2, 1, False, "empty.txt"),
         TreeData(3, 1, False, "sample.tree", "SampleTree.tree"),
     ]
+
 
 def sample_treedata_2() -> list[TreeData]:
     return [
