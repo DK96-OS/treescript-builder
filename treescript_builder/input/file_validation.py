@@ -17,6 +17,9 @@ _FILE_DOES_NOT_EXIST_MSG = "The File does not Exist."
 _FILE_READ_OSERROR_MSG = "Failed to Read from File."
 _FILE_VALIDATION_ERROR_MSG = "Invalid Input File Contents."
 
+_NOT_A_DIR_ERROR_MSG = "Not a Directory."
+_DIR_DOES_NOT_EXIST_MSG = "The Directory does not exist."
+
 
 def validate_input_file(file_name: str) -> str | None:
     """ Read the Input File, Validate (non-blank) data, and return Input str.
@@ -68,5 +71,5 @@ def validate_directory(dir_path_str: str | None) -> Path | None:
     if (path := Path(dir_path_str)).exists():
         if path.is_dir():
             return path
-        exit("Not a Directory.")
-    exit("The Directory does not exist.")
+        exit(_NOT_A_DIR_ERROR_MSG)
+    exit(_DIR_DOES_NOT_EXIST_MSG)
