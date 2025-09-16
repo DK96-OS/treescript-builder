@@ -8,6 +8,10 @@ from pathlib import Path
 import pytest
 
 
+TEST_INPUT_FILE = 'input.tree'
+TEST_DATA_DIR = 'data-dir'
+
+
 def get_basic_tree_script() -> str:
     return 'src/\n  data.txt'
 
@@ -34,6 +38,8 @@ def mock_basic_tree(tmp_path):
     src_dir = tmp_path / 'src'
     src_dir.mkdir()
     (src_dir / 'data.txt').touch()
+    (ts_path := tmp_path / TEST_INPUT_FILE).touch()
+    ts_path.write_text(get_basic_tree_script())
     return Path(str(tmp_path))
 
 
@@ -44,6 +50,8 @@ def mock_nested_tree(tmp_path):
     main_dir = src_dir / 'main'
     main_dir.mkdir()
     (main_dir / 'SourceClass.java').touch()
+    (ts_path := tmp_path / TEST_INPUT_FILE).touch()
+    ts_path.write_text(get_nested_tree_script())
     return Path(str(tmp_path))
 
 
@@ -53,6 +61,8 @@ def mock_empty_dirs_tree(tmp_path):
     my_dirs.mkdir()
     for n in range(1, 4): # Create Numbered Empty Dirs
         (my_dirs / f'dir{n}').mkdir()
+    (ts_path := tmp_path / TEST_INPUT_FILE).touch()
+    ts_path.write_text(get_empty_dirs_tree_script())
     return Path(str(tmp_path))
 
 
@@ -65,4 +75,6 @@ def mock_hidden_tree(tmp_path):
     workflows_dir.mkdir()
     (workflows_dir / 'ci.yml').touch()
     (tmp_path / '.hidden.txt').touch()
+    (ts_path := tmp_path / TEST_INPUT_FILE).touch()
+    ts_path.write_text(get_hidden_tree_script())
     return Path(str(tmp_path))
