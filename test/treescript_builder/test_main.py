@@ -4,6 +4,7 @@
 import builtins
 import os
 import sys
+from itertools import chain
 from typing import Callable
 
 import pytest
@@ -126,6 +127,16 @@ def test_main_default_empty_dirs_tree(monkeypatch, mock_empty_dirs_tree):
     assert 5 == len(list(mock_empty_dirs_tree.rglob('*')))
 
 
+def test_main_reverse_basic_tree(monkeypatch, mock_basic_tree):
+    sys.argv = ['treescript-builder', TEST_INPUT_FILE, '--reverse',]
+    os.chdir(mock_basic_tree)
+    collector, mock_print = setup_mock_print_collector()
+    monkeypatch.setattr(builtins, 'print', mock_print)
+    main()
+    collector.assert_expected('')
+    assert 1 == len(list(mock_basic_tree.rglob('*')))
+
+
 def test_main_trim_basic_tree(monkeypatch, mock_basic_tree):
     sys.argv = ['treescript-builder', TEST_INPUT_FILE, '--trim',]
     os.chdir(mock_basic_tree)
@@ -194,3 +205,30 @@ def test_main_data_empty_dirs_tree(monkeypatch, mock_empty_dirs_tree):
     monkeypatch.setattr(builtins, 'print', mock_print)
     main()
     collector.assert_expected('')
+
+
+@pytest.mark.parametrize(
+    'unrecognized_option_arg', [
+        f'-{chr(letter)}' for letter in chain(
+            range(65, 91),
+            range(97, 114),
+            # -r is valid
+            range(115, 123),
+        )
+    ]
+)
+def test_main_unrecognized_option_basic_tree(unrecognized_option_arg, mock_basic_tree):
+    sys.argv = ['treescript-builder', TEST_INPUT_FILE, unrecognized_option_arg ]
+    os.chdir(mock_basic_tree)
+    with pytest.raises(SystemExit, match="Unable to Parse Arguments."):
+        main()
+
+
+def test_main_reverse_option_basic_tree(monkeypatch, mock_basic_tree):
+    sys.argv = ['treescript-builder', TEST_INPUT_FILE, '-r' ]
+    os.chdir(mock_basic_tree)
+    collector, mock_print = setup_mock_print_collector()
+    monkeypatch.setattr(builtins, 'print', mock_print)
+    main()
+    collector.assert_expected('')
+    assert 1 == len(list(mock_basic_tree.rglob('*')))
