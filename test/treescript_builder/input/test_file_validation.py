@@ -107,7 +107,7 @@ def test_validate_input_file_filenames_returns_data():
 def test_validate_directory_does_not_exist_raises_exit():
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: False)
-        with pytest.raises(SystemExit):
+        with pytest.raises(SystemExit, match=file_validation._DIR_DOES_NOT_EXIST_MSG):
             validate_directory("dir1")
 
 
@@ -122,7 +122,7 @@ def test_validate_directory_exists_not_dir_raises_exit():
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
         c.setattr(Path, 'is_dir', lambda _: False)
-        with pytest.raises(SystemExit):
+        with pytest.raises(SystemExit, match=file_validation._NOT_A_DIR_ERROR_MSG):
             validate_directory("dir1")
 
 
