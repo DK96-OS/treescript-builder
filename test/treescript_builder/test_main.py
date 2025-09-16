@@ -71,8 +71,8 @@ def test_main_build_nested_tree(monkeypatch, tmp_path):
     item_list = sorted(map(lambda x: str(x), list(tmp_path.rglob('*'))))
     assert item_list[0].endswith(TEST_INPUT_FILE)
     assert item_list[1].endswith('src')
-    assert item_list[2].endswith('src/main')
-    assert item_list[3].endswith('src/main/SourceClass.java')
+    assert item_list[2].endswith('src/main') or item_list[2].endswith('src\\main')
+    assert item_list[3].endswith('src/main/SourceClass.java') or item_list[2].endswith('src\\main\\SourceClass.java')
     assert 4 == len(item_list)
 
 
@@ -89,9 +89,9 @@ def test_main_build_empty_dirs_tree(monkeypatch, tmp_path):
     collector.assert_expected('')
     item_list = sorted(map(lambda x: str(x), list(tmp_path.rglob('*'))))
     assert item_list[0].endswith('empty_dirs')
-    assert item_list[1].endswith('empty_dirs/dir1')
-    assert item_list[2].endswith('empty_dirs/dir2')
-    assert item_list[3].endswith('empty_dirs/dir3')
+    assert item_list[1].endswith('empty_dirs/dir1') or item_list[1].endswith('empty_dirs\\dir1')
+    assert item_list[2].endswith('empty_dirs/dir2') or item_list[2].endswith('empty_dirs\\dir2')
+    assert item_list[3].endswith('empty_dirs/dir3') or item_list[3].endswith('empty_dirs\\dir3')
     assert item_list[4].endswith(TEST_INPUT_FILE)
     assert 5 == len(item_list)
 
