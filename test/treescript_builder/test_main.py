@@ -53,7 +53,7 @@ def test_main_build_basic_tree(monkeypatch, tmp_path):
     item_list = sorted(map(lambda x: str(x), list(tmp_path.rglob('*'))))
     assert item_list[0].endswith(TEST_INPUT_FILE)
     assert item_list[1].endswith('src')
-    assert item_list[2].endswith('src/data.txt')
+    assert item_list[2].endswith('src/data.txt') or item_list[2].endswith('src\\data.txt')
     assert 3 == len(item_list)
 
 
@@ -72,7 +72,7 @@ def test_main_build_nested_tree(monkeypatch, tmp_path):
     assert item_list[0].endswith(TEST_INPUT_FILE)
     assert item_list[1].endswith('src')
     assert item_list[2].endswith('src/main') or item_list[2].endswith('src\\main')
-    assert item_list[3].endswith('src/main/SourceClass.java') or item_list[2].endswith('src\\main\\SourceClass.java')
+    assert item_list[3].endswith('src/main/SourceClass.java') or item_list[3].endswith('src\\main\\SourceClass.java')
     assert 4 == len(item_list)
 
 
