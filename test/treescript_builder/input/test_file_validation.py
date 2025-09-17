@@ -85,6 +85,15 @@ def test_validate_input_file_valueerror_raises_valueerror():
             validate_input_file("file_name")
 
 
+def test_validate_input_file_symlink_stat_raises_():
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True)
+        c.setattr(Path, 'lstat', lambda _: MockPathStat(file_validation._FILE_SIZE_LIMIT, is_symlink=True))
+        c.setattr(Path, 'read_text', lambda _: '')
+        with pytest.raises(SystemExit, match=file_validation._FILE_SYMLINK_DISABLED_MSG):
+            validate_input_file("file_name")
+
+
 def test_validate_input_file_is_empty_returns_none():
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
