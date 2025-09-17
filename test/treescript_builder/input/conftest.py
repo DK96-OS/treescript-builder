@@ -1,5 +1,6 @@
 """ Test Data Providers for Input Package Tests.
 """
+from stat import S_IFLNK, S_IFREG
 
 NUMERICAL_CHARS = [chr(i) for i in range(48,57 + 1)]      # 10
 UPPER_CASE_LETTERS = [chr(i) for i in range(65,90 + 1)]   # 26
@@ -50,6 +51,6 @@ def generate_invalid_data_label_chars():
 
 
 class MockPathStat:
-    def __init__(self, file_size: int = 400):
-        self.st_mode = 2
+    def __init__(self, file_size: int = 400, is_symlink: bool = False):
         self.st_size = file_size
+        self.st_mode = S_IFLNK if is_symlink else S_IFREG
