@@ -18,9 +18,9 @@ def validate_name(argument) -> bool:
     """
     if argument is None or not isinstance(argument, str):
         return False
-    elif len(argument := argument.strip()) < 1:
+    elif len(argument.strip()) < 1:
         return False
-    return argument.isascii()
+    return True
 
 
 def validate_data_label(data_label: str) -> bool:
