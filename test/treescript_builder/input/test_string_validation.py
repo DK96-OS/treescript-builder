@@ -2,6 +2,7 @@
 """
 import pytest
 
+from test.treescript_builder.input.conftest import generate_filenames, generate_invalid_data_label_chars
 from treescript_builder.input.string_validation import validate_name, validate_data_label, validate_dir_name
 
 
@@ -35,6 +36,11 @@ def test_validate_name_returns_true(test_input):
     assert validate_name(test_input)
 
 
+def test_validate_name_filenames_returns_true():
+    for filename in generate_filenames():
+        assert validate_name(filename)
+
+
 @pytest.mark.parametrize(
     "test_input",
     [
@@ -46,13 +52,30 @@ def test_validate_name_returns_true(test_input):
         '.',
         '..',
         '*',
-        'paths/are/invalid',
-        'paths\\are\\invalid',
+        '**',
         '=',
     ]
 )
 def test_validate_data_label_returns_false(test_input):
     assert not validate_data_label(test_input)
+
+
+@pytest.mark.parametrize(
+    "test_input", [
+        '..\\',
+        '../',
+        r'.\.',
+        'paths/are/invalid',
+        'paths\\are\\invalid',
+    ]
+)
+def test_validate_data_label_contains_slash_char_returns_false(test_input):
+    assert not validate_data_label(test_input)
+
+
+def test_validate_data_label_invalid_range_returns_false():
+    for invalid_char in generate_invalid_data_label_chars():
+        assert not validate_data_label(invalid_char)
 
 
 @pytest.mark.parametrize(
@@ -83,16 +106,20 @@ def test_validate_dir_name_backslash_dir_returns_str():
     assert validate_dir_name('dir\\') == 'dir'
 
 
-def test_validate_dir_name_empty_str_returns_none():
-    assert validate_dir_name('') is None
+@pytest.mark.parametrize(
+    "test_input",
+    [
+        '',
+        ' ',
+    ]
+)
+def test_validate_dir_name_special_inputs_returns_none(test_input):
+    assert validate_dir_name(test_input) is None
 
 
-def test_validate_dir_name_space_char_returns_none():
-    assert validate_dir_name(' ') is None
-
-
-def test_validate_dir_name_is_file_returns_none():
-    assert validate_dir_name('file') is None
+def test_validate_dir_name_filenames_returns_none():
+    for filename in generate_filenames():
+        assert validate_dir_name(filename) is None # Filenames are not Dir Names.
 
 
 def test_validate_dir_name_inconsistent_slash_chars_raises_error():
