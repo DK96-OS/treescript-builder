@@ -2,6 +2,7 @@
  - These Methods all raise SystemExit exceptions.
  Author: DK96-OS 2024 - 2025
 """
+from os.path import normpath, abspath
 from pathlib import Path
 from stat import S_ISLNK
 from sys import exit
@@ -53,7 +54,9 @@ def validate_input_file(file_name: str) -> str | None:
     return None
 
 
-def validate_directory(dir_path_str: str | None) -> Path | None:
+def validate_directory(
+    dir_path_str: str | None,
+) -> Path | None:
     """ Ensure that if the Directory argument is present, it Exists.
  - Allows None to pass through the method.
 
