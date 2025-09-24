@@ -10,7 +10,14 @@ def tree_operations(
     input_data: InputData,
     instructions: tuple[InstructionData, ...],
 ) -> tuple[bool, ...]:
-    """ 
+    """ Execute Tree Operations using InstructionData and InputData options.
+
+**Parameters:**
+ - input_data (InputData): The InputData options provided by the Input Package.
+ - instructions (tuple[InstructionData]): The set of Instructions obtained from Tree Validation.
+
+**Returns:**
+ tuple[bool, ...] - The collection of tree operation results from the corresponding InstructionData tuple.
     """
     return file_trimmer.trim(
         instructions, input_data.move_files, input_data.control_mode
@@ -23,7 +30,14 @@ def operate_with_results(
     input_data: InputData,
     instructions: tuple[InstructionData, ...],
 ) -> str:
-    """ 
+    """ Execute Tree Operations, and process the results into a printable string.
+
+**Parameters:**
+ - input_data (InputData): The InputData options provided by the Input Package.
+ - instructions (tuple[InstructionData]): The set of Instructions obtained from Tree Validation.
+
+**Returns:**
+ str - The Results, after processing into a printable string.
     """
     return results.process_build_results(
         instructions,
