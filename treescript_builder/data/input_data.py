@@ -13,12 +13,11 @@ class InputData:
 
 **Fields:**
  - tree_input (str): The Tree Input to the operation.
- - data_dir (Path?): An Optional Path to the DataDirectory. Default: None.
- - trim_tree (bool): Whether the operation is trim, instead of build. Default: False.
- - move_files (bool): Whether to Move files instead of copying. Default: False.
- - text_mode (TextModeEnum): The Mode of Text File Operation. Default: WRITE.
- - control_mode (ControlModeEnum): The control behaviour around validation, overwrite prevention, and error handling. Default: VALIDATE.
- - verbosity_level (int): The amount of information to print out. Zero prints nothing. Default: 0.
+ - data_dir (Path?): An Optional Path to the DataDirectory.
+ - trim_tree (bool): Whether the operation is trim, instead of build.
+ - move_files (bool): Whether to Move files instead of copying.
+ - control_mode (ControlModeEnum): The control behaviour around validation, overwrite prevention, and error handling.
+ - verbosity_level (int): The amount of information to print out. Zero prints nothing.
     """
     tree_input: str
     data_dir: Path | None
