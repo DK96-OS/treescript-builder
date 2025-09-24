@@ -1,4 +1,7 @@
 """ Test Fixtures and Data Providers.
+ - Selection of TreeScript: Basic, Nested, EmptyDirs.
+ - TempPath FileTree Fixtures.
+ Author: DK96-OS 2024 - 2025
 """
 import pytest
 
@@ -6,6 +9,9 @@ from pathlib import Path
 
 from treescript_builder.data.instruction_data import InstructionData
 
+
+TEST_INPUT_FILE = 'input.tree'
+TEST_DATA_DIR = 'data-dir'
 
 # Data Tree Target Paths
 DATA_TREE_TARGET_DIR_NAME = "target_dir"
@@ -82,18 +88,6 @@ def mock_data_tree_empty(temp_cwd):
     (data_dir := Path(temp_cwd.name) / DATA_TREE_DATA_DIR_NAME).mkdir()
     (data_dir / DATA_TREE_DATA_FILE_NAME).touch()
     return Path(str(temp_cwd.name))
-=======
- - Selection of TreeScript: Basic, Nested, EmptyDirs.
- - TempPath FileTree Fixtures.
- Author: DK96-OS 2024 - 2025
-"""
-from pathlib import Path
-
-import pytest
-
-
-TEST_INPUT_FILE = 'input.tree'
-TEST_DATA_DIR = 'data-dir'
 
 
 def get_basic_tree_script() -> str:

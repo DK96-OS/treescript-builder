@@ -6,7 +6,7 @@ from typing import Generator
 
 from treescript_builder.data.instruction_data import InstructionData
 from treescript_builder.data.tree_data import TreeData
-from treescript_builder.input.line_reader import read_input_tree
+from treescript_builder.tree.line_reader import read_input_tree
 
 
 def generate_simple_tree():
