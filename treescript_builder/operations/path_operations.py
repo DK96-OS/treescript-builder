@@ -60,7 +60,7 @@ def get_trywrite_operation(
 
 def get_overwrite_operation(
     move_file: bool,
-    exact: bool = False,
+    exact: bool,
 ) -> Callable[[Path, Path | None], bool]:
     """ Obtain the Operation that Overwrites the TargetFile with the SourceFile.
 - If not exact, the TargetFile won't be overwritten if SourceFile is empty.
@@ -74,6 +74,26 @@ def get_overwrite_operation(
  Callable[[Path, Path?], bool] - A Method that operates on Paths.
     """
     return (_ow_exact_move if exact else _ow_move) if move_file else (_ow_exact_copy if exact else _ow_copy)
+
+
+def get_write_operation(
+    move_file: bool,
+    overwrite: bool,
+    exact: bool,
+) -> Callable[[Path, Path | None], bool]:
+    """ Obtain a Path Operation Method for the Write Mode (not TextMerge Mode).
+ - Includes TryWrite and Overwrite Methods.
+ - See other similar methods for more details: get_trywrite_operation, get_overwrite_operation.
+
+**Parameters:**
+ - move_file (bool): Whether to move the file, instead of copy.
+ - overwrite (bool): Whether to overwrite files, instead of checking for contents before writing.
+ - exact (bool): Whether operation should follow exact builder instructions, or yield when SourceFile is empty.
+
+**Returns:**
+ Callable[[Path,Path?], bool] - The Path Operations method that matches the parameters.
+    """
+    return get_overwrite_operation(move_file, exact) if overwrite else get_trywrite_operation(move_file)
 
 
 def get_text_merge_method(

@@ -3,7 +3,7 @@
 """
 from treescript_builder.data.input_data import InputData
 from treescript_builder.data.instruction_data import InstructionData
-from treescript_builder.operations import file_builder, file_trimmer, results
+from treescript_builder.operations import file_operations, results
 
 
 def tree_operations(
@@ -19,10 +19,12 @@ def tree_operations(
 **Returns:**
  tuple[bool, ...] - The collection of tree operation results from the corresponding InstructionData tuple.
     """
-    return file_trimmer.trim(
-        instructions, input_data.move_files, input_data.control_mode
-    ) if input_data.trim_tree else file_builder.build(
-        instructions, input_data.move_files, input_data.control_mode
+    return (
+        file_operations.trim if input_data.trim_tree else file_operations.build
+    )(
+        instructions=instructions,
+        move_files=input_data.move_files,
+        control_mode=input_data.control_mode,
     )
 
 
@@ -39,7 +41,10 @@ def operate_with_results(
 **Returns:**
  str - The Results, after processing into a printable string.
     """
-    return results.process_build_results(
+    return (results.process_trim_results 
+        if input_data.trim_tree else
+        results.process_build_results
+    )(
         instructions,
         tree_operations(input_data, instructions),
         input_data.control_mode,
