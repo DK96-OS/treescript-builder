@@ -35,6 +35,8 @@ class DataDirectory:
 **Raises:**
  SystemExit - When the Data label is invalid, or the Data File does not exist.
         """
+        if node.data_label == '': # For compatibility with 0.1.x
+            return None
         if not validate_data_label(data_label := node.get_data_label()):
             exit(f'Invalid Data Label on line: {node.line_number}')
         # Search in the DataDir for this Data File.
@@ -54,6 +56,8 @@ class DataDirectory:
 **Raises:**
  SystemExit - When the Data label is invalid, or the Data File already exists.
         """
+        if node.data_label == '': # For compatibility with 0.1.x
+            return None
         if not validate_data_label(data_label := node.get_data_label()):
             exit(f'Invalid Data Label on line: {node.line_number}')
         # Check if the Data File already exists
