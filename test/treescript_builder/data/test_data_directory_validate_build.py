@@ -1,6 +1,7 @@
 """ Testing File Validation Methods.
 """
 from pathlib import Path
+from re import escape
 
 import pytest
 
@@ -67,7 +68,7 @@ def test_validate_build_isdir_returns_path_anyway():
 def test_validate_build_invalid_filename_raises_exit(test_input):
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True) # The DataDir Exists
-        with pytest.raises(SystemExit):
+        with pytest.raises(SystemExit, match=escape(f'Label ({test_input.data_label}) not found in DataDirectory on Line: {test_input.line_number}')):
             DataDirectory(ftb_path).validate_build(test_input)
 
 
@@ -92,6 +93,6 @@ def test_validate_build_invalid_filename_raises_exit(test_input):
 )
 def test_validate_build_invalid_datalabel_raises_exit(test_input):
     with pytest.MonkeyPatch().context() as c:
-        c.setattr(Path, 'exists', lambda _: True)
-        with pytest.raises(SystemExit):
+        c.setattr(Path, 'exists', lambda _: True) # DataDir exists.
+        with pytest.raises(SystemExit, match=f'Invalid Data Label on line: {test_input.line_number}'):
             DataDirectory(ftb_path).validate_build(test_input)
