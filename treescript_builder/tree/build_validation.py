@@ -1,4 +1,4 @@
-"""Tree Validation Methods for the Build Operation.
+""" Tree Validation Methods for the Build Operation.
  Author: DK96-OS 2024 - 2025
 """
 from pathlib import Path
@@ -37,7 +37,7 @@ def _validate_build_generator(
     for node in tree_data:
         # Error if any Nodes have Data Labels
         if node.data_label != '':
-            exit(f"Found Data Label on Line {node.line_number} with no Data Directory: {node.data_label}")
+            exit(f"No DataDirectory provided, but DataLabel found on Line: {node.line_number}")
         # Calculate Tree Depth Change
         if tree_state.validate_tree_data(node) == 0:
             if node.is_dir:
