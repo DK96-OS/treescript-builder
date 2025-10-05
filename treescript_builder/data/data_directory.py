@@ -21,7 +21,7 @@ class DataDirectory:
         if not isinstance(data_dir, Path) or not data_dir.exists():
             exit('The Data Directory must be a Path that Exists!')
         self._data_dir = data_dir
-        # todo: Create a map of used Data Labels
+        self._expected_trim_data: dict[str, bool] = {}
 
     def validate_build(self, node: TreeData) -> Path | None:
         """ Determine if the Data File supporting this Tree node is available.
@@ -60,9 +60,14 @@ class DataDirectory:
             return None
         if not validate_data_label(data_label := node.get_data_label()):
             exit(f'Invalid Data Label on line: {node.line_number}')
+        # Check if another TreeData Node has this DataLabel
+        if self._expected_trim_data.get(data_label):
+            exit(f"Duplicate DataLabels in Trim Operation on Line: {node.line_number}")
         # Check if the Data File already exists
         if self._search_label(data_label) is not None:
             exit(f'Data File already exists!\n({data_label}) on Line: {node.line_number}')
+        # Add the new DataLabel to the collection
+        self._expected_trim_data[data_label] = True
         # Return the DataLabel Path
         return self._data_dir / data_label
 
