@@ -61,7 +61,7 @@ class DataDirectory:
         if not validate_data_label(data_label := node.get_data_label()):
             exit(f'Invalid Data Label on line: {node.line_number}')
         # Check if another TreeData Node has this DataLabel
-        if self._expected_trim_data.__contains__(data_label):
+        if data_label in self._expected_trim_data:
             exit(f"Duplicate DataLabels in Trim Operation on Line: {node.line_number}")
         # Check if the Data File already exists
         if self._search_label(data_label) is not None:
