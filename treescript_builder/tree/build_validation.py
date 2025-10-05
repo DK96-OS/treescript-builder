@@ -23,11 +23,11 @@ def validate_build(
 **Returns:**
  tuple[InstructionData] - A generator that yields Instructions.
     """
-    if data_dir_path is None:
-        return tuple(iter(_validate_build_generator(tree_data)))
-    else:
-        data = DataDirectory(data_dir_path)
-        return tuple(iter(_validate_build_generator_data(tree_data, data)))
+    return tuple(
+        _validate_build_generator(tree_data)
+        if data_dir_path is None else
+        _validate_build_generator_data(tree_data, DataDirectory(data_dir_path))
+    )
 
 
 def _validate_build_generator(
