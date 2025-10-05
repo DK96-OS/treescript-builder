@@ -98,7 +98,7 @@ def test_validate_build_with_data_dir_gradle_module_tree_returns_data():
         c.setattr(Path, 'exists', lambda _: True)
         data_dir_path = Path('.ftb/data/')
         #
-        c.setattr(DataDirectory, 'validate_build', lambda _, x: data_dir_path / x.data_label)
+        c.setattr(DataDirectory, 'validate_build', lambda _, x: data_dir_path / x.get_data_label())
         assert validate_build(generate_gradle_module_tree_with_data(), data_dir_path) == (
             InstructionData(True, Path('module1/'), None),
             InstructionData(False, Path('module1/build.gradle'), Path('.ftb/data/gbuild_module1')),

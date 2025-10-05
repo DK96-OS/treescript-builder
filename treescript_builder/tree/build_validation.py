@@ -1,4 +1,4 @@
-"""Tree Validation Methods for the Build Operation.
+""" Tree Validation Methods for the Build Operation.
  Author: DK96-OS 2024 - 2025
 """
 from pathlib import Path
@@ -23,11 +23,11 @@ def validate_build(
 **Returns:**
  tuple[InstructionData] - A generator that yields Instructions.
     """
-    if data_dir_path is None:
-        return tuple(iter(_validate_build_generator(tree_data)))
-    else:
-        data = DataDirectory(data_dir_path)
-        return tuple(iter(_validate_build_generator_data(tree_data, data)))
+    return tuple(
+        _validate_build_generator(tree_data)
+        if data_dir_path is None else
+        _validate_build_generator_data(tree_data, DataDirectory(data_dir_path))
+    )
 
 
 def _validate_build_generator(
@@ -37,7 +37,7 @@ def _validate_build_generator(
     for node in tree_data:
         # Error if any Nodes have Data Labels
         if node.data_label != '':
-            exit(f"Found Data Label on Line {node.line_number} with no Data Directory: {node.data_label}")
+            exit(f"No DataDirectory provided, but DataLabel found on Line: {node.line_number}")
         # Calculate Tree Depth Change
         if tree_state.validate_tree_data(node) == 0:
             if node.is_dir:

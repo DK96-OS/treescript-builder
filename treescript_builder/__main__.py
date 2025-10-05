@@ -3,10 +3,12 @@
 
 def main():
     # Author: DK96-OS 2024 - 2025
-    from treescript_builder.input import validate_input_arguments
-    from treescript_builder.tree import build_tree
     from sys import argv
-    build_tree(validate_input_arguments(argv[1:]))
+    from treescript_builder.input import validate_input_arguments
+    input_data = validate_input_arguments(argv[1:])
+    #
+    from treescript_builder.tree import build_tree
+    build_tree(input_data)
 
 
 if __name__ == "__main__":

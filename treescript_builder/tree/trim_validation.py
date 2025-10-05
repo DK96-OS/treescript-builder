@@ -19,16 +19,15 @@ def validate_trim(
 **Parameters:**
  - tree_data (Generator[TreeData]): The Generator that provides TreeData.
  - data_dir_path (Path?): The optional Path to a Data Directory. Default: None.
- - verbose (bool): Whether to print DataDirectory information during validation.
 
 **Returns:**
- tuple[InstructionData] - A generator that yields Instructions.
+ tuple[InstructionData] - A tuple of InstructionData.
     """
-    if data_dir_path is None:
-        return tuple(iter(_validate_trim_generator(tree_data)))
-    else:
-        data = DataDirectory(data_dir_path)
-        return tuple(iter(_validate_trim_generator_data(tree_data, data)))
+    return tuple(
+        _validate_trim_generator(tree_data)
+        if data_dir_path is None else
+        _validate_trim_generator_data(tree_data, DataDirectory(data_dir_path))
+    )
 
 
 def _validate_trim_generator(
@@ -48,7 +47,6 @@ def _validate_trim_generator(
             # Pop Stack to required Depth
             for i in tree_state.process_stack(node.depth):
                 yield InstructionData(True, i)
-            # Dir or File
             if node.is_dir:
                 tree_state.add_to_stack(node.name)
             else:
@@ -80,7 +78,6 @@ def _validate_trim_generator_data(
             # Pop Stack to required Depth
             for i in tree_state.process_stack(node.depth):
                 yield InstructionData(True, i)
-            # Dir or File
             if node.is_dir:
                 tree_state.add_to_stack(node.name)
             else:
