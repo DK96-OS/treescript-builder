@@ -41,11 +41,10 @@ def test_validate_trim_datadir_does_not_exist_raises_exit():
     # Ignore IsDir
     test_input = TreeData(1, 0, True, "file_name", data_label)
     with pytest.MonkeyPatch().context() as c:
-        # The DataDir exists
-        c.setattr(Path, 'exists', lambda _: False)
+        c.setattr(Path, 'exists', lambda _: False) # The DataDir does not exist!
         with pytest.raises(SystemExit):
-            DataDirectory(ftb_path).validate_trim(test_input)
-
+            data_dir = DataDirectory(ftb_path)
+            data_dir.validate_trim(test_input)
 
 def test_validate_trim_isdir_does_not_exist_returns_path():
     # Ignore IsDir
