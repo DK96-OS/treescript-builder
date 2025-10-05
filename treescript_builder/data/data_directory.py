@@ -20,7 +20,7 @@ class DataDirectory:
     def __init__(self, data_dir: Path):
         if not isinstance(data_dir, Path) or not data_dir.exists():
             exit('The Data Directory must be a Path that Exists!')
-        self._data_dir = data_dir
+        self._data_dir: Path = data_dir
         self._expected_trim_data: list[str] = []
 
     def validate_build(self, node: TreeData) -> Path | None:

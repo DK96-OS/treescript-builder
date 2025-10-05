@@ -24,9 +24,9 @@ class TreeState:
     """
 
     def __init__(self):
-        self._stack = PathStack()
-        self._queue = []
-        self._prev_line_number = 0
+        self._stack: PathStack = PathStack()
+        self._queue: list = []
+        self._prev_line_number: int = 0
 
     def validate_tree_data(self, node: TreeData) -> int:
         """ Ensure that the next TreeData is valid, relative to current state.
