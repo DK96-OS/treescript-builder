@@ -72,3 +72,20 @@ def test_validate_trim_data_file_already_exists_raises_exit(test_input):
         c.setattr(Path, 'glob', yield_path)
         with pytest.raises(SystemExit):
             DataDirectory(ftb_path).validate_trim(test_input)
+
+
+def test_validate_trim_duplicate_data_labels_raises_exit():
+    test_input1 = TreeData(1, 0, False, "f1", data_label)
+    test_input2 = TreeData(2, 0, False, "f2", '')
+    test_input3 = TreeData(3, 0, False, "f3", data_label)
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True)
+        data_dir = DataDirectory(ftb_path)
+        # DataFile does not exist
+        c.setattr(Path, 'exists', lambda _: True)
+        # First 2 Inputs are valid
+        assert data_dir.validate_trim(test_input1) == ftb_path / data_label
+        assert data_dir.validate_trim(test_input2) is None # No DataLabel here. Compatible with 0.1.x
+        # The next is a duplicate DataLabel!
+        with pytest.raises(SystemExit,):
+            data_dir.validate_trim(test_input3)
