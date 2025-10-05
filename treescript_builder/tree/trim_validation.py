@@ -19,10 +19,9 @@ def validate_trim(
 **Parameters:**
  - tree_data (Generator[TreeData]): The Generator that provides TreeData.
  - data_dir_path (Path?): The optional Path to a Data Directory. Default: None.
- - verbose (bool): Whether to print DataDirectory information during validation.
 
 **Returns:**
- tuple[InstructionData] - A generator that yields Instructions.
+ tuple[InstructionData] - A tuple of InstructionData.
     """
     if data_dir_path is None:
         return tuple(iter(_validate_trim_generator(tree_data)))
