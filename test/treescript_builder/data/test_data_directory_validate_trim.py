@@ -23,46 +23,52 @@ def yield_path(_, x):
         (TreeData(1, 0, False, "file_name", 'data_label'), ftb_path / data_label),
     ]
 )
-def test_validate_trim_data_file_does_not_yet_exist_returns_data(test_input, expect):
+def test_validate_trim_data_file_does_not_yet_exist_returns_path(test_input, expect):
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
-        data_dir = DataDirectory(ftb_path)
-        #
         c.setattr(Path, 'glob', lambda _, x: iter([]))
-        assert data_dir.validate_trim(test_input) == expect
+        assert DataDirectory(ftb_path).validate_trim(test_input) == expect
 
 
 def test_validate_trim_empty_data_label_returns_none():
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
-        data_dir = DataDirectory(ftb_path)
-        #
         test_input = TreeData(1, 0, False, "file_name", '')
-        assert data_dir.validate_trim(test_input) is None
+        assert DataDirectory(ftb_path).validate_trim(test_input) is None
 
 
-def test_validate_trim_input_is_dir_returns_none():
+def test_validate_trim_datadir_does_not_exist_raises_exit():
+    # Ignore IsDir
+    test_input = TreeData(1, 0, True, "file_name", data_label)
     with pytest.MonkeyPatch().context() as c:
+        # The DataDir exists
+        c.setattr(Path, 'exists', lambda _: False)
+        with pytest.raises(SystemExit):
+            DataDirectory(ftb_path).validate_trim(test_input)
+
+
+def test_validate_trim_isdir_does_not_exist_returns_path():
+    # Ignore IsDir
+    test_input = TreeData(1, 0, True, "file_name", data_label)
+    with pytest.MonkeyPatch().context() as c:
+        # The DataDir exists
         c.setattr(Path, 'exists', lambda _: True)
         data_dir = DataDirectory(ftb_path)
-        #
-        c.setattr(Path, 'glob', yield_path)
-        test_input = TreeData(1, 0, True, "file_name", data_label)
-        assert data_dir.validate_trim(test_input) is None
+        # DataFile does not exist
+        c.setattr(Path, 'exists', lambda _: True)
+        assert data_dir.validate_trim(test_input) == ftb_path / data_label
 
 
 @pytest.mark.parametrize(
     "test_input",
     [
         (TreeData(1, 0, False, "file_name", data_label)),
-        (TreeData(1, 0, False, "file_name", data_label)),
+        (TreeData(2, 1, False, "f2", data_label)),
     ]
 )
 def test_validate_trim_data_file_already_exists_raises_exit(test_input):
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
-        data_dir = DataDirectory(ftb_path)
-        #
         c.setattr(Path, 'glob', yield_path)
         with pytest.raises(SystemExit):
-            data_dir.validate_trim(test_input)
+            DataDirectory(ftb_path).validate_trim(test_input)
