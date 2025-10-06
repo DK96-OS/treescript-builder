@@ -7,7 +7,7 @@ The Default Input Reader.
  - The Name String is the name of the line.
  Author: DK96-OS 2024 - 2025
 """
-from itertools import groupby
+from itertools import groupby, takewhile
 from sys import exit
 from typing import Generator
 
@@ -15,7 +15,7 @@ from treescript_builder.data.tree_data import TreeData
 from treescript_builder.input.string_validation import validate_dir_name, validate_name
 
 
-SPACE_CHARS = (' ', ' ', ' ', ' ')
+SPACE_CHARS = (' ', ' ')
 
 
 def read_input_tree(
@@ -60,7 +60,6 @@ def _process_line(
 **Raises:**
  SystemExit - When Line cannot be read successfully.
     """
-    # Calculate the Depth
     if (depth := _calculate_depth(line)) < 0:
         exit(f"Invalid Space Count in Line: {line_number}")
     # Remove Space
@@ -126,7 +125,6 @@ def _calculate_depth(line: str) -> int:
 **Returns:**
  int: The depth of the line in the tree structure, or -1 if space count is invalid.
     """
-    from itertools import takewhile
     space_count = len(list(
         takewhile(lambda c: c in SPACE_CHARS, line)
     ))

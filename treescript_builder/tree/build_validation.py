@@ -23,11 +23,11 @@ def validate_build(
 **Returns:**
  tuple[InstructionData] - A generator that yields Instructions.
     """
-    return tuple(iter(
-        _validate_build_generator(tree_data) if data_dir_path is None
-        else
+    return tuple(
+        _validate_build_generator(tree_data)
+        if data_dir_path is None else
         _validate_build_generator_data(tree_data, DataDirectory(data_dir_path))
-    ))
+    )
 
 
 def _validate_build_generator(
@@ -37,7 +37,7 @@ def _validate_build_generator(
     for node in tree_data:
         # Error if any Nodes have Data Labels
         if node.data_label != '':
-            exit(f"Found Data Label on Line {node.line_number} with no Data Directory: {node.data_label}")
+            exit(f"No DataDirectory provided, but DataLabel found on Line: {node.line_number}")
         # Calculate Tree Depth Change
         if tree_state.validate_tree_data(node) == 0:
             if node.is_dir:

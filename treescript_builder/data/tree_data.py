@@ -20,3 +20,13 @@ Fields:
     is_dir: bool
     name: str
     data_label: str = ''
+    
+    def get_data_label(self) -> str:
+        """ Obtain the string DataLabel for this TreeData Node.
+ - Contains the relation between these two Fields: name, data_label.
+ - If the DataLabel is the exclamation point !, then use the name as DataLabel.
+
+**Returns:**
+ str - The DataLabel string to use for this TreeData Node. It may not have been validated.
+        """
+        return self.name if self.data_label == '!' else self.data_label

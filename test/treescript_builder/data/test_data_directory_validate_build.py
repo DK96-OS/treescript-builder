@@ -1,6 +1,7 @@
-"""Testing File Validation Methods.
+""" Testing File Validation Methods.
 """
 from pathlib import Path
+from re import escape
 
 import pytest
 
@@ -25,27 +26,35 @@ def yield_path(_, x):
 )
 def test_validate_build_input_file_returns_data(test_input, expect):
     with pytest.MonkeyPatch().context() as c:
-        c.setattr(Path, 'exists', lambda _: True)
-        data_dir = DataDirectory(ftb_path)
-        #
+        c.setattr(Path, 'exists', lambda _: True) # The DataDir Exists
         c.setattr(Path, 'glob', yield_path)
-        assert data_dir.validate_build(test_input) == expect
+        assert DataDirectory(ftb_path).validate_build(test_input) == expect
 
 
-@pytest.mark.parametrize(
-    "test_input",
-    [
-        (TreeData(1, 0, False, "file_name", '')),
-        (TreeData(1, 0, True, "file_name", data_label)),
-    ]
-)
-def test_validate_build_invalid_tree_data_returns_none(test_input):
+def test_validate_build_empty_data_label_returns_none():
+    test_input = TreeData(1, 0, False, "file_name", '')
     with pytest.MonkeyPatch().context() as c:
-        c.setattr(Path, 'exists', lambda _: True)
-        data_dir = DataDirectory(ftb_path)
-        #
+        c.setattr(Path, 'exists', lambda _: True) # The DataDir Exists
         c.setattr(Path, 'glob', yield_path)
-        assert data_dir.validate_build(test_input) is None
+        assert DataDirectory(ftb_path).validate_build(test_input) is None
+
+
+def test_validate_build_isdir_plus_empty_data_label_returns_none():
+    # Ignores the IsDir attribute
+    test_input = TreeData(1, 0, True, "file_name", '')
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True) # The DataDir Exists
+        c.setattr(Path, 'glob', yield_path)
+        # Empty DataLabel should return None for compatibility with 0.1.x
+        assert DataDirectory(ftb_path).validate_build(test_input) is None
+
+
+def test_validate_build_isdir_returns_path_anyway():
+    test_input = TreeData(1, 0, True, "file_name", data_label)
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True) # The DataDir Exists
+        c.setattr(Path, 'glob', yield_path)
+        assert DataDirectory(ftb_path).validate_build(test_input) == ftb_path / data_label
 
 
 @pytest.mark.parametrize(
@@ -58,10 +67,9 @@ def test_validate_build_invalid_tree_data_returns_none(test_input):
 )
 def test_validate_build_invalid_filename_raises_exit(test_input):
     with pytest.MonkeyPatch().context() as c:
-        c.setattr(Path, 'exists', lambda _: True)
-        data_dir = DataDirectory(ftb_path)
-        with pytest.raises(SystemExit):
-            data_dir.validate_build(test_input)
+        c.setattr(Path, 'exists', lambda _: True) # The DataDir Exists
+        with pytest.raises(SystemExit, match=escape(f'Label ({test_input.data_label}) not found in DataDirectory on Line: {test_input.line_number}')):
+            DataDirectory(ftb_path).validate_build(test_input)
 
 
 @pytest.mark.parametrize(
@@ -71,6 +79,12 @@ def test_validate_build_invalid_filename_raises_exit(test_input):
         (TreeData(1, 0, False, "file", "/any")),
         (TreeData(1, 0, False, "file", "a/ny")),
         (TreeData(1, 0, False, "file", "/")),
+        (TreeData(1, 0, False, "file", ".")),
+        (TreeData(1, 0, False, "file", "..")),
+        (TreeData(1, 0, False, "file", "../")),
+        (TreeData(1, 0, False, "file", "/..")),
+        (TreeData(1, 0, False, "file", "/../")),
+        (TreeData(1, 0, False, "file", "~")),
         (TreeData(1, 0, False, "file", "@")),
         (TreeData(1, 0, False, "file", "%")),
         (TreeData(1, 0, False, "file", "$")),
@@ -79,7 +93,6 @@ def test_validate_build_invalid_filename_raises_exit(test_input):
 )
 def test_validate_build_invalid_datalabel_raises_exit(test_input):
     with pytest.MonkeyPatch().context() as c:
-        c.setattr(Path, 'exists', lambda _: True)
-        data_dir = DataDirectory(ftb_path)
-        with pytest.raises(SystemExit):
-            data_dir.validate_build(test_input)
+        c.setattr(Path, 'exists', lambda _: True) # DataDir exists.
+        with pytest.raises(SystemExit, match=f'Invalid Data Label on line: {test_input.line_number}'):
+            DataDirectory(ftb_path).validate_build(test_input)

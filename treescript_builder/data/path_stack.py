@@ -17,8 +17,7 @@ class PathStack:
     """
 
     def __init__(self):
-        # The Stack of Directories in the Path.
-        self._stack = []
+        self._stack: list[str] = []
 
     def push(self, directory_name: str):
         """ Push a directory to the Path Stack.
@@ -70,8 +69,7 @@ class PathStack:
 **Returns:**
  boolean - Whether the Reduction was successful, ie 0 or more Stack pops.
         """
-        current_depth = self.get_depth()
-        if current_depth < depth or depth < 0:
+        if depth < 0 or (current_depth := self.get_depth()) < depth:
             return False
         if current_depth == depth:
             return True
