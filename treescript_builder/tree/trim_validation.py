@@ -35,6 +35,9 @@ def _validate_trim_generator(
 ) -> Generator[InstructionData, None, None]:
     tree_state = TreeState()
     for node in tree_data:
+        # Error if any Nodes have Data Labels
+        if node.data_label != '':
+            exit(f"No DataDirectory provided, but DataLabel found on Line: {node.line_number}")
         # Calculate Tree Depth Change
         if tree_state.validate_tree_data(node) == 1:
             if node.is_dir:
