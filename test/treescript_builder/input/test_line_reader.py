@@ -106,6 +106,28 @@ def test_process_line_file_trailing_space_returns_data(test_input, expect):
 @pytest.mark.parametrize(
     "test_input,expect", 
     [
+        (create_depth(depth) + 'file #Comment String', TreeData(1, depth, False, 'file', ''))
+        for depth in range(0, 4)
+    ]
+)
+def test_process_line_file_trailing_comment_returns_data(test_input, expect):
+    assert _process_line(1, test_input) == expect
+
+
+@pytest.mark.parametrize(
+    "test_input,expect", 
+    [
+        (create_depth(depth) + 'file DataLabel #Comment String', TreeData(1, depth, False, 'file', 'DataLabel'))
+        for depth in range(0, 4)
+    ]
+)
+def test_process_line_file_with_data_label_trailing_comment_returns_data(test_input, expect):
+    assert _process_line(1, test_input) == expect
+
+
+@pytest.mark.parametrize(
+    "test_input,expect", 
+    [
         (create_depth(depth) + dir, TreeData(1, depth, True, dir.strip('/\\'), ''))
         for dir in dir_variants
         for depth in range(0, 4)

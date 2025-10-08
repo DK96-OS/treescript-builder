@@ -102,18 +102,19 @@ class TreeState:
 
     def process_stack(self, depth: int) -> Generator[Path, None, None]:
         """ Pop the Stack to the Desired Depth.
+        - Combines all Elements in the Stack into a Directory Path.
 
-        Parameters:
+        **Parameters:**
          - depth (int): The depth to process the stack to.
 
-        Returns:
-         Generator[Path] - Provides a Path for each entry in the Stack.
+        **Yields:**
+         Path - A Path for every Directory in the Stack, from top to bottom.
         """
         if depth < 0:
-            exit('Invalid Depth')
+            raise ValueError('Negative Depth.')
         while depth < self._stack.get_depth():
             if (entry := self._stack.pop()) is not None:
-                yield self._stack.create_path(entry)
+                yield self._stack.join_stack() / entry
 
     def reduce_depth(self, depth: int) -> bool:
         """ Pop an element from the stack.
@@ -135,7 +136,6 @@ class TreeState:
         Raises:
          SystemExit - When the Line Number does not increase.
         """
-        if self._prev_line_number < line_number:
-            self._prev_line_number = line_number
-        else:
+        if self._prev_line_number >= line_number:
             exit("Invalid Tree Data Sequence")
+        self._prev_line_number = line_number

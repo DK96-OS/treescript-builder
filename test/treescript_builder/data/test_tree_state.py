@@ -143,9 +143,9 @@ def test_process_queue_multi_item_queue_():
     assert instance.process_queue() == Path('./src/main/java/')
 
 
-def test_process_stack_negative_depth_raises_exit():
+def test_process_stack_negative_depth_raises_value_error():
     instance = TreeState()
-    with pytest.raises(SystemExit):
+    with pytest.raises(ValueError, match='Negative Depth.'):
         tuple(iter(instance.process_stack(-1)))
 
 

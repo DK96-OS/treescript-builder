@@ -11,7 +11,6 @@ class PathStack:
  - push(str)
  - pop: str?
  - join_stack: Path
- - create_path(str): Path
  - reduce_depth(int): bool
  - get_depth: int
     """
@@ -46,19 +45,6 @@ class PathStack:
         if len(self._stack) == 0:
             return Path("./")
         return Path(f"./{'/'.join(self._stack)}/")
-
-    def create_path(self, filename: str) -> Path:
-        """ Combines all Elements in the Stack and appends a File name.
-
-**Parameters:**
- - filename (str): The name of the file to append to the end of the path.
-
-**Returns:**
- Path - The Path to the file.
-        """
-        if type(filename) is not str or len(filename) < 1:
-            return self.join_stack()
-        return self.join_stack() / filename
 
     def reduce_depth(self, depth: int) -> bool:
         """ Reduce the Depth of the Path Stack.
