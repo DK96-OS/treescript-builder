@@ -145,7 +145,7 @@ def test_process_queue_multi_item_queue_():
 
 def test_process_stack_negative_depth_raises_exit():
     instance = TreeState()
-    with pytest.raises(SystemExit):
+    with pytest.raises(SystemExit, match='Negative Depth.'):
         tuple(iter(instance.process_stack(-1)))
 
 
