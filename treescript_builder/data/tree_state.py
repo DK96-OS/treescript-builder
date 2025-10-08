@@ -111,7 +111,7 @@ class TreeState:
          Path - A Path for every Directory in the Stack, from top to bottom.
         """
         if depth < 0:
-            raise ValueError('Invalid Depth Argument')
+            raise ValueError('Negative Depth.')
         while depth < self._stack.get_depth():
             if (entry := self._stack.pop()) is not None:
                 yield self._stack.join_stack() / entry
