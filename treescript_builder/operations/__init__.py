@@ -19,12 +19,11 @@ def tree_operations(
 **Returns:**
  tuple[bool, ...] - The collection of tree operation results from the corresponding InstructionData tuple.
     """
-    return (
-        file_operations.trim if input_data.trim_tree else file_operations.build
-    )(
+    return file_operations.build(
         instructions=instructions,
         move_files=input_data.move_files,
         control_mode=input_data.control_mode,
+        is_trim=input_data.trim_tree, 
     )
 
 
