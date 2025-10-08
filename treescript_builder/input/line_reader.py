@@ -27,7 +27,9 @@ _INVALID_DATALABEL_ERROR_MSG = "Invalid DataLabel in Line: "
 _MISSING_DATADIR_ERROR_MSG = "Missing DataDirectory for DataLabel in Line: "
 
 
-def read_input_tree(input_tree_data: str) -> Generator[TreeData, None, None]:
+def read_input_tree(
+    input_tree_data: str,
+) -> Generator[TreeData, None, None]:
     """ Generate structured Tree Data from the Input Data String.
 
 **Parameters:**
@@ -53,7 +55,6 @@ def read_input_tree(input_tree_data: str) -> Generator[TreeData, None, None]:
 def _process_line(
     line_number: int,
     line: str,
-    is_data_label_enabled: bool = False,
 ) -> TreeData:
     """ Processes a single line of the input tree structure.
  - Returns a tuple indicating the depth, type (file or directory), name of file or dir, and file data if available.
@@ -86,8 +87,6 @@ def _process_line(
     elif isinstance(args, list) and len(args) >= 2:
         name = args[0]  # First Word is the Tree Node Name.
         # Second Word is the DataLabel.
-        if not is_data_label_enabled:
-            exit(_MISSING_DATADIR_ERROR_MSG + str(line_number))
         data_label = _validate_data_label_argument(line_number, args[1])
         # Additional Words are ignored. Comments after the DataLabel are possible, for now. 
         # Alternate LineReader Modules are likely to expand in this area:
