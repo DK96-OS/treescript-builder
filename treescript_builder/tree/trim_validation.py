@@ -4,10 +4,10 @@
 from pathlib import Path
 from typing import Generator
 
-from treescript_builder.data.data_directory import DataDirectory
 from treescript_builder.data.instruction_data import InstructionData
 from treescript_builder.data.tree_data import TreeData
 from treescript_builder.data.tree_state import TreeState
+from treescript_builder.tree.data_directory import DataDirectory
 
 
 def validate_trim(
@@ -24,71 +24,34 @@ def validate_trim(
  tuple[InstructionData] - A tuple of InstructionData.
     """
     return tuple(
-        _validate_trim_generator(tree_data)
-        if data_dir_path is None else
-        _validate_trim_generator_data(tree_data, DataDirectory(data_dir_path))
+        _validate_trim_generator(
+            tree_data=tree_data,
+            data_dir=DataDirectory(data_dir_path) if data_dir_path is not None else None,
+        )
     )
 
 
 def _validate_trim_generator(
     tree_data: Generator[TreeData, None, None],
+    data_dir: DataDirectory | None,
 ) -> Generator[InstructionData, None, None]:
     tree_state = TreeState()
     for node in tree_data:
-        # Error if any Nodes have Data Labels
-        if node.data_label != '':
+        # Error if no dataDir and Node has no DataLabel. todo: Move this validation earlier in the program. (line_reader, maybe)
+        if data_dir is None and node.data_label != '':
             exit(f"No DataDirectory provided, but DataLabel found on Line: {node.line_number}")
         # Calculate Tree Depth Change
-        if tree_state.validate_tree_data(node) == 1:
-            if node.is_dir:
-                tree_state.add_to_stack(node.name)
-            else:
-                yield InstructionData(
-                    False, tree_state.get_current_path() / node.name
-                )
+        if tree_state.validate_tree_data(node) != 1: # Pop Stack to required Depth
+            for trim_dir_path in tree_state.process_stack(node.depth):
+                yield InstructionData(True, trim_dir_path)
+        if node.is_dir:
+            tree_state.add_to_stack(node.name)
         else:
-            # Pop Stack to required Depth
-            for i in tree_state.process_stack(node.depth):
-                yield InstructionData(True, i)
-            if node.is_dir:
-                tree_state.add_to_stack(node.name)
-            else:
-                yield InstructionData(
-                    False, tree_state.get_current_path() / node.name
-                )
+            yield InstructionData(
+                False,
+                tree_state.get_current_path() / node.name,
+                data_dir.validate_trim(node) if data_dir is not None else None
+            )
     # Finish Trim Sequence with Pop Stack
-    for i in tree_state.process_stack(0):
-        yield InstructionData(True, i)
-
-
-def _validate_trim_generator_data(
-    tree_data: Generator[TreeData, None, None],
-    data_dir: DataDirectory,
-) -> Generator[InstructionData, None, None]:
-    tree_state = TreeState()
-    for node in tree_data:
-        # Calculate Tree Depth Change
-        if tree_state.validate_tree_data(node) == 1:
-            if node.is_dir:
-                tree_state.add_to_stack(node.name)
-            else:
-                yield InstructionData(
-                    False,
-                    tree_state.get_current_path() / node.name,
-                    data_dir.validate_trim(node)
-                )
-        else:
-            # Pop Stack to required Depth
-            for i in tree_state.process_stack(node.depth):
-                yield InstructionData(True, i)
-            if node.is_dir:
-                tree_state.add_to_stack(node.name)
-            else:
-                yield InstructionData(
-                    False,
-                    tree_state.get_current_path() / node.name,
-                    data_dir.validate_trim(node)
-                )
-    # Finish Trim Sequence with Pop Stack
-    for i in tree_state.process_stack(0):
-        yield InstructionData(True, i)
+    for trim_dir_path in tree_state.process_stack(0):
+        yield InstructionData(True, trim_dir_path)
