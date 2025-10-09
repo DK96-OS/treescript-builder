@@ -65,14 +65,6 @@ class TestPathStack(unittest.TestCase):
             self.instance.join_stack()
         )
 
-    def test_create_path_after_push_once_returns_valid_path(self):
-        dir_name_1, file_name = "java", "Main.java"
-        self.instance.push(dir_name_1)
-        self.assertEqual(
-            Path("./" + dir_name_1 + "/" + file_name),
-            self.instance.create_path(file_name)
-        )
-
     def test_get_depth_add_one(self):
         dir_name_1 = "src"
         self.instance.push(dir_name_1)

@@ -1,10 +1,12 @@
-""" Line Reader.
+""" Line Reader Module for Processing TreeScript.
 
 The Default Input Reader.
  - Processes a single line at a time, and determines its key properties.
  - The Depth is the Integer number of directories between the current line and the root.
  - The Directory Boolean indicates whether the line represents a Directory.
  - The Name String is the name of the line.
+ - DataLabel is the first word after the Name, and it has a strict set of validation criteria.
+ - Comments are filtered out by starting a line with the # character. A comment after a file name is also filtered.
  Author: DK96-OS 2024 - 2025
 """
 from itertools import groupby, takewhile
@@ -12,10 +14,17 @@ from sys import exit
 from typing import Generator
 
 from treescript_builder.data.tree_data import TreeData
-from treescript_builder.input.string_validation import validate_dir_name, validate_name
+from treescript_builder.input.string_validation import validate_dir_name, validate_name, validate_data_label
 
 
 SPACE_CHARS = (' ', ' ')
+
+
+_INVALID_DEPTH_ERROR_MSG = "Invalid Depth (Number of Spaces) in Line: "
+
+_INVALID_NODE_NAME_ERROR_MSG = "Invalid Name in Line: "
+_INVALID_DATALABEL_ERROR_MSG = "Invalid DataLabel in Line: "
+_MISSING_DATADIR_ERROR_MSG = "Missing DataDirectory for DataLabel in Line: "
 
 
 def read_input_tree(
@@ -53,34 +62,39 @@ def _process_line(
 **Parameters:**
  - line_number (int): The line-number in the input tree structure, starting from 1.
  - line (str): A line from the input tree structure.
+ - is_data_label_enabled (bool): Whether DataLabels are enabled. If the DataDirectory argument is not provided, DataLabels are disabled.
 
 **Returns:**
- tuple: (int, bool, str, str) where int is the depth, bool is true when is Directory, and str is name, followed by str data.
+ TreeData - A Tree Node Data object.
 
 **Raises:**
  SystemExit - When Line cannot be read successfully.
     """
+    # Depth Depends on Leading Spaces
     if (depth := _calculate_depth(line)) < 0:
-        exit(f"Invalid Space Count in Line: {line_number}")
-    # Remove Space
+        exit(_INVALID_DEPTH_ERROR_MSG + str(line_number))
+    # Now remove Leading Spaces (and trailing)
     args = line.strip()
-    # Try to split line into multiple arguments
+    # Try to split line into multiple arguments, on one of the SpaceChars.
     for space_char in SPACE_CHARS:
         if space_char in args:
             args = args.split(space_char)
             break
     # Check whether line was split or not
     if isinstance(args, str):
-        name = args
-        data_label = ""
+        name = args  # Was Not Split
+        data_label = ''
     elif isinstance(args, list) and len(args) >= 2:
-        name = args[0]
-        data_label = args[1]
+        name = args[0]  # First Word is the Tree Node Name.
+        # Second Word is the DataLabel.
+        data_label = _validate_data_label_argument(line_number, args[1])
+        # Additional Words are ignored. Comments after the DataLabel are possible, for now. 
+        # Alternate LineReader Modules are likely to expand in this area:
     else:
         exit(f"Invalid Line: {line_number}")
-    # Validate the Node Name and Type.
+    # Validate the Node Name and Type (is_dir). The tuple is bool first, then node name.
     if (node_info := _validate_node_name(name)) is None:
-        exit(f'Invalid Node on Line: {line_number}')
+        exit(_INVALID_NODE_NAME_ERROR_MSG + str(line_number))
     return TreeData(
         line_number=line_number,
         depth=depth,
@@ -90,6 +104,17 @@ def _process_line(
     )
 
 
+def _validate_data_label_argument(
+    line_number: int,
+    argument: str,
+) -> str:
+    if argument.startswith('#'):  # Comment should be ignored.
+        return ''
+    elif not validate_data_label(argument):
+        exit(_INVALID_DATALABEL_ERROR_MSG + str(line_number))
+    return argument
+
+
 def _validate_node_name(node_name: str) -> tuple[bool, str] | None:
     """ Determine whether this Tree Node is a Directory, and validate the name.
 
@@ -97,7 +122,7 @@ def _validate_node_name(node_name: str) -> tuple[bool, str] | None:
  - node_name (str): The argument received for the node name.
 
 **Returns:**
- tuple[bool, str] - Node information, first whether it is a directory, then the valid name of the node.
+ tuple[bool, str]? - Node information, first whether it is a directory, then the valid name of the node.
     
 **Raises:**
  SystemExit - When the directory name is invalid.
@@ -123,7 +148,7 @@ def _calculate_depth(line: str) -> int:
  - line (str): A line from the tree command output.
 
 **Returns:**
- int: The depth of the line in the tree structure, or -1 if space count is invalid.
+ int - The depth of the line in the tree structure, or -1 if space count is invalid.
     """
     space_count = len(list(
         takewhile(lambda c: c in SPACE_CHARS, line)
