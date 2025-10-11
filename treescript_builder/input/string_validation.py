@@ -13,7 +13,6 @@ def validate_name(argument: str | None) -> bool:
 **Parameters:**
  - argument (str?): The given argument, which needs validation.
 
-
 **Returns:**
  bool - True if the argument qualifies as valid.
     """

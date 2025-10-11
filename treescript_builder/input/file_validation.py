@@ -2,13 +2,11 @@
  - These Methods all raise SystemExit exceptions.
  Author: DK96-OS 2024 - 2025
 """
-from os.path import normpath, abspath
 from pathlib import Path
 from stat import S_ISLNK
 from sys import exit
 
 from treescript_builder.input.string_validation import validate_name
-
 
 _FILE_SIZE_LIMIT = 32 * 1024 # 32 KB
 _FILE_SIZE_LIMIT_ERROR_MSG = "File larger than 32 KB Limit."

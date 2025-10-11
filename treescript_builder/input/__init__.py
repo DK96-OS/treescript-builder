@@ -1,16 +1,15 @@
-""" The Input Module.
+""" The Input Package Module.
  - Validate And Format Input Arguments.
- - Read Input Tree String from File.
+ - Read Input TreeScript String from File.
  Author: DK96-OS 2024 - 2025
 """
-from treescript_builder.data.file_mode_enum import FileModeEnum
-from treescript_builder.input.argument_data import ArgumentData
-from treescript_builder.input.argument_parser import parse_arguments
-from treescript_builder.input.file_validation import validate_input_file, validate_directory
-from treescript_builder.input.input_data import InputData
+from treescript_builder.data.input_data import InputData
+from treescript_builder.input import argument_parser, file_validation, option_validation
 
 
-def validate_input_arguments(arguments: list[str]) -> InputData:
+def validate_input_arguments(
+    arguments: list[str],
+) -> InputData:
     """ Parse and Validate the Arguments, then return as InputData.
 
 **Parameters:**
@@ -22,36 +21,14 @@ def validate_input_arguments(arguments: list[str]) -> InputData:
 **Raises:**
  SystemExit - If Arguments, Input File or Directory names invalid.
     """
-    arg_data = parse_arguments(arguments)
+    arg_data = argument_parser.parse_arguments(arguments)
     return InputData(
-        tree_input=validate_input_file(arg_data.input_file_path_str),
-        data_dir=validate_directory(arg_data.data_dir_path_str),
-        is_reversed=arg_data.is_reversed,
-        mode=_determine_file_mode_from_arg_data(arg_data),
-        verbosity_level=_determine_verbosity_level_from_arg_data(arg_data),
+        tree_input=file_validation.validate_input_file(arg_data.input_file_path_str),
+        data_dir=file_validation.validate_directory(arg_data.data_dir_path_str),
+        trim_tree=arg_data.trim_tree,
+        move_files=arg_data.move_files,
+        control_mode=(control_mode := option_validation.get_control_modes_from_arg_data(arg_data)),
+        verbosity_level=option_validation.get_verbosity_from_args(
+            control_mode, arg_data.verbosity,
+        ),
     )
-
-
-def _determine_file_mode_from_arg_data(
-    arg_data: ArgumentData,
-) -> FileModeEnum:
-    # Checks ArgumentData flags, and returns the highest priority FileMode.
-    # Note that any option flag provided will override the default: Append.
-    if arg_data.prepend:
-        return FileModeEnum.PREPEND
-    elif arg_data.cancel:
-        return FileModeEnum.CANCEL
-    elif arg_data.overwrite:
-        return FileModeEnum.OVERWRITE
-    elif arg_data.move:
-        return FileModeEnum.MOVE
-    return FileModeEnum.APPEND
-
-
-def _determine_verbosity_level_from_arg_data(
-    arg_data: ArgumentData,
-) -> int:
-    if (verbosity_level := arg_data.verbosity) > 0:
-        return verbosity_level
-    # FileMode.CANCEL has a Minimum Verbosity Level 1.
-    return 1 if arg_data.cancel else 0
