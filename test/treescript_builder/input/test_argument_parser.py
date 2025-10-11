@@ -2,9 +2,9 @@
 """
 import pytest
 
-from treescript_builder.data.input_data import TextModeEnum
+from test.conftest import TEST_DATA_DIR
 from treescript_builder.input.argument_parser import parse_arguments, _INVALID_ARGUMENTS_COMBINATION_STR, \
-    _INVALID_CONTROL_MODE_ARGUMENTS_STR
+    _INVALID_CONTROL_MODE_ARGUMENTS_STR, _INVALID_TEXT_MODE_ARGUMENTS_STR
 from treescript_builder.input.argument_data import ArgumentData
 
 
@@ -63,59 +63,56 @@ def test_parse_arguments_defaults_parametrized_text_modes_valid(
 
 
 @pytest.mark.parametrize(
-    'test_input, expected_text_mode, expect_trim, expect_move', [
+    "test_input, expect_prepend_mode, expect_trim, expect_move", [
         # Prepend TextMode
-        ([_TS_FILE_NAME, "--data_dir=data", '--prepend'], TextModeEnum.PREPEND, False, False),
-        ([_TS_FILE_NAME, "--data_dir=data", '--prepend', '--move'], TextModeEnum.PREPEND, False, True),
-        ([_TS_FILE_NAME, "--data_dir=data", '--prepend', '-m'], TextModeEnum.PREPEND, False, True),
+        ([_TS_FILE_NAME, f"--data_dir={TEST_DATA_DIR}", '--prepend'], True, False, False),
+        ([_TS_FILE_NAME, f"--data_dir={TEST_DATA_DIR}", '--prepend', '--move'], True, False, True),
+        ([_TS_FILE_NAME, f"--data_dir={TEST_DATA_DIR}", '--prepend', '-m'], True, False, True),
         # Append TextMode
-        ([_TS_FILE_NAME, "--data_dir=data", '--append'], TextModeEnum.APPEND, False, False),
-        ([_TS_FILE_NAME, "--data_dir=data", '--append', '--move'], TextModeEnum.APPEND, False, True),
-        ([_TS_FILE_NAME, "--data_dir=data", '--append', '-m'], TextModeEnum.APPEND, False, True),
+        ([_TS_FILE_NAME, f"--data_dir={TEST_DATA_DIR}", '--append'], False, False, False),
+        ([_TS_FILE_NAME, f"--data_dir={TEST_DATA_DIR}", '--append', '--move'], False, False, True),
+        ([_TS_FILE_NAME, f"--data_dir={TEST_DATA_DIR}", '--append', '-m'], False, False, True),
         # Prepend w/ Trim
-        ([_TS_FILE_NAME, "--data_dir=data", '-t', '--prepend'], TextModeEnum.PREPEND, True, False),
-        ([_TS_FILE_NAME, "--data_dir=data", '-mt', '--prepend'], TextModeEnum.PREPEND, True, True),
+        ([_TS_FILE_NAME, f"--data_dir={TEST_DATA_DIR}", '-t', '--prepend'], True, True, False),
+        ([_TS_FILE_NAME, f"--data_dir={TEST_DATA_DIR}", '-mt', '--prepend'], True, True, True),
         # Append w/ Trim
-        ([_TS_FILE_NAME, "--data_dir=data", '-t', '--append'], TextModeEnum.APPEND, True, False),
-        ([_TS_FILE_NAME, "--data_dir=data", '-mt', '--append'], TextModeEnum.APPEND, True, True),
+        ([_TS_FILE_NAME, f"--data_dir={TEST_DATA_DIR}", '-t', '--append'], False, True, False),
+        ([_TS_FILE_NAME, f"--data_dir={TEST_DATA_DIR}", '-mt', '--append'], False, True, True),
     ]
 )
 def test_parse_arguments_data_dir_parametrized_text_modes_valid(
-    test_input, expected_text_mode, expect_trim, expect_move,
+    test_input, expect_prepend_mode, expect_trim, expect_move,
 ):
     assert parse_arguments(test_input) == ArgumentData(
         input_file_path_str=_TS_FILE_NAME,
-        data_dir_path_str='data',
+        data_dir_path_str=TEST_DATA_DIR,
         trim_tree=expect_trim,
         move_files=expect_move,
-        text_append=expected_text_mode == TextModeEnum.APPEND,
-        text_prepend=expected_text_mode == TextModeEnum.PREPEND,
+        text_append=expect_prepend_mode == False,   # Must be either Append or Prepend!
+        text_prepend=expect_prepend_mode,
     )
 
 
 @pytest.mark.parametrize(
-    'test_input, expect_cancel, expect_continue, expect_validate, expect_overwrite, expect_exact', [
-        ([_TS_FILE_NAME], False, False, False, False, False),                           # Default Text Mode
-        ([_TS_FILE_NAME, '--cancel'], True, False, False, False, False),                # Cancel Control Mode
-        ([_TS_FILE_NAME, '--continue'], False, True, False, False, False),              # Continue Control Mode
-        ([_TS_FILE_NAME, '--validate'], False, False, True, False, False),              # Validate Control Mode
-        ([_TS_FILE_NAME, '--overwrite'], False, False, False, True, False),             # Overwrite Control Mode
-        ([_TS_FILE_NAME, '--overwrite', '--exact'], False, False, False, True, True),   # Overwrite Exact Control Mode
+    'test_input, expect_continue, expect_validate, expect_overwrite, expect_exact', [
+        ([_TS_FILE_NAME], False, False, False, False),                           # Default Text Mode
+        ([_TS_FILE_NAME, '--continue'], True, False, False, False),              # Continue Control Mode
+        ([_TS_FILE_NAME, '--validate'], False, True, False, False),              # Validate Control Mode
+        ([_TS_FILE_NAME, '--overwrite'], False, False, True, False),             # Overwrite Control Mode
+        ([_TS_FILE_NAME, '--overwrite', '--exact'], False, False, True, True),   # Overwrite Exact Control Mode
         # Shortcut arguments.
-        ([_TS_FILE_NAME, '--can'], True, False, False, False, False),                   # Cancel Control Mode
-        ([_TS_FILE_NAME, '--con'], False, True, False, False, False),                   # Continue Control Mode
-        ([_TS_FILE_NAME, '--val'], False, False, True, False, False),                   # Validate Control Mode
-        ([_TS_FILE_NAME, '--over'], False, False, False, True, False),                  # Overwrite Control Mode
-        ([_TS_FILE_NAME, '--over', '--ex'], False, False, False, True, True),           # Overwrite Control Mode
+        ([_TS_FILE_NAME, '--con'], True, False, False, False),                   # Continue Control Mode
+        ([_TS_FILE_NAME, '--val'], False, True, False, False),                   # Validate Control Mode
+        ([_TS_FILE_NAME, '--over'], False, False, True, False),                  # Overwrite Control Mode
+        ([_TS_FILE_NAME, '--over', '--ex'], False, False, True, True),           # Overwrite Control Mode
     ]
 )
 def test_parse_arguments_defaults_parametrized_control_modes_valid(
-    test_input, expect_cancel, expect_continue, expect_validate, expect_overwrite, expect_exact
+    test_input, expect_continue, expect_validate, expect_overwrite, expect_exact
 ):
     assert parse_arguments(test_input) == ArgumentData(
         input_file_path_str=_TS_FILE_NAME,
         data_dir_path_str=None,
-        control_cancel=expect_cancel,
         control_continue=expect_continue,
         control_validate=expect_validate,
         control_overwrite=expect_overwrite,
@@ -148,17 +145,17 @@ def test_parse_arguments_defaults_parametrized_modifiers_valid(
 
 @pytest.mark.parametrize(
     'test_input, expected_trim, expected_move', [
-        ([_TS_FILE_NAME, "--data_dir=data"], False, False),                     # Default
-        ([_TS_FILE_NAME, "--data_dir", "data"], False, False),                  # Default 2
+        ([_TS_FILE_NAME, f"--data_dir={TEST_DATA_DIR}"], False, False),                     # Default
+        ([_TS_FILE_NAME, "--data_dir", TEST_DATA_DIR], False, False),                  # Default 2
         #
-        ([_TS_FILE_NAME, "--data_dir=data", '--trim'], True, False),            # Trim Tree
-        ([_TS_FILE_NAME, "--data_dir=data", '-t'], True, False),                # Trim Tree Short
+        ([_TS_FILE_NAME, f"--data_dir={TEST_DATA_DIR}", '--trim'], True, False),            # Trim Tree
+        ([_TS_FILE_NAME, f"--data_dir={TEST_DATA_DIR}", '-t'], True, False),                # Trim Tree Short
         #
-        ([_TS_FILE_NAME, "--data_dir=data", '--move'], False, True),            # Move Files
-        ([_TS_FILE_NAME, "--data_dir=data", '-m'], False, True),                # Move Files Short
+        ([_TS_FILE_NAME, f"--data_dir={TEST_DATA_DIR}", '--move'], False, True),            # Move Files
+        ([_TS_FILE_NAME, f"--data_dir={TEST_DATA_DIR}", '-m'], False, True),                # Move Files Short
         #
-        ([_TS_FILE_NAME, "--data_dir=data", '--move', '--trim'], True, True),   # Move and Trim 
-        ([_TS_FILE_NAME, "--data_dir=data", '-mt'], True, True),                # Move and Trim Short
+        ([_TS_FILE_NAME, f"--data_dir={TEST_DATA_DIR}", '--move', '--trim'], True, True),   # Move and Trim 
+        ([_TS_FILE_NAME, f"--data_dir={TEST_DATA_DIR}", '-mt'], True, True),                # Move and Trim Short
     ]
 )
 def test_parse_arguments_data_dir_parametrized_modifiers_valid(
@@ -166,7 +163,7 @@ def test_parse_arguments_data_dir_parametrized_modifiers_valid(
 ):
     assert parse_arguments(test_input) == ArgumentData(
         input_file_path_str=_TS_FILE_NAME,
-        data_dir_path_str='data',
+        data_dir_path_str=TEST_DATA_DIR,
         trim_tree=expected_trim,
         move_files=expected_move,
     )
@@ -190,20 +187,34 @@ def test_parse_arguments_defaults_parametrized_verbosity_valid(
 
 @pytest.mark.parametrize(
     "test_input", [
-        ([_TS_FILE_NAME, "--cancel", "--overwrite"]),
-        ([_TS_FILE_NAME, '--continue', "--cancel"]),
-        ([_TS_FILE_NAME, '--continue', "--validate"]),
-        # w/ Trim
-        ([_TS_FILE_NAME, '-t', "--cancel", "--overwrite"]),
-        ([_TS_FILE_NAME, '-t', '--cancel', "--continue"]),
-        ([_TS_FILE_NAME, '-t', '--continue', "--validate"]),
-        # w/ DataDir
-        ([_TS_FILE_NAME, '-t', "--cancel", "--overwrite", "--data_dir", "data"]),
-        ([_TS_FILE_NAME, '-t', "--cancel", "--continue", "--data_dir", "data"]),
-        ([_TS_FILE_NAME, '-t', "--continue", "--validate", "--data_dir", "data"]),
+        ([_TS_FILE_NAME, '--append', "--prepend"]),
+    ]
+)
+def test_parse_arguments_invalid_text_mode_combinations_raises_exit(test_input):
+    from re import escape
+    with pytest.raises(SystemExit, match=escape(_INVALID_TEXT_MODE_ARGUMENTS_STR)):
+        parse_arguments(test_input)
+
+
+@pytest.mark.parametrize(
+    "test_input", [
+        ([_TS_FILE_NAME, '--continue', "--exact"]), # Exact without overwrite? Should exact imply overwrite?
+        ([_TS_FILE_NAME, "--validate", "--exact", '-t']), # W/ Trim and Validate arguments
     ]
 )
 def test_parse_arguments_invalid_control_mode_combinations_raises_exit(test_input):
     from re import escape
     with pytest.raises(SystemExit, match=escape(_INVALID_CONTROL_MODE_ARGUMENTS_STR)):
+        parse_arguments(test_input)
+
+
+@pytest.mark.parametrize(
+    "test_input", [
+        # The Cancel Argument is not included, because it is default. Continue argument.
+        ([_TS_FILE_NAME, '--continue', "--cancel"]), # Continue and Cancel are different behaviours.
+        ([_TS_FILE_NAME, "--cancel", "--overwrite"]),
+    ]
+)
+def test_parse_arguments_invalid_control_mode_combinations2_raises_exit(test_input):
+    with pytest.raises(SystemExit):
         parse_arguments(test_input)
