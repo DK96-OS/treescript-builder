@@ -1,14 +1,15 @@
 """ Test Fixtures & Data Providers.
 """
+import pytest
 
-
-SPACE_CHARS = (' ', ' ', ' ', ' ')
+from treescript_builder.data.control_modes import WriteControlModes, TextMergeControlModes
+from treescript_builder.tree.line_reader import SPACE_CHARS
 
 
 def raise_exception(name: str):
     """ Raise an Exception in a mock method.
  - Argument is lowercased before matching.
- 
+
 **Available Exceptions:**
  - OSError
  - IOError
@@ -16,6 +17,9 @@ def raise_exception(name: str):
  - ValueError
  - TypeError
  - BaseException
+
+**Parameters:**
+ - name (str): The name of the Exception to be raised during method execution.
     """
     match name.lower():
         case 'oserror':
@@ -42,3 +46,46 @@ def create_depth(depth: int) -> str:
  str - The String of a Space Char, of the required length.
 	"""
     return SPACE_CHARS[0] * depth * 2
+
+
+def get_control_mode_write(
+    overwrite: bool = False,
+    exact: bool = False,
+) -> WriteControlModes:
+    return WriteControlModes(
+        overwrite=overwrite,
+        exact_build=exact,
+    )
+
+
+def get_control_mode_text_merge(
+    is_prepend: bool
+) -> TextMergeControlModes:
+    return TextMergeControlModes(
+        prepend_merge=is_prepend,
+    )
+
+
+@pytest.fixture
+def control_trywrite():
+    return WriteControlModes()
+
+
+@pytest.fixture
+def control_overwrite():
+    return WriteControlModes(overwrite=True)
+
+
+@pytest.fixture
+def control_overwrite_exact():
+    return WriteControlModes(overwrite=True, exact_build=True)
+
+
+@pytest.fixture
+def control_text_append():
+    return TextMergeControlModes()
+
+
+@pytest.fixture
+def control_text_prepend():
+    return TextMergeControlModes(prepend_merge=True)
