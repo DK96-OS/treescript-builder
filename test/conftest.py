@@ -96,6 +96,10 @@ def get_basic_tree_script() -> str:
     return 'src/\n  data.txt'
 
 
+def get_basic_data_tree_script() -> str:
+    return 'src/\n  data.txt DataLabel'
+
+
 def get_nested_tree_script() -> str:
     return 'src/\n  main/\n    SourceClass.java'
 
@@ -135,6 +139,8 @@ def get_treescript_input_sample(
             return TS_INPUT_STR_1
         case 'basic':
             return get_basic_tree_script()
+        case 'basic+data':
+            return get_basic_data_tree_script()
         case 'nested':
             return get_nested_tree_script()
         case 'empty_dirs':
@@ -217,9 +223,11 @@ def input_data_with_dir(
     verbosity: int = 1,
 ) -> tuple[InputData, TemporaryDirectory]:
     tmp_dir = TemporaryDirectory()
+    data_dir_path = Path(tmp_dir.name) / data_dir
+    data_dir_path.mkdir(parents=True)
     return InputData(
         tree_input=get_treescript_input_sample(input_tree_name),
-        data_dir=Path(tmp_dir.name) / data_dir,
+        data_dir=data_dir_path,
         trim_tree=is_trim,
         move_files=move_files,
         control_mode=control_mode,

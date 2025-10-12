@@ -1,8 +1,11 @@
 """ Test Fixtures & Data Providers.
 """
+from pathlib import Path
+
 import pytest
 
 from treescript_builder.data.control_modes import WriteControlModes, TextMergeControlModes
+from treescript_builder.data.instruction_data import InstructionData
 from treescript_builder.tree.line_reader import SPACE_CHARS
 
 
@@ -95,3 +98,35 @@ def control_text_append():
 @pytest.fixture
 def control_text_prepend():
     return TextMergeControlModes(prepend_merge=True)
+
+
+def get_basic_data_tree_instructions() -> tuple[InstructionData, ...]:
+    return (
+        InstructionData(True, Path('src/'), None),
+        InstructionData(False, Path('src/data.txt'), Path('data/dir/DataLabel')),
+    )
+
+
+def get_nested_tree_instructions() -> tuple[InstructionData, ...]:
+    return (
+        InstructionData(True, Path('src/main/'), None),
+        InstructionData(False, Path('src/main/SourceClass.java'), None),
+    )
+
+
+def get_empty_dirs_tree_instructions() -> tuple[InstructionData, ...]:
+    return (
+        InstructionData(True, Path('empty_dirs/dir1/'), None),
+        InstructionData(True, Path('empty_dirs/dir2/'), None),
+        InstructionData(True, Path('empty_dirs/dir3/'), None),
+    )
+
+
+def get_hidden_tree_instructions() -> tuple[InstructionData, ...]:
+    return (
+        InstructionData(True, Path('.github/'), None),
+        InstructionData(False, Path('.github/dependabot.yml'), None),
+        InstructionData(True, Path('.github/workflows/'), None),
+        InstructionData(False, Path('.github/workflows/ci.yml'), None),
+        InstructionData(False, Path('.hidden.txt'), None),
+    )
