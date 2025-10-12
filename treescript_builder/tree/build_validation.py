@@ -26,7 +26,7 @@ def validate_build(
     return tuple(
         _validate_build_generator(
             tree_data=tree_data,
-            data_dir=DataDirectory(data_dir_path) if data_dir_path is None else None
+            data_dir=DataDirectory(data_dir_path) if data_dir_path is not None else None
         )
     )
 
