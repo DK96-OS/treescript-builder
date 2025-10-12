@@ -51,18 +51,24 @@ def create_depth(depth: int) -> str:
 def get_control_mode_write(
     overwrite: bool = False,
     exact: bool = False,
+    continue_build: bool = False,
+    validate: bool = False,
 ) -> WriteControlModes:
     return WriteControlModes(
         overwrite=overwrite,
         exact_build=exact,
+        continue_build=continue_build,
+        validate=validate,
     )
 
 
 def get_control_mode_text_merge(
-    is_prepend: bool
+    is_prepend: bool,
+    continue_build: bool = False,
 ) -> TextMergeControlModes:
     return TextMergeControlModes(
         prepend_merge=is_prepend,
+        continue_build=continue_build,
     )
 
 
