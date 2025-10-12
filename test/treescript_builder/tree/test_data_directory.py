@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from treescript_builder.data.data_directory import DataDirectory
+from treescript_builder.tree.data_directory import DataDirectory
 
 
 @pytest.mark.parametrize(
