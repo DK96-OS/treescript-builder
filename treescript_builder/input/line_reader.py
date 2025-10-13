@@ -9,7 +9,7 @@ The Default Input Reader.
  - Comments are filtered out by starting a line with the # character. A comment after a file name is also filtered.
  Author: DK96-OS 2024 - 2025
 """
-from itertools import groupby, takewhile
+from itertools import groupby
 from sys import exit
 from typing import Generator
 
