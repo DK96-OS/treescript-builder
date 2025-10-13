@@ -1,21 +1,23 @@
-"""Testing Build Validation Methods.
+""" Testing Build Validation Methods.
 """
-import pytest
 from pathlib import Path
+
+import pytest
 
 from test.treescript_builder.tree.conftest import generate_simple_tree, generate_gradle_module_tree, \
     generate_python_package_tree, generate_complex_tree, generate_gradle_module_tree_with_data, \
-    generate_invalid_tree_line_1, generate_invalid_tree_line_2
-from treescript_builder.data.data_directory import DataDirectory
+    generate_invalid_tree_line_1, generate_invalid_tree_line_2, generate_simple_tree_instructions, \
+    generate_gradle_module_tree_instructions, generate_complex_tree_instructions, \
+    generate_gradle_module_tree_instructions_with_data
 from treescript_builder.data.instruction_data import InstructionData
 from treescript_builder.data.tree_data import TreeData
 from treescript_builder.tree.build_validation import validate_build
+from treescript_builder.tree.data_directory import DataDirectory
 
 
 def test_validate_build_simple_tree_returns_data():
-    assert validate_build(generate_simple_tree(), None) == (
-        InstructionData(True, Path('src/'), None),
-        InstructionData(False, Path('src/data.txt'), None),
+    assert validate_build(generate_simple_tree(), None) == tuple(
+        generate_simple_tree_instructions()
     )
 
 
@@ -39,11 +41,8 @@ def test_validate_build_three_nested_dirs_returns_one_instruction():
 
 
 def test_validate_build_gradle_module_tree_returns_data():
-    assert validate_build(generate_gradle_module_tree(), None) == (
-        InstructionData(True, Path('module1/'), None),
-        InstructionData(False, Path('module1/build.gradle'), None),
-        InstructionData(True, Path('module1/src/main/java/'), None),
-        InstructionData(True, Path('module1/src/test/java/'), None),
+    assert validate_build(generate_gradle_module_tree(), None) == tuple(
+        generate_gradle_module_tree_instructions()
     )
 
 
@@ -83,10 +82,9 @@ def test_validate_build_invalid_tree_raises_exit(generator):
 
 
 def test_validate_build_with_data_dir_simple_tree_returns_data():
+    data_dir_path = Path('.ftb/data/')
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
-        data_dir_path = Path('.ftb/data/')
-        #
         assert validate_build(generate_simple_tree(), data_dir_path) == (
             InstructionData(True, Path('src/'), None),
             InstructionData(False, Path('src/data.txt'), None),
@@ -94,35 +92,21 @@ def test_validate_build_with_data_dir_simple_tree_returns_data():
 
 
 def test_validate_build_with_data_dir_gradle_module_tree_returns_data():
+    data_dir_path = Path('.ftb/data/')
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
-        data_dir_path = Path('.ftb/data/')
-        #
-        c.setattr(DataDirectory, 'validate_build', lambda _, x: data_dir_path / x.get_data_label())
-        assert validate_build(generate_gradle_module_tree_with_data(), data_dir_path) == (
-            InstructionData(True, Path('module1/'), None),
-            InstructionData(False, Path('module1/build.gradle'), Path('.ftb/data/gbuild_module1')),
-            InstructionData(True, Path('module1/src/main/java/'), None),
-            InstructionData(True, Path('module1/src/test/java/'), None),
+        c.setattr(DataDirectory, 'validate_build', lambda _, x: data_dir_path / x.data_label)
+        assert validate_build(generate_gradle_module_tree_with_data(), data_dir_path) == tuple(
+            generate_gradle_module_tree_instructions_with_data()
         )
 
 
 def test_validate_build_with_data_dir_complex_tree_returns_data():
+    data_dir_path = Path('.ftb/data/')
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
-        data_dir_path = Path('.ftb/data/')
-        #
-        assert validate_build(generate_complex_tree(), data_dir_path) == (
-            InstructionData(True, Path('.github/workflows/'), None),
-            InstructionData(True, Path('module1/'), None),
-            InstructionData(False, Path('module1/build.gradle'), None),
-            InstructionData(True, Path('module1/src/main/java/com/example/'), None),
-            InstructionData(False, Path('module1/src/main/java/com/example/Main.java'), None),
-            InstructionData(True, Path('module1/src/test/java/com/example/'), None),
-            InstructionData(False, Path('module1/src/test/java/com/example/MainTest.java'), None),
-            InstructionData(False, Path('README.md'), None),
-            InstructionData(False, Path('build.gradle'), None),
-            InstructionData(False, Path('settings.gradle'), None),
+        assert validate_build(generate_complex_tree(), data_dir_path) == tuple(
+            generate_complex_tree_instructions()
         )
 
 
@@ -134,8 +118,8 @@ def test_validate_build_with_data_dir_complex_tree_returns_data():
     ]
 )
 def test_validate_build_with_data_dir_invalid_tree_raises_exit(generator):
+    data_dir_path = Path('.ftb/data/')
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
-        data_dir_path = Path('.ftb/data/')
         with pytest.raises(SystemExit):
             validate_build(generator, data_dir_path)

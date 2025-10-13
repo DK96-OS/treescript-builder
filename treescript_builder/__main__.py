@@ -4,11 +4,16 @@
 def main():
     # Author: DK96-OS 2024 - 2025
     from sys import argv
+    # Process Arguments with Input Package
     from treescript_builder.input import validate_input_arguments
     input_data = validate_input_arguments(argv[1:])
-    #
-    from treescript_builder.tree import build_tree
-    build_tree(input_data)
+    # Validate TreeScript with Tree Package
+    from treescript_builder.tree import validate_tree
+    instructions = validate_tree(input_data)
+    # Build Tree with Operations Package
+    from treescript_builder.operations import tree_operations
+    if 0 < len(result := tree_operations(input_data, instructions)):
+        print(result) # Non-empty result str.
 
 
 if __name__ == "__main__":

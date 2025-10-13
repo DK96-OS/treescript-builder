@@ -33,13 +33,13 @@ def read_input_tree(
     """ Generate structured Tree Data from the Input Data String.
 
 **Parameters:**
- - input_data (InputData): The Input.
+ - input_tree_data (str): The Input string, which should contain TreeScript.
 
 **Yields:**
  TreeData - Produces TreeData from the Input Data.
 
 **Raises:**
- SystemExit - When any Line cannot be read successfully.
+ SystemExit - When any Line cannot be read as TreeScript successfully.
     """
     line_number = 1
     for is_newline, group in groupby(input_tree_data, lambda x: x in ["\n", "\r"]):

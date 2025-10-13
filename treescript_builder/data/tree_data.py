@@ -13,7 +13,7 @@ Fields:
  - depth (int): The depth in the tree, from the root. Starts at zero.
  - is_dir (bool): Whether this Node is a directory.
  - name (str): The Name of the Tree Node.
- - data_label (str): The Data Label, may be empty string.
+ - data_label (str): The Data Label, may be empty string. Default: Empty Str.
     """
     line_number: int
     depth: int

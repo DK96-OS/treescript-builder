@@ -8,7 +8,6 @@ from sys import exit
 
 from treescript_builder.input.string_validation import validate_name
 
-
 _FILE_SIZE_LIMIT = 32 * 1024 # 32 KB
 _FILE_SIZE_LIMIT_ERROR_MSG = "File larger than 32 KB Limit."
 _FILE_SYMLINK_DISABLED_MSG = "Symlink file paths are disabled."
@@ -53,7 +52,9 @@ def validate_input_file(file_name: str) -> str | None:
     return None
 
 
-def validate_directory(dir_path_str: str | None) -> Path | None:
+def validate_directory(
+    dir_path_str: str | None,
+) -> Path | None:
     """ Ensure that if the Directory argument is present, it Exists.
  - Allows None to pass through the method.
 
