@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from test.conftest import mock_basic_tree
-from treescript_builder.tree.path_operations import make_dir_exist, prepend_to_file, append_to_file, overwrite_file
+from treescript_builder.operations.path_operations import make_dir_exist, get_text_merge_method, get_write_operation
 
 
 def mock_mkdir_raise_oserror(*args, **kwargs):
@@ -57,7 +57,7 @@ def test_make_dir_exist_nested_java_dir_raises_oserror_returns_false(mock_basic_
 def test_append_to_file(mock_data_tree):
     target_path = mock_data_tree / "target_dir" / "target_file.txt"
     source_path = mock_data_tree / "data_dir" / "data_file.txt"
-    assert append_to_file(target_path, source_path)
+    assert get_text_merge_method(move_file=False, prepend=False)(target_path, source_path)
     #
     result = target_path.read_text()
     assert result == """Target File Contents.Data File Contents."""
@@ -65,7 +65,7 @@ def test_append_to_file(mock_data_tree):
 
 def test_append_to_file_none_source_path_returns_true(mock_data_tree):
     target_path = mock_data_tree / "target_dir" / "target_file.txt"
-    assert append_to_file(target_path, None)
+    assert get_text_merge_method(move_file=False, prepend=False)(target_path, None)
     #
     result = target_path.read_text()
     assert result == """Target File Contents."""
@@ -78,7 +78,7 @@ def test_append_to_file_empty_target_file(mock_data_tree):
     target_path.unlink()
     target_path.touch()
     #
-    assert append_to_file(target_path, source_path)
+    assert get_text_merge_method(move_file=False, prepend=False)(target_path, source_path)
     #
     result = target_path.read_text()
     assert result == """Data File Contents."""
@@ -87,7 +87,7 @@ def test_append_to_file_empty_target_file(mock_data_tree):
 def test_prepend_to_file(mock_data_tree):
     target_path = mock_data_tree / "target_dir" / "target_file.txt"
     source_path = mock_data_tree / "data_dir" / "data_file.txt"
-    assert prepend_to_file(target_path, source_path)
+    assert get_text_merge_method(move_file=False, prepend=True)(target_path, source_path)
     #
     result = target_path.read_text()
     assert result == """Data File Contents.Target File Contents."""
@@ -95,7 +95,7 @@ def test_prepend_to_file(mock_data_tree):
 
 def test_prepend_to_file_none_source_path_return_true(mock_data_tree):
     target_path = mock_data_tree / "target_dir" / "target_file.txt"
-    assert prepend_to_file(target_path, None)
+    assert get_text_merge_method(move_file=False, prepend=True)(target_path, None)
     #
     result = target_path.read_text()
     assert result == """Target File Contents."""
@@ -108,7 +108,7 @@ def test_prepend_to_file_empty_target_file_returns_true(mock_data_tree):
     target_path.unlink()
     target_path.touch()
     #
-    assert prepend_to_file(target_path, source_path)
+    assert get_text_merge_method(move_file=False, prepend=True)(target_path, source_path)
     #
     result = target_path.read_text()
     assert result == """Data File Contents."""
@@ -117,7 +117,7 @@ def test_prepend_to_file_empty_target_file_returns_true(mock_data_tree):
 def test_overwrite_file(mock_data_tree):
     target_path = mock_data_tree / "target_dir" / "target_file.txt"
     source_path = mock_data_tree / "data_dir" / "data_file.txt"
-    assert overwrite_file(target_path, source_path)
+    assert get_write_operation(move_file=False, overwrite=True, exact=False)(target_path, source_path)
     #
     result = target_path.read_text()
     assert result == """Data File Contents."""
@@ -126,7 +126,7 @@ def test_overwrite_file(mock_data_tree):
 def test_overwrite_file_empty_source_(mock_data_tree):
     target_path = mock_data_tree / "target_dir" / "target_file.txt"
     source_path = mock_data_tree / "data_dir" / "data_file.txt"
-    assert overwrite_file(target_path, source_path)
+    assert get_write_operation(move_file=False, overwrite=True, exact=False)(target_path, source_path)
     #
     result = target_path.read_text()
     assert result == """Data File Contents."""
@@ -139,7 +139,7 @@ def test_overwrite_file_empty_target_file_returns_true(mock_data_tree):
     target_path.unlink()
     target_path.touch()
     #
-    assert overwrite_file(target_path, source_path)
+    assert get_write_operation(move_file=False, overwrite=True, exact=False)(target_path, source_path)
     #
     result = target_path.read_text()
     assert result == """Data File Contents."""
