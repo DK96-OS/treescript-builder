@@ -4,7 +4,7 @@ import pytest
 
 from test.treescript_builder.conftest import create_depth
 from test.treescript_builder.tree.conftest import sample_treescript_1, sample_treedata_1, sample_treedata_2, \
-    sample_treescript_2
+    sample_treescript_2, sample_treescript_2_crlf
 from treescript_builder.data.tree_data import TreeData
 from treescript_builder.input.line_reader import _calculate_depth, _process_line, _validate_node_name, read_input_tree
 
@@ -333,5 +333,11 @@ def test_read_input_tree_sample_treescript_1_returns_tree_data():
 
 def test_read_input_tree_sample_treescript_2_returns_tree_data():
     test_input = sample_treescript_2()
+    result = list(read_input_tree(test_input))
+    assert result == sample_treedata_2()
+
+
+def test_read_input_tree_sample_treescript_2_crlf_returns_tree_data():
+    test_input = sample_treescript_2_crlf()
     result = list(read_input_tree(test_input))
     assert result == sample_treedata_2()
