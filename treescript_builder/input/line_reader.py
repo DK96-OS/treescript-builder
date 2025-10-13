@@ -42,7 +42,7 @@ def read_input_tree(
  SystemExit - When any Line cannot be read successfully.
     """
     line_number = 1
-    for is_newline, group in groupby(input_tree_data, lambda x: x in ["\n", "\r"]):
+    for is_newline, group in groupby(input_tree_data, lambda x: x == "\n"):
         if is_newline:
             line_number += sum(1 for _ in group) # Line number increase by size of group
         else:
@@ -150,9 +150,11 @@ def _calculate_depth(line: str) -> int:
 **Returns:**
  int - The depth of the line in the tree structure, or -1 if space count is invalid.
     """
-    space_count = len(list(
-        takewhile(lambda c: c in SPACE_CHARS, line)
-    ))
+    space_count = 0
+    for char in line:
+        if char not in SPACE_CHARS:
+            break
+        space_count += 1
     # Bit Shift Shuffle Equivalence Validation (space_count is divisible by 2)
     if (depth := space_count >> 1) << 1 == space_count:
         return depth
