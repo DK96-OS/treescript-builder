@@ -9,7 +9,6 @@ The Default Input Reader.
  - Comments are filtered out by starting a line with the # character. A comment after a file name is also filtered.
  Author: DK96-OS 2024 - 2025
 """
-from itertools import groupby, takewhile
 from sys import exit
 from typing import Generator
 
@@ -41,15 +40,10 @@ def read_input_tree(
 **Raises:**
  SystemExit - When any Line cannot be read successfully.
     """
-    line_number = 1
-    for is_newline, group in groupby(input_tree_data, lambda x: x in ["\n", "\r"]):
-        if is_newline:
-            line_number += sum(1 for _ in group) # Line number increase by size of group
-        else:
-            line = ''.join(group)
-            if len(lstr := line.lstrip()) == 0 or lstr.startswith('#'):
-                continue
-            yield _process_line(line_number, line)
+    for line_number, line in enumerate(input_tree_data.splitlines(), start=1):
+        if len(lstr := line.lstrip()) == 0 or lstr.startswith('#'):
+            continue
+        yield _process_line(line_number, line)
 
 
 def _process_line(
@@ -150,9 +144,11 @@ def _calculate_depth(line: str) -> int:
 **Returns:**
  int - The depth of the line in the tree structure, or -1 if space count is invalid.
     """
-    space_count = len(list(
-        takewhile(lambda c: c in SPACE_CHARS, line)
-    ))
+    space_count = 0
+    for char in line:
+        if char not in SPACE_CHARS:
+            break
+        space_count += 1
     # Bit Shift Shuffle Equivalence Validation (space_count is divisible by 2)
     if (depth := space_count >> 1) << 1 == space_count:
         return depth
