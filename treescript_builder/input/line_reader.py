@@ -42,9 +42,9 @@ def read_input_tree(
  SystemExit - When any Line cannot be read successfully.
     """
     for line_number, line in enumerate(input_tree_data.splitlines(), start=1):
-    if len(lstr := line.lstrip()) == 0 or lstr.startswith('#'):
-        continue
-    yield _process_line(line_number, line)
+        if len(lstr := line.lstrip()) == 0 or lstr.startswith('#'):
+            continue
+        yield _process_line(line_number, line)
 
 
 def _process_line(
