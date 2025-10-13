@@ -19,18 +19,15 @@ def tree_operations(
 **Returns:**
  str - The Results, after processing into a printable string.
     """
-    return (
-        results.process_trim_results
-        if input_data.trim_tree else
-        results.process_build_results
-    )(
-        instructions,
-        file_operations.build(
+    return results.process_build_results(
+        instructions_tuple=instructions,
+        results_tuple=file_operations.build(
             instructions=instructions,
             move_files=input_data.move_files,
             control_mode=input_data.control_mode,
             is_trim=input_data.trim_tree,
         ),
-        input_data.control_mode,
-        input_data.verbosity_level,
+        is_trim=input_data.trim_tree,
+        control_mode=input_data.control_mode,
+        verbosity_level=input_data.verbosity_level,
     )
