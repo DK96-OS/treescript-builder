@@ -17,11 +17,14 @@ def make_dir_exist(
  - dir_path (Path): The Path to the Directory (and parent directories) to be created.
 
 **Returns:**
- bool - True if the Operation Succeeded, and the directory now exists.
+ bool - True if the Operation Succeeded, and the directory now exists. False if error occurred.
     """
-    if not dir_path.exists():
-        dir_path.mkdir(parents=True, exist_ok=True)
-    return True
+    try:
+        if not dir_path.exists():
+            dir_path.mkdir(parents=True, exist_ok=True)
+        return True
+    except OSError:
+        return False
 
 
 def remove_empty_dir(
