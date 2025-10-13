@@ -41,15 +41,10 @@ def read_input_tree(
 **Raises:**
  SystemExit - When any Line cannot be read successfully.
     """
-    line_number = 1
-    for is_newline, group in groupby(input_tree_data, lambda x: x == "\n"):
-        if is_newline:
-            line_number += sum(1 for _ in group) # Line number increase by size of group
-        else:
-            line = ''.join(group)
-            if len(lstr := line.lstrip()) == 0 or lstr.startswith('#'):
-                continue
-            yield _process_line(line_number, line)
+    for line_number, line in enumerate(input_tree_data.splitlines(), start=1):
+    if len(lstr := line.lstrip()) == 0 or lstr.startswith('#'):
+        continue
+    yield _process_line(line_number, line)
 
 
 def _process_line(
