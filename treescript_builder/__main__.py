@@ -11,8 +11,8 @@ def main():
     from treescript_builder.tree import validate_tree
     instructions = validate_tree(input_data)
     # Build Tree with Operations Package
-    from treescript_builder.operations import operate_with_results
-    if 0 < len(result := operate_with_results(input_data, instructions)):
+    from treescript_builder.operations import tree_operations
+    if 0 < len(result := tree_operations(input_data, instructions)):
         print(result) # Non-empty result str.
 
 
