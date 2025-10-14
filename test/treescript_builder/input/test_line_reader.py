@@ -20,7 +20,7 @@ dir_variants = ('/dir', 'dir/', '\\dir', 'dir\\')
     ]
 )
 def test_calculate_depth_file_returns_true(test_input, expect):
-    assert _calculate_depth(test_input) == expect
+    assert _calculate_depth(1, test_input) == expect
 
 
 @pytest.mark.parametrize(
@@ -31,7 +31,8 @@ def test_calculate_depth_file_returns_true(test_input, expect):
     ]
 )
 def test_calculate_depth_file_odd_spaces_raises_exit(test_input):
-    assert _calculate_depth(test_input) == -1
+    with pytest.raises(SystemExit):
+        _calculate_depth(1, test_input)
 
 
 @pytest.mark.parametrize(
@@ -43,7 +44,7 @@ def test_calculate_depth_file_odd_spaces_raises_exit(test_input):
     ]
 )
 def test_calculate_depth_dir_returns_true(test_input, expect):
-    assert _calculate_depth(test_input) == expect
+    assert _calculate_depth(1, test_input) == expect
 
 
 @pytest.mark.parametrize(
@@ -54,8 +55,9 @@ def test_calculate_depth_dir_returns_true(test_input, expect):
         for depth in range(0, 9)
     ]
 )
-def test_calculate_depth_dir_odd_spaces_returns_negative(test_input):
-    assert _calculate_depth(test_input) == -1
+def test_calculate_depth_dir_odd_spaces_raises_exit(test_input):
+    with pytest.raises(SystemExit):
+        _calculate_depth(1, test_input)
 
 
 @pytest.mark.parametrize(
