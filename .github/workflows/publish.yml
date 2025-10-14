@@ -33,7 +33,7 @@ jobs:
         run: python -m build --sdist --wheel --outdir dist/
 
       - name: Sign Distributions
-        uses: dk96-os/gh-action-sigstore-python@3bc18de48fb9b0c3623d9fb0dee958415aac1cca # v3.2.10
+        uses: dk96-os/gh-action-sigstore-python@f8a2585e1a04146f915101924f70784b2b95cd66 # v3.2.11
         with:
           inputs: >-
             ./dist/*.tar.gz
