@@ -9,15 +9,11 @@ The Default Input Reader.
  - Comments are filtered out by starting a line with the # character. A comment after a file name is also filtered.
  Author: DK96-OS 2024 - 2025
 """
-from itertools import groupby, takewhile
 from sys import exit
 from typing import Generator
 
 from treescript_builder.data.tree_data import TreeData
 from treescript_builder.input.string_validation import validate_dir_name, validate_name, validate_data_label
-
-
-SPACE_CHARS = (' ', ' ')
 
 
 _INVALID_DEPTH_ERROR_MSG = "Invalid Depth (Number of Spaces) in Line: "
@@ -41,15 +37,10 @@ def read_input_tree(
 **Raises:**
  SystemExit - When any Line cannot be read as TreeScript successfully.
     """
-    line_number = 1
-    for is_newline, group in groupby(input_tree_data, lambda x: x in ["\n", "\r"]):
-        if is_newline:
-            line_number += sum(1 for _ in group) # Line number increase by size of group
-        else:
-            line = ''.join(group)
-            if len(lstr := line.lstrip()) == 0 or lstr.startswith('#'):
-                continue
-            yield _process_line(line_number, line)
+    for line_number, line in enumerate(input_tree_data.splitlines(), start=1):
+        if len(lstr := line.lstrip()) == 0 or lstr.startswith('#'):
+            continue
+        yield _process_line(line_number, line)
 
 
 def _process_line(
@@ -70,34 +61,22 @@ def _process_line(
 **Raises:**
  SystemExit - When Line cannot be read successfully.
     """
-    # Depth Depends on Leading Spaces
-    if (depth := _calculate_depth(line)) < 0:
-        exit(_INVALID_DEPTH_ERROR_MSG + str(line_number))
-    # Now remove Leading Spaces (and trailing)
-    args = line.strip()
-    # Try to split line into multiple arguments, on one of the SpaceChars.
-    for space_char in SPACE_CHARS:
-        if space_char in args:
-            args = args.split(space_char)
-            break
-    # Check whether line was split or not
-    if isinstance(args, str):
-        name = args  # Was Not Split
-        data_label = ''
-    elif isinstance(args, list) and len(args) >= 2:
+    # Remove Leading Spaces (and trailing)
+    if chr(32) in (args := line.strip()):
+        args = args.split(chr(32))  # Split line into words.
         name = args[0]  # First Word is the Tree Node Name.
         # Second Word is the DataLabel.
         data_label = _validate_data_label_argument(line_number, args[1])
         # Additional Words are ignored. Comments after the DataLabel are possible, for now. 
         # Alternate LineReader Modules are likely to expand in this area:
     else:
-        exit(f"Invalid Line: {line_number}")
+        name, data_label = args, ''  # Was Not Split
     # Validate the Node Name and Type (is_dir). The tuple is bool first, then node name.
     if (node_info := _validate_node_name(name)) is None:
         exit(_INVALID_NODE_NAME_ERROR_MSG + str(line_number))
     return TreeData(
         line_number=line_number,
-        depth=depth,
+        depth=_calculate_depth(line_number, line),
         is_dir=node_info[0],
         name=node_info[1],
         data_label=data_label,
@@ -141,7 +120,10 @@ def _validate_node_name(node_name: str) -> tuple[bool, str] | None:
     return None
 
 
-def _calculate_depth(line: str) -> int:
+def _calculate_depth(
+    line_number: int,
+    line: str
+) -> int:
     """ Calculates the depth of a line in the tree structure.
 
 **Parameters:**
@@ -150,10 +132,9 @@ def _calculate_depth(line: str) -> int:
 **Returns:**
  int - The depth of the line in the tree structure, or -1 if space count is invalid.
     """
-    space_count = len(list(
-        takewhile(lambda c: c in SPACE_CHARS, line)
-    ))
+    space_count = len(line) - len(line.lstrip())
     # Bit Shift Shuffle Equivalence Validation (space_count is divisible by 2)
-    if (depth := space_count >> 1) << 1 == space_count:
-        return depth
-    return -1  # Invalid Space Count! Someone made an off-by-one whitespace mistake!
+    if (depth := space_count >> 1) << 1 != space_count:
+        # Invalid Space Count! Someone made an off-by-one whitespace mistake!
+        exit(_INVALID_DEPTH_ERROR_MSG + str(line_number))
+    return depth

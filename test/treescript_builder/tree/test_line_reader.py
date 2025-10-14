@@ -4,7 +4,7 @@ import pytest
 
 from test.treescript_builder.conftest import create_depth
 from test.treescript_builder.tree.conftest import sample_treescript_1, sample_treedata_1, sample_treedata_2, \
-    sample_treescript_2
+    sample_treescript_2, sample_treescript_2_crlf
 from treescript_builder.data.tree_data import TreeData
 from treescript_builder.tree.line_reader import _calculate_depth, _process_line, _validate_node_name, read_input_tree
 
@@ -20,7 +20,7 @@ dir_variants = ('/dir', 'dir/', '\\dir', 'dir\\')
     ]
 )
 def test_calculate_depth_file_returns_true(test_input, expect):
-    assert _calculate_depth(test_input) == expect
+    assert _calculate_depth(1, test_input) == expect
 
 
 @pytest.mark.parametrize(
@@ -31,7 +31,8 @@ def test_calculate_depth_file_returns_true(test_input, expect):
     ]
 )
 def test_calculate_depth_file_odd_spaces_raises_exit(test_input):
-    assert _calculate_depth(test_input) == -1
+    with pytest.raises(SystemExit):
+        _calculate_depth(1, test_input)
 
 
 @pytest.mark.parametrize(
@@ -43,7 +44,7 @@ def test_calculate_depth_file_odd_spaces_raises_exit(test_input):
     ]
 )
 def test_calculate_depth_dir_returns_true(test_input, expect):
-    assert _calculate_depth(test_input) == expect
+    assert _calculate_depth(1, test_input) == expect
 
 
 @pytest.mark.parametrize(
@@ -54,8 +55,9 @@ def test_calculate_depth_dir_returns_true(test_input, expect):
         for depth in range(0, 9)
     ]
 )
-def test_calculate_depth_dir_odd_spaces_returns_negative(test_input):
-    assert _calculate_depth(test_input) == -1
+def test_calculate_depth_dir_odd_spaces_raises_exit(test_input):
+    with pytest.raises(SystemExit):
+        _calculate_depth(1, test_input)
 
 
 @pytest.mark.parametrize(
@@ -333,5 +335,11 @@ def test_read_input_tree_sample_treescript_1_returns_tree_data():
 
 def test_read_input_tree_sample_treescript_2_returns_tree_data():
     test_input = sample_treescript_2()
+    result = list(read_input_tree(test_input))
+    assert result == sample_treedata_2()
+
+
+def test_read_input_tree_sample_treescript_2_crlf_returns_tree_data():
+    test_input = sample_treescript_2_crlf()
     result = list(read_input_tree(test_input))
     assert result == sample_treedata_2()

@@ -123,6 +123,10 @@ def sample_treescript_2() -> str:
     return "build/\n  empty.txt\n  sample.tree SampleTree.tree\n\n\n" + "builder/\n  file.txt\n"
 
 
+def sample_treescript_2_crlf() -> str:
+    return "build/\r\n  empty.txt\r\n  sample.tree SampleTree.tree\r\n\r\n\r\n" + "builder/\r\n  file.txt\r\n"
+
+
 def sample_treedata_1() -> list[TreeData]:
     return [
         TreeData(1, 0, True, "build"),
