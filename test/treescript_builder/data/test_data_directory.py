@@ -6,7 +6,7 @@ from re import escape
 import pytest
 
 from treescript_builder.data import data_directory
-from treescript_builder.data.data_directory import DataDirectory
+from treescript_builder.data.data_directory import DataDirectory, get_data_dir_validator
 from treescript_builder.data.tree_data import TreeData
 
 
@@ -235,3 +235,51 @@ def test_validate_trim_duplicate_data_labels_raises_exit():
         # The next is a duplicate DataLabel!
         with pytest.raises(SystemExit, match=data_directory._DATA_LABEL_DUPLICATE_MSG):
             data_dir.validate_trim(test_input3)
+
+
+@pytest.mark.parametrize(
+    "tree_data", [
+        TreeData(1, 0, True, "src", ''),
+        TreeData(2, 1, False, "file_name.txt", ''),
+    ]
+)
+def test_get_data_dir_validator_build_no_data_dir_tree_data_without_data_label_returns_none(tree_data):
+    validator = get_data_dir_validator(None, is_trim=False)
+    assert validator(tree_data) is None
+
+
+@pytest.mark.parametrize(
+    "tree_data", [
+        TreeData(1, 0, False, "src_file", 'DataLabel'),
+        TreeData(2, 1, False, "file_name.txt", '!'),
+        TreeData(5, 3, False, "file_name.txt", 'file_name.txt'),
+    ]
+)
+def test_get_data_dir_validator_build_no_data_dir_tree_data_with_data_label_raises_exit(tree_data):
+    validator = get_data_dir_validator(None, is_trim=False)
+    with pytest.raises(SystemExit):
+        validator(tree_data)
+
+
+@pytest.mark.parametrize(
+    "tree_data", [
+        TreeData(1, 0, True, "src", ''),
+        TreeData(2, 1, False, "file_name.txt", ''),
+    ]
+)
+def test_get_data_dir_validator_trim_no_data_dir_tree_data_without_data_label_returns_none(tree_data):
+    validator = get_data_dir_validator(None, is_trim=True)
+    assert validator(tree_data) is None
+
+
+@pytest.mark.parametrize(
+    "tree_data", [
+        TreeData(1, 0, False, "src_file", 'DataLabel'),
+        TreeData(2, 1, False, "file_name.txt", '!'),
+        TreeData(5, 3, False, "file_name.txt", 'file_name.txt'),
+    ]
+)
+def test_get_data_dir_validator_trim_no_data_dir_tree_data_with_data_label_raises_exit(tree_data):
+    validator = get_data_dir_validator(None, is_trim=True)
+    with pytest.raises(SystemExit):
+        validator(tree_data)
