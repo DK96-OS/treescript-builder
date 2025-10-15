@@ -111,8 +111,6 @@ class TreeState:
         **Yields:**
          Path - A Path for every Directory in the Stack, from top to bottom.
         """
-        if depth < 0:
-            raise ValueError('Negative Depth.')
         for d in range(self._stack.get_depth(), depth, -1):
             if (entry := self._stack.pop()) is not None:
                 yield self._stack.join_stack() / entry
