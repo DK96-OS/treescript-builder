@@ -40,28 +40,16 @@ def _validate_trim_generator(
 ) -> Generator[InstructionData, None, None]:
     tree_state = TreeState()
     for node in tree_data:
-        # Calculate Tree Depth Change
-        if tree_state.validate_tree_data(node) == 1:
-            if node.is_dir:
-                tree_state.add_to_stack(node.name)
-            else:
-                yield InstructionData(
-                    False,
-                    tree_state.get_current_path() / node.name,
-                    data_dir_validator(node)
-                )
-        else:
-            # Pop Stack to required Depth
-            for i in tree_state.process_stack(node.depth):
+        if tree_state.validate_tree_data(node) < 0:         # Calculate Tree Depth Change
+            for i in tree_state.process_stack(node.depth):  # Pop Stack to required Depth
                 yield InstructionData(True, i)
-            if node.is_dir:
-                tree_state.add_to_stack(node.name)
-            else:
-                yield InstructionData(
-                    False,
-                    tree_state.get_current_path() / node.name,
-                    data_dir_validator(node)
-                )
-    # Finish Trim Sequence with Pop Stack
-    for i in tree_state.process_stack(0):
+        if node.is_dir:
+            tree_state.add_to_stack(node.name)              # Push Dir to Stack
+        else:
+            yield InstructionData(
+                False,
+                tree_state.get_current_path() / node.name,
+                data_dir_validator(node)
+            )
+    for i in tree_state.process_stack(0):                   # Pop Remaining Stack Dirs
         yield InstructionData(True, i)
