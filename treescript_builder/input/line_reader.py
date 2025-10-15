@@ -85,7 +85,7 @@ def _validate_node_name(
     """ Determine whether this Tree Node is a Directory, and validate the name.
 
 **Parameters:**
- - line_number (int):
+ - line_number (int): Identifies the line in the input tree.
  - node_name (str): The argument received for the node name.
 
 **Returns:**
