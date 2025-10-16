@@ -50,9 +50,8 @@ def test_validate_tree_data_decrease_depth_returns_negative():
 
 
 @pytest.mark.parametrize(
-    'depth',
-    [
-        1, 2, -1
+    'depth', [
+        1, 2,
     ]
 )
 def test_validate_tree_data_invalid_depth_raises_exit(depth):
@@ -60,6 +59,22 @@ def test_validate_tree_data_invalid_depth_raises_exit(depth):
     instance = TreeState()
     with pytest.raises(SystemExit):
         instance.validate_tree_data(input_data)
+
+
+@pytest.mark.parametrize(
+    'depth,stack_contents', [
+        (-1, []),
+        (-1, ['src']),
+        (-2, []),
+        (-2, ['src']),
+    ]
+)
+def test_validate_tree_data_negative_depth_returns_tree_state_contents(depth, stack_contents):
+    input_data = TreeData(3, depth, True, 'src', '')
+    instance = TreeState()
+    for s in stack_contents:
+        instance.add_to_stack(s)
+    assert depth - len(stack_contents) == instance.validate_tree_data(input_data)
 
 
 def test_get_current_path_():
@@ -82,9 +97,9 @@ def test_get_current_path_single_item_queue():
 @pytest.mark.parametrize(
     'test_input',
     [
-        (('src')),
-        (('src', 'main')),
-        (('src', 'main', 'java')),
+        ('src',),
+        ('src', 'main'),
+        ('src', 'main', 'java'),
     ]
 )
 def test_add_to_queue_empty_stack_increases_depth(test_input):
@@ -97,9 +112,9 @@ def test_add_to_queue_empty_stack_increases_depth(test_input):
 @pytest.mark.parametrize(
     'test_input',
     [
-        (('src')),
-        (('src', 'main')),
-        (('src', 'main', 'java')),
+        ('src',),
+        ('src', 'main'),
+        ('src', 'main', 'java'),
     ]
 )
 def test_add_to_stack_empty_stack_increases_depth(test_input):
@@ -112,8 +127,8 @@ def test_add_to_stack_empty_stack_increases_depth(test_input):
 @pytest.mark.parametrize(
     'test_input',
     [
-        (('main')),
-        (('main', 'java')),
+        ('main',),
+        ('main', 'java'),
     ]
 )
 def test_add_to_queue_nonempty_stack_increases_depth(test_input):
@@ -143,20 +158,32 @@ def test_process_queue_multi_item_queue_():
     assert instance.process_queue() == Path('./src/main/java/')
 
 
-def test_process_stack_negative_depth_raises_value_error():
+def test_process_stack_negative_depth_yields_nothing():
     instance = TreeState()
-    with pytest.raises(ValueError, match='Negative Depth.'):
-        tuple(iter(instance.process_stack(-1)))
+    assert 0 == len(tuple(instance.process_stack(-1)))
+
+
+def test_process_stack_negative_depth_with_contents_yields_contents():
+    instance = TreeState()
+    instance.add_to_stack('src')
+    assert (Path('src'),) == tuple(instance.process_stack(-1))
+
+
+def test_process_stack_negative_depth_with_contents2_yields_contents():
+    instance = TreeState()
+    instance.add_to_stack('src')
+    instance.add_to_stack('src2')
+    assert (Path('src/src2'),Path('src')) == tuple(instance.process_stack(-1))
 
 
 def test_process_stack_empty_depth_0_yields_nothing():
     instance = TreeState()
-    assert len(tuple(iter(instance.process_stack(0)))) == 0
+    assert len(tuple(instance.process_stack(0))) == 0
 
 
 def test_process_stack_empty_depth_1_yields_nothing():
     instance = TreeState()
-    assert len(tuple(iter(instance.process_stack(0)))) == 0
+    assert len(tuple(instance.process_stack(0))) == 0
 
 
 def test_process_stack_single_item_depth_0_yields_item():
@@ -165,7 +192,7 @@ def test_process_stack_single_item_depth_0_yields_item():
     assert len(tuple(iter(instance.process_stack(0)))) == 1
 
 
-def test_process_stack_single_item_depth_1_yields_nothin():
+def test_process_stack_single_item_depth_1_yields_nothing():
     instance = TreeState()
     instance.add_to_stack('src')
     assert len(tuple(iter(instance.process_stack(1)))) == 0
