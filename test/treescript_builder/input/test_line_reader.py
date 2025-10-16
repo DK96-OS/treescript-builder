@@ -190,7 +190,7 @@ def test_process_line_current_dir_raise_exit(test_input):
     ]
 )
 def test_validate_node_name_valid_dir_returns_tuple(test_input):
-    assert _validate_node_name(test_input) == (True, 'a')
+    assert _validate_node_name(1, test_input) == (True, 'a')
 
 
 @pytest.mark.parametrize(
@@ -203,7 +203,7 @@ def test_validate_node_name_valid_dir_returns_tuple(test_input):
     ]
 )
 def test_validate_node_name_valid_hidden_dir_returns_tuple(test_input):
-    assert _validate_node_name(test_input) == (True, '.a')
+    assert _validate_node_name(1, test_input) == (True, '.a')
 
 
 @pytest.mark.parametrize(
@@ -215,7 +215,7 @@ def test_validate_node_name_valid_hidden_dir_returns_tuple(test_input):
     ]
 )
 def test_validate_node_name_valid_file_returns_tuple(test_input):
-    assert _validate_node_name(test_input) == (False, test_input)
+    assert _validate_node_name(1, test_input) == (False, test_input)
 
 
 @pytest.mark.parametrize(
@@ -228,7 +228,8 @@ def test_validate_node_name_valid_file_returns_tuple(test_input):
     ]
 )
 def test_validate_node_name_invalid_dir_returns_none(test_input):
-    assert _validate_node_name(test_input) is None
+    with pytest.raises(SystemExit):
+        _validate_node_name(1, test_input)
 
 
 @pytest.mark.parametrize(
@@ -239,7 +240,8 @@ def test_validate_node_name_invalid_dir_returns_none(test_input):
     ]
 )
 def test_validate_node_name_invalid_file_returns_none(test_input):
-    assert _validate_node_name(test_input) is None
+    with pytest.raises(SystemExit):
+        _validate_node_name(1, test_input)
 
 
 def test_read_input_tree_all_dirs():
