@@ -6,7 +6,6 @@ import pytest
 
 from treescript_builder.data.control_modes import WriteControlModes, TextMergeControlModes
 from treescript_builder.data.instruction_data import InstructionData
-from treescript_builder.tree.line_reader import SPACE_CHARS
 
 
 def raise_exception(name: str):
@@ -48,7 +47,7 @@ def create_depth(depth: int) -> str:
 **Returns:**
  str - The String of a Space Char, of the required length.
 	"""
-    return SPACE_CHARS[0] * depth * 2
+    return chr(32) * depth * 2
 
 
 def get_control_mode_write(
