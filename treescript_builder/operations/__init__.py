@@ -27,6 +27,7 @@ def tree_operations(
             control_mode=input_data.control_mode,
             is_trim=input_data.trim_tree,
         ),
+        move_files=input_data.move_files,
         is_trim=input_data.trim_tree,
         control_mode=input_data.control_mode,
         verbosity_level=input_data.verbosity_level,
