@@ -9,9 +9,6 @@ class ControlMode(ABC):
     """ An empty abstract class used in type hints.
  - Intended to be extended by the dataclasses in this module.
     """
-    @abstractmethod
-    def get_verbose_overview(self, verbosity: int) -> str:
-        raise NotImplementedError
 
 
 @dataclass(frozen=True)
@@ -22,18 +19,6 @@ class WriteControlModes(ControlMode):
     overwrite: bool = False
     continue_build: bool = False
     exact_build: bool = False
-    
-    @override
-    def get_verbose_overview(self, verbosity: int) -> str:
-        if verbosity < 2:
-            return ""
-        if self.overwrite:
-            if self.continue_build:
-                return "OVERWRITE, CONTINUE:"
-            return "OVERWRITE"
-        if self.continue_build:
-            return "WRITE, CONTINUE:"
-        return "WRITE"
 
 
 @dataclass(frozen=True)
@@ -42,11 +27,3 @@ class TextMergeControlModes(ControlMode):
     """
     prepend_merge: bool = False
     continue_build: bool = False
-
-    @override
-    def get_verbose_overview(self, verbosity: int) -> str:
-        if verbosity < 2:
-            return ""
-        if self.prepend_merge:
-            return "PREPEND:"
-        return "APPEND:"
