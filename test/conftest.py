@@ -22,14 +22,13 @@ DATA_TREE_TARGET_FILE_CONTENTS = "Target File Contents."
 
 # Data Tree Data Paths
 DATA_TREE_DATA_DIR_NAME = "data_dir"
-DATA_TREE_DATA_FILE_NAME = "data_file.txt"
+DATA_TREE_DATA_FILE_NAME = "data_file.txt" # AKA DataLabel
 DATA_TREE_DATA_FILE_CONTENTS = "Data File Contents."
 
 # Data Tree Instructions
-DATA_TREE_TARGET_DIR_INSTRUCT = InstructionData(True, Path('./target_dir/'), None)
-DATA_TREE_DATA_DIR_INSTRUCT = InstructionData(True, Path('./data_dir/'), None)
-DATA_TREE_TARGET_FILE_INSTRUCT_NO_DATA = InstructionData(False, Path('./target_dir/target_file.txt'), None)
-DATA_TREE_TARGET_FILE_INSTRUCT_WITH_DATA = InstructionData(False, Path('./target_dir/target_file.txt'), Path('./data_dir/data_file.txt'))
+DATA_TREE_TARGET_DIR_INSTRUCT = InstructionData(True, Path(f'./{DATA_TREE_TARGET_DIR_NAME}/'), None)
+DATA_TREE_TARGET_FILE_INSTRUCT_NO_DATA = InstructionData(False, Path(f'./{DATA_TREE_TARGET_DIR_NAME}/{DATA_TREE_TARGET_FILE_NAME}'), None)
+DATA_TREE_TARGET_FILE_INSTRUCT_WITH_DATA = InstructionData(False, Path(f'./{DATA_TREE_TARGET_DIR_NAME}/{DATA_TREE_DATA_FILE_NAME}'), Path(f'./{DATA_TREE_DATA_DIR_NAME}/{DATA_TREE_DATA_FILE_NAME}'))
 
 
 @pytest.fixture
@@ -69,6 +68,17 @@ def create_data_tree(
 
 
 @pytest.fixture
+def mock_data_tree_empty_data_dir(temp_cwd):
+    """ A File Tree, where files contain just single line of text.
+    """
+    (target_dir := Path(temp_cwd.name) / DATA_TREE_TARGET_DIR_NAME).mkdir()
+    (target_file := target_dir / DATA_TREE_TARGET_FILE_NAME).touch()
+    target_file.write_text(DATA_TREE_TARGET_FILE_CONTENTS)
+    (data_dir := Path(temp_cwd.name) / DATA_TREE_DATA_DIR_NAME).mkdir()
+    return Path(str(temp_cwd.name))
+
+
+@pytest.fixture
 def mock_data_tree(temp_cwd):
     """ A File Tree, where files contain just single line of text.
     """
@@ -79,6 +89,11 @@ def mock_data_tree(temp_cwd):
     (data_file := data_dir / DATA_TREE_DATA_FILE_NAME).touch()
     data_file.write_text(DATA_TREE_DATA_FILE_CONTENTS)
     return Path(str(temp_cwd.name))
+
+
+def get_data_tree_instructions(with_data: bool = True) -> tuple[InstructionData, ...]:
+    return (DATA_TREE_TARGET_DIR_INSTRUCT, DATA_TREE_TARGET_FILE_INSTRUCT_WITH_DATA) \
+        if with_data else (DATA_TREE_TARGET_DIR_INSTRUCT, DATA_TREE_TARGET_FILE_INSTRUCT_NO_DATA)
 
 
 @pytest.fixture
@@ -94,6 +109,20 @@ def mock_data_tree_empty(temp_cwd):
 
 def get_basic_tree_script() -> str:
     return 'src/\n  data.txt'
+
+
+def get_basic_tree_build_instructions(data_file_path: Path | None = None) -> tuple[InstructionData, ...]:
+    return (
+        InstructionData(True, Path('src/'), None),
+        InstructionData(False, Path('src/data.txt'), data_file_path),
+    )
+
+
+def get_basic_tree_trim_instructions(data_file_path: Path | None = None) -> tuple[InstructionData, ...]:
+    return (
+        InstructionData(False, Path('src/data.txt'), data_file_path),
+        InstructionData(True, Path('src/'), None),
+    )
 
 
 def get_basic_data_tree_script() -> str:
@@ -152,8 +181,7 @@ def get_treescript_input_sample(
 
 @pytest.fixture
 def mock_basic_tree(tmp_path):
-    src_dir = tmp_path / 'src'
-    src_dir.mkdir()
+    (src_dir := tmp_path / 'src').mkdir()
     (src_dir / 'data.txt').touch()
     (ts_path := tmp_path / TEST_INPUT_FILE).touch()
     ts_path.write_text(get_basic_tree_script())
@@ -162,10 +190,8 @@ def mock_basic_tree(tmp_path):
 
 @pytest.fixture
 def mock_nested_tree(tmp_path):
-    src_dir = tmp_path / 'src'
-    src_dir.mkdir()
-    main_dir = src_dir / 'main'
-    main_dir.mkdir()
+    (src_dir := tmp_path / 'src').mkdir()
+    (main_dir := src_dir / 'main').mkdir()
     (main_dir / 'SourceClass.java').touch()
     (ts_path := tmp_path / TEST_INPUT_FILE).touch()
     ts_path.write_text(get_nested_tree_script())
@@ -174,8 +200,7 @@ def mock_nested_tree(tmp_path):
 
 @pytest.fixture
 def mock_empty_dirs_tree(tmp_path):
-    my_dirs = tmp_path / 'empty_dirs/'
-    my_dirs.mkdir()
+    (my_dirs := tmp_path / 'empty_dirs/').mkdir()
     for n in range(1, 4): # Create Numbered Empty Dirs
         (my_dirs / f'dir{n}').mkdir()
     (ts_path := tmp_path / TEST_INPUT_FILE).touch()
@@ -185,11 +210,9 @@ def mock_empty_dirs_tree(tmp_path):
 
 @pytest.fixture
 def mock_hidden_tree(tmp_path):
-    github_dir = tmp_path / '.github'
-    github_dir.mkdir()
+    (github_dir := tmp_path / '.github').mkdir()
     (github_dir / 'dependabot.yml').touch()
-    workflows_dir = github_dir / 'workflows'
-    workflows_dir.mkdir()
+    (workflows_dir := github_dir / 'workflows').mkdir()
     (workflows_dir / 'ci.yml').touch()
     (tmp_path / '.hidden.txt').touch()
     (ts_path := tmp_path / TEST_INPUT_FILE).touch()
@@ -223,8 +246,7 @@ def input_data_with_dir(
     verbosity: int = 1,
 ) -> tuple[InputData, TemporaryDirectory]:
     tmp_dir = TemporaryDirectory()
-    data_dir_path = Path(tmp_dir.name) / data_dir
-    data_dir_path.mkdir(parents=True)
+    (data_dir_path := Path(tmp_dir.name) / data_dir).mkdir(parents=True)
     return InputData(
         tree_input=get_treescript_input_sample(input_tree_name),
         data_dir=data_dir_path,
