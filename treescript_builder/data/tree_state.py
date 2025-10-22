@@ -9,6 +9,10 @@ from treescript_builder.data.path_stack import PathStack
 from treescript_builder.data.tree_data import TreeData
 
 
+_INVALID_TREE_INDENT_MSG = 'Invalid Tree Indentation on Line: '
+_INVALID_LINE_NUMBER_MSG = "Invalid Line Number Sequence"
+
+
 class TreeState:
     """ Manages the State of the Tree during Validation.
 
@@ -42,12 +46,9 @@ class TreeState:
          SystemExit - When the TreeData is invalid, relative to the current TreeState.
         """
         self._update_line_number(node.line_number)
-        # Calculate the Change in Depth
-        if node.depth < 0:
-            exit("Invalid Depth Value")
-        # Ensure that the depth change is zero or less
+        # Calculate the Change in Depth. Ensure that the depth change is zero or less
         if (delta := node.depth - self.get_current_depth()) > 0:
-            exit(f"You have jumped {delta} steps in the tree on line: {node.line_number}")
+            exit(_INVALID_TREE_INDENT_MSG + str(node.line_number))
         return delta
 
     def get_current_depth(self) -> int:
@@ -110,9 +111,7 @@ class TreeState:
         **Yields:**
          Path - A Path for every Directory in the Stack, from top to bottom.
         """
-        if depth < 0:
-            raise ValueError('Negative Depth.')
-        while depth < self._stack.get_depth():
+        for d in range(self._stack.get_depth(), depth, -1):
             if (entry := self._stack.pop()) is not None:
                 yield self._stack.join_stack() / entry
 
@@ -137,5 +136,5 @@ class TreeState:
          SystemExit - When the Line Number does not increase.
         """
         if self._prev_line_number >= line_number:
-            exit("Invalid Tree Data Sequence")
+            exit(_INVALID_LINE_NUMBER_MSG)
         self._prev_line_number = line_number

@@ -2,12 +2,12 @@
  Author: DK96-OS 2024 - 2025
 """
 from pathlib import Path
-from typing import Generator
+from typing import Generator, Callable
 
+from treescript_builder.tree.data_directory import DataDirectory, get_data_dir_validator
 from treescript_builder.data.instruction_data import InstructionData
 from treescript_builder.data.tree_data import TreeData
 from treescript_builder.data.tree_state import TreeState
-from treescript_builder.tree.data_directory import DataDirectory
 
 
 def validate_trim(
@@ -26,32 +26,30 @@ def validate_trim(
     return tuple(
         _validate_trim_generator(
             tree_data=tree_data,
-            data_dir=DataDirectory(data_dir_path) if data_dir_path is not None else None,
+            data_dir=get_data_dir_validator(
+                data_dir=DataDirectory(data_dir_path) if data_dir_path is not None else None,
+                is_trim=True,
+            ),
         )
     )
 
 
 def _validate_trim_generator(
     tree_data: Generator[TreeData, None, None],
-    data_dir: DataDirectory | None,
+    data_dir_validator: Callable[[TreeData], Path | None],
 ) -> Generator[InstructionData, None, None]:
     tree_state = TreeState()
     for node in tree_data:
-        # Error if no dataDir and Node has no DataLabel. todo: Move this validation earlier in the program. (line_reader, maybe)
-        if data_dir is None and node.data_label != '':
-            exit(f"No DataDirectory provided, but DataLabel found on Line: {node.line_number}")
-        # Calculate Tree Depth Change
-        if tree_state.validate_tree_data(node) != 1: # Pop Stack to required Depth
-            for trim_dir_path in tree_state.process_stack(node.depth):
-                yield InstructionData(True, trim_dir_path)
+        if tree_state.validate_tree_data(node) < 0:         # Calculate Tree Depth Change
+            for i in tree_state.process_stack(node.depth):  # Pop Stack to required Depth
+                yield InstructionData(True, i)
         if node.is_dir:
-            tree_state.add_to_stack(node.name)
+            tree_state.add_to_stack(node.name)              # Push Dir to Stack
         else:
             yield InstructionData(
                 False,
                 tree_state.get_current_path() / node.name,
-                data_dir.validate_trim(node) if data_dir is not None else None
+                data_dir_validator(node)
             )
-    # Finish Trim Sequence with Pop Stack
-    for trim_dir_path in tree_state.process_stack(0):
-        yield InstructionData(True, trim_dir_path)
+    for i in tree_state.process_stack(0):                   # Pop Remaining Stack Dirs
+        yield InstructionData(True, i)
