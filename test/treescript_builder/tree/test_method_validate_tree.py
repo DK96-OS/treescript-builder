@@ -1,6 +1,6 @@
 """ Testing the Tree Module Init Build Tree Method.
 """
-from re import escape
+from pathlib import Path
 
 import pytest
 
@@ -8,7 +8,8 @@ from test.conftest import get_input_data, input_data_with_dir
 from test.treescript_builder.conftest import get_nested_tree_instructions, get_control_mode_write, \
     get_hidden_tree_instructions, get_empty_dirs_tree_instructions
 from test.treescript_builder.tree.conftest import generate_simple_tree_instructions
-from treescript_builder.tree import validate_tree
+from treescript_builder.data.instruction_data import InstructionData
+from treescript_builder.tree import validate_tree, data_directory
 
 
 @pytest.mark.parametrize(
@@ -29,7 +30,7 @@ def test_validate_tree_trywrite_returns_data(input_data, expected_instructions):
     ]
 )
 def test_validate_tree_with_data_trywrite_data_file_does_not_exist_raises_exit(input_data_and_dir: tuple):
-    with pytest.raises(SystemExit, match=escape('Label (DataLabel) not found in DataDirectory on Line: 2')):
+    with pytest.raises(SystemExit, match=data_directory._DATA_LABEL_NOT_FOUND_MSG):
         validate_tree(input_data_and_dir[0])
 
 
@@ -87,8 +88,20 @@ def test_validate_tree_trywrite_validate_returns_data(input_data, expected_instr
     ]
 )
 def test_validate_tree_with_data_validate_data_file_does_not_exist_raises_exit(input_data_and_dir: tuple):
-    with pytest.raises(SystemExit, match=escape('Label (DataLabel) not found in DataDirectory on Line: 2')):
+    with pytest.raises(SystemExit, match=data_directory._DATA_LABEL_NOT_FOUND_MSG + '2'):
         validate_tree(input_data_and_dir[0])
+
+
+@pytest.mark.parametrize(
+    "input_data_and_dir", [
+        input_data_with_dir('basic+data', 'data/dir', get_control_mode_write(validate=True), False, is_trim=True),
+    ]
+)
+def test_validate_tree_with_data_is_trim_validate_data_file_does_not_exist_returns_instructions(input_data_and_dir: tuple):
+    assert validate_tree(input_data_and_dir[0]) == (
+        InstructionData(False, Path('src/data.txt'), Path(input_data_and_dir[1].name) / 'data/dir' / 'DataLabel'),
+        InstructionData(True, Path('src'), None),
+    )
 
 
 @pytest.mark.parametrize(
@@ -105,9 +118,9 @@ def test_validate_tree_trywrite_continue_build_returns_data(input_data, expected
 
 @pytest.mark.parametrize(
     "input_data_and_dir", [
-        input_data_with_dir('basic+data', 'data/dir', get_control_mode_write(continue_build=True), False),
+        input_data_with_dir('basic+data', 'data/dir', get_control_mode_write(), False),
     ]
 )
 def test_validate_tree_with_data_continue_build_returns_data(input_data_and_dir: tuple):
-    with pytest.raises(SystemExit, match=escape('Label (DataLabel) not found in DataDirectory on Line: 2')):
+    with pytest.raises(SystemExit, match=data_directory._DATA_LABEL_NOT_FOUND_MSG + '2'):
         validate_tree(input_data_and_dir[0])
