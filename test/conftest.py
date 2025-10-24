@@ -91,9 +91,26 @@ def mock_data_tree(temp_cwd):
     return Path(str(temp_cwd.name))
 
 
-def get_data_tree_instructions(with_data: bool = True) -> tuple[InstructionData, ...]:
-    return (DATA_TREE_TARGET_DIR_INSTRUCT, DATA_TREE_TARGET_FILE_INSTRUCT_WITH_DATA) \
-        if with_data else (DATA_TREE_TARGET_DIR_INSTRUCT, DATA_TREE_TARGET_FILE_INSTRUCT_NO_DATA)
+def get_data_tree_instructions(
+    with_data: bool = True,
+    is_trim: bool = False,
+) -> tuple[InstructionData, ...]:
+    """ Obtain InstructionData Tuples for the DataTree.
+ - Provides both Trim and Build Instruction Tuples. Note: In Trim Operations, Files are Trimmed before Directories.
+
+**Parameters:**
+ - with_data (bool): Whether to include the DataLabel. Default: True.
+ - is_trim (bool): Whether the Instructions are for Trim Operations. Default: False.
+
+**Returns:**
+ tuple[InstructionData] - The Instruction Tuple containing the DataTree Paths, for the requested operation.
+    """
+    if is_trim:
+        return (DATA_TREE_TARGET_FILE_INSTRUCT_WITH_DATA, DATA_TREE_TARGET_DIR_INSTRUCT) \
+            if with_data else (DATA_TREE_TARGET_FILE_INSTRUCT_NO_DATA, DATA_TREE_TARGET_DIR_INSTRUCT)
+    else: # Build (reverse files and dir instructions)
+        return (DATA_TREE_TARGET_DIR_INSTRUCT, DATA_TREE_TARGET_FILE_INSTRUCT_WITH_DATA) \
+            if with_data else (DATA_TREE_TARGET_DIR_INSTRUCT, DATA_TREE_TARGET_FILE_INSTRUCT_NO_DATA)
 
 
 @pytest.fixture
@@ -127,6 +144,10 @@ def get_basic_tree_trim_instructions(data_file_path: Path | None = None) -> tupl
 
 def get_basic_data_tree_script() -> str:
     return 'src/\n  data.txt DataLabel'
+
+
+def get_data_tree_script() -> str:
+    return f'{DATA_TREE_TARGET_DIR_NAME}/\n  {DATA_TREE_TARGET_FILE_NAME} {DATA_TREE_DATA_FILE_NAME}'
 
 
 def get_nested_tree_script() -> str:
@@ -166,6 +187,8 @@ def get_treescript_input_sample(
     match tree_sample_name.lower():
         case 'input.tree':
             return TS_INPUT_STR_1
+        case 'data_tree':
+            return get_data_tree_script()
         case 'basic':
             return get_basic_tree_script()
         case 'basic+data':
