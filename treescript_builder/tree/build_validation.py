@@ -13,12 +13,14 @@ from treescript_builder.data.tree_state import TreeState
 def validate_build(
     tree_data: Generator[TreeData, None, None],
     data_dir_path: Path | None = None,
+    move_files: bool = False,
 ) -> tuple[InstructionData, ...]:
     """ Validate the Build Instructions.
 
 **Parameters:**
  - tree_data (Generator[TreeData]): The Generator that provides TreeData.
  - data_dir_path (Path?): The optional Data Directory Path. Default: None.
+ - move_files (bool): Whether the Build Operation specifies moving Files instead of copying. Default: False.
 
 **Returns:**
  tuple[InstructionData] - A generator that yields Instructions.
@@ -26,9 +28,10 @@ def validate_build(
     return tuple(
         _validate_build_generator(
             tree_data=tree_data,
-            data_dir=get_data_dir_validator(
+            data_dir_validator=get_data_dir_validator(
                 data_dir=DataDirectory(data_dir_path) if data_dir_path is not None else None,
                 is_trim=False,
+                move_files=move_files,
             ),
         )
     )

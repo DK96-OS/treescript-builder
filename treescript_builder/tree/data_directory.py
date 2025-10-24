@@ -41,7 +41,7 @@ class DataDirectory:
         elif not data_dir.exists():
             exit(_DATA_DIR_PATH_DOES_NOT_EXIST_MSG)
         self._data_dir: Path = data_dir
-        self._expected_trim_data: list[str] = []
+        self._expected_data_labels: list[str] = []
 
     def validate_build(self, node: TreeData) -> Path | None:
         """ Determine if the Data File supporting this Tree node is available.
@@ -62,6 +62,19 @@ class DataDirectory:
             exit(_DATA_LABEL_NOT_FOUND_MSG + str(node.line_number))
         return data_path
 
+    def validate_build_unique(self, node: TreeData) -> Path | None:
+        if (data_label := _validate_node_data_label(node)) is None:
+            return None
+        # Check if another TreeData Node has this DataLabel
+        if data_label in self._expected_data_labels:
+            exit(_DATA_LABEL_DUPLICATE_MSG + str(node.line_number))
+        # Search in the DataDir for this DataFile.
+        if (data_path := self._search_label(data_label)) is None:
+            exit(_DATA_LABEL_NOT_FOUND_MSG + str(node.line_number))
+        # Add the new DataLabel to the collection
+        self._expected_data_labels.append(data_label)
+        return data_path
+
     def validate_trim(self, node: TreeData) -> Path | None:
         """ Determine if the File already exists in the Data Directory.
 
@@ -77,13 +90,13 @@ class DataDirectory:
         if (data_label := _validate_node_data_label(node)) is None:
             return None
         # Check if another TreeData Node has this DataLabel
-        if data_label in self._expected_trim_data:
+        if data_label in self._expected_data_labels:
             exit(_DATA_LABEL_DUPLICATE_MSG + str(node.line_number))
         # Check if the DataFile already exists
         if self._search_label(data_label) is not None:
             exit(_DATA_FILE_EXISTS_MSG + str(node.line_number))
         # Add the new DataLabel to the collection
-        self._expected_trim_data.append(data_label)
+        self._expected_data_labels.append(data_label)
         # Return the DataLabel Path
         return self._data_dir / data_label
 
@@ -107,6 +120,7 @@ class DataDirectory:
 def get_data_dir_validator(
     data_dir: DataDirectory | None,
     is_trim: bool,
+    move_files: bool,
 ) -> Callable[[TreeData], Path | None]:
     """ Obtain a Method that Validates incoming TreeData Nodes for the given DataDirectory conditions.
  - When DataDirectory is not present, there should be no DataLabels on any Nodes.
@@ -114,6 +128,7 @@ def get_data_dir_validator(
 **Parameters:**
  - data_dir (DataDirectory?): The DataDirectory object to be used by the Validator Method. If None, ensures no TreeData have DataLabels.
  - is_trim (bool): Whether the Validation is for Trim operation.
+ - move_files (bool): Whether the files are to be moved during the operation.
 
 **Returns:**
  Callable[[TreeData], Path?] - A Method that (optionally wraps a DataDirectory) transforms TreeData to DataFile Paths.
@@ -129,4 +144,6 @@ def get_data_dir_validator(
         return _raise_if_data_label_present
     if is_trim:
         return lambda node: data_dir.validate_trim(node)
+    if move_files:
+        return lambda node: data_dir.validate_build_unique(node)
     return lambda node: data_dir.validate_build(node)
