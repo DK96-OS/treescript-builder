@@ -3,6 +3,7 @@
  - TempPath FileTree Fixtures.
  Author: DK96-OS 2024 - 2025
 """
+from os import chdir
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -33,15 +34,11 @@ DATA_TREE_TARGET_FILE_INSTRUCT_WITH_DATA = InstructionData(False, Path(f'./{DATA
 
 @pytest.fixture
 def temp_cwd():
-    """ Creates a Temporary Working Directory for Git subprocesses.
+    """ Creates a Temporary Working Directory.
     """
-    from tempfile import TemporaryDirectory
     tdir = TemporaryDirectory()
-    from os import getcwd, chdir
-    initial_cwd = getcwd()
     chdir(tdir.name)
     yield tdir
-    chdir(initial_cwd)
     tdir.cleanup()
 
 
@@ -49,7 +46,9 @@ def temp_cwd():
 def mock_basic_tree(temp_cwd):
     (src_dir := Path(temp_cwd.name) / 'src').mkdir()
     (src_dir / 'data.txt').touch()
-    return Path(str(temp_cwd))
+    (ts_path := Path(temp_cwd.name) / TEST_INPUT_FILE).touch()
+    ts_path.write_text(get_basic_tree_script())
+    return Path(str(temp_cwd.name))
 
 
 def create_data_tree(
@@ -68,52 +67,6 @@ def create_data_tree(
 
 
 @pytest.fixture
-def mock_data_tree_empty_data_dir(temp_cwd):
-    """ A File Tree, where files contain just single line of text.
-    """
-    (target_dir := Path(temp_cwd.name) / DATA_TREE_TARGET_DIR_NAME).mkdir()
-    (target_file := target_dir / DATA_TREE_TARGET_FILE_NAME).touch()
-    target_file.write_text(DATA_TREE_TARGET_FILE_CONTENTS)
-    (data_dir := Path(temp_cwd.name) / DATA_TREE_DATA_DIR_NAME).mkdir()
-    return Path(str(temp_cwd.name))
-
-
-@pytest.fixture
-def mock_data_tree(temp_cwd):
-    """ A File Tree, where files contain just single line of text.
-    """
-    (target_dir := Path(temp_cwd.name) / DATA_TREE_TARGET_DIR_NAME).mkdir()
-    (target_file := target_dir / DATA_TREE_TARGET_FILE_NAME).touch()
-    target_file.write_text(DATA_TREE_TARGET_FILE_CONTENTS)
-    (data_dir := Path(temp_cwd.name) / DATA_TREE_DATA_DIR_NAME).mkdir()
-    (data_file := data_dir / DATA_TREE_DATA_FILE_NAME).touch()
-    data_file.write_text(DATA_TREE_DATA_FILE_CONTENTS)
-    return Path(str(temp_cwd.name))
-
-
-def get_data_tree_instructions(
-    with_data: bool = True,
-    is_trim: bool = False,
-) -> tuple[InstructionData, ...]:
-    """ Obtain InstructionData Tuples for the DataTree.
- - Provides both Trim and Build Instruction Tuples. Note: In Trim Operations, Files are Trimmed before Directories.
-
-**Parameters:**
- - with_data (bool): Whether to include the DataLabel. Default: True.
- - is_trim (bool): Whether the Instructions are for Trim Operations. Default: False.
-
-**Returns:**
- tuple[InstructionData] - The Instruction Tuple containing the DataTree Paths, for the requested operation.
-    """
-    if is_trim:
-        return (DATA_TREE_TARGET_FILE_INSTRUCT_WITH_DATA, DATA_TREE_TARGET_DIR_INSTRUCT) \
-            if with_data else (DATA_TREE_TARGET_FILE_INSTRUCT_NO_DATA, DATA_TREE_TARGET_DIR_INSTRUCT)
-    else: # Build (reverse files and dir instructions)
-        return (DATA_TREE_TARGET_DIR_INSTRUCT, DATA_TREE_TARGET_FILE_INSTRUCT_WITH_DATA) \
-            if with_data else (DATA_TREE_TARGET_DIR_INSTRUCT, DATA_TREE_TARGET_FILE_INSTRUCT_NO_DATA)
-
-
-@pytest.fixture
 def mock_data_tree_empty(temp_cwd):
     """ Similar to the data tree, but all files are empty.
     """
@@ -126,20 +79,6 @@ def mock_data_tree_empty(temp_cwd):
 
 def get_basic_tree_script() -> str:
     return 'src/\n  data.txt'
-
-
-def get_basic_tree_build_instructions(data_file_path: Path | None = None) -> tuple[InstructionData, ...]:
-    return (
-        InstructionData(True, Path('src/'), None),
-        InstructionData(False, Path('src/data.txt'), data_file_path),
-    )
-
-
-def get_basic_tree_trim_instructions(data_file_path: Path | None = None) -> tuple[InstructionData, ...]:
-    return (
-        InstructionData(False, Path('src/data.txt'), data_file_path),
-        InstructionData(True, Path('src/'), None),
-    )
 
 
 def get_basic_data_tree_script() -> str:
