@@ -59,6 +59,9 @@ _PASSED_OPERATION_MSG = 'Pass: '
 _FAILED_OPERATION_MSG = 'Fail: '
 
 _SINGLE_OPERATION_SUCCEEDED_MSG = 'File Operation Succeeded.'
+_SINGLE_OPERATION_FAILED_MSG = 'File Operation Failed.'
+_ALL_OPERATION_SUCCEEDED_MSG = 'All File Operations Succeeded.'
+_ALL_OPERATION_FAILED_MSG = 'All File Operations Failed.'
 
 
 def _wrap_text_block_in_newline(
@@ -119,8 +122,8 @@ def _verbose_file_paths(
 
 def _create_opening_statement(
     control_mode: ControlMode,
-    is_trim: bool,
-    move_files: bool,
+    is_trim: bool, #unused
+    move_files: bool, #unused
 ) -> str:
     if isinstance(control_mode, WriteControlModes):
         return _get_write_mode_segment(control_mode)
@@ -152,10 +155,8 @@ def _percentage_summary(
     if (length := len(results_tuple)) == 0:
         return _NO_FILETREE_OPERATIONS
     elif (success := sum(results_tuple)) == 0:
-        return f"All {length} operations failed."
+        return _SINGLE_OPERATION_FAILED_MSG if length == 1 else _ALL_OPERATION_FAILED_MSG
     elif success == length:
-        if length == 1:
-            return _SINGLE_OPERATION_SUCCEEDED_MSG
-        return f"All {length} operations succeeded."
+        return _SINGLE_OPERATION_SUCCEEDED_MSG if length == 1 else _ALL_OPERATION_SUCCEEDED_MSG
     # Compute the Fraction of success operations
-    return f"({success} / {length}) operations succeeded: {round(100 * success / length, 1)}%"
+    return f"({success} / {length}) Operations Succeeded: {round(100 * success / length, 1)}%"

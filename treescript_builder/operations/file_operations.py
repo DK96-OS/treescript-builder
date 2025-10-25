@@ -58,7 +58,7 @@ def _trim_files(
 ) -> tuple[bool, ...]:
     path_method = _get_path_method(control_mode, move_files)
     instruct_method = lambda x: path_method(x.data_path, x.path)
-    return tuple(_trim_instruction(i, instruct_method) for i in instructions)
+    return tuple(_trim_instruction(i, instruct_method, move_files) for i in instructions)
 
 
 def _build_instruction(
@@ -92,6 +92,7 @@ def _build_instruction(
 def _trim_instruction(
     instruct: InstructionData,
     trim_method: Callable[[InstructionData], bool],
+    move_files: bool,
 ) -> bool:
     """ Wraps the intersection of InstructionData and Trimmer Method.
  - Handles Directory instructions outside of Trimmer Method.
@@ -99,6 +100,7 @@ def _trim_instruction(
 **Parameters:*
  - instruct (InstructionData): Data describing a trim operation step.
  - trim_method (Callable): A path_operation method, applied to File Instructions.
+ - move_files (bool): Whether the operation moves files, rather than copies.
 
 **Returns:**
  bool - True if operation succeeds. False if OSError occurs, or trimmer method canceled file operation.
@@ -107,7 +109,10 @@ def _trim_instruction(
         if instruct.is_dir:
             return path_operations.remove_empty_dir(instruct.path)
         elif instruct.data_path is None:
-            pass
+            if move_files:
+                instruct.path.unlink(missing_ok=True)
+            else:
+                return True
         else:
             return trim_method(instruct)
     except OSError:
