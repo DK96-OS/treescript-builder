@@ -23,7 +23,7 @@ def validate_tree(
 	"""
     tree_generator = line_reader.read_input_tree(input_data.tree_input)
     return trim_validation.validate_trim(
-        tree_generator, input_data.data_dir
+        tree_generator, input_data.data_dir, input_data.move_files,
     ) if input_data.trim_tree else build_validation.validate_build(
         tree_generator, input_data.data_dir
     )
