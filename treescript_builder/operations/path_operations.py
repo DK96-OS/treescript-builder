@@ -6,6 +6,8 @@ from pathlib import Path
 from shutil import copy2, move
 from typing import Callable
 
+from treescript_builder.input.file_validation import safe_read_text_file
+
 
 def make_dir_exist(
     dir_path: Path,
@@ -48,7 +50,7 @@ def remove_empty_dir(
 
 def get_trywrite_operation(
     move_file: bool,
-) -> Callable[[Path, Path | None], bool]:
+) -> Callable[[Path, Path], bool]:
     """ Obtain the Operation that checks the TargetFile before writing to it.
  - These operations yield when TargetFile is non-empty.
 
@@ -64,7 +66,7 @@ def get_trywrite_operation(
 def get_overwrite_operation(
     move_file: bool,
     exact: bool,
-) -> Callable[[Path, Path | None], bool]:
+) -> Callable[[Path, Path], bool]:
     """ Obtain the Operation that Overwrites the TargetFile with the SourceFile.
 - If not exact, the TargetFile won't be overwritten if SourceFile is empty.
 - Exactness feature is added to help protect against accidental overwrites.
@@ -83,7 +85,7 @@ def get_write_operation(
     move_file: bool,
     overwrite: bool,
     exact: bool,
-) -> Callable[[Path, Path | None], bool]:
+) -> Callable[[Path, Path], bool]:
     """ Obtain a Path Operation Method for the Write Mode (not TextMerge Mode).
  - Includes TryWrite and Overwrite Methods.
  - See other similar methods for more details: get_trywrite_operation, get_overwrite_operation.
@@ -102,7 +104,7 @@ def get_write_operation(
 def get_text_merge_method(
     move_file: bool,
     prepend: bool,
-) -> Callable[[Path, Path | None], bool]:
+) -> Callable[[Path, Path], bool]:
     """ Obtain a Path Operation Method that Merges TargetFile and SourceFile Texts.
 
 **Parameters:**
@@ -129,7 +131,7 @@ def _is_non_empty_path(
 
 def _try_copy(
     target_file: Path,
-    source_file: Path | None,
+    source_file: Path,
 ) -> bool:
     if _is_non_empty_path(target_file):
         return False
@@ -149,40 +151,31 @@ def _try_move(
 
 def _ow_copy(
     target_file: Path,
-    source_file: Path | None,
+    source_file: Path ,
 ) -> bool:
-    if source_file is None:
-        target_file.touch(exist_ok=True)
-    else:
-        copy2(source_file, target_file)
+    copy2(source_file, target_file)
     return True
 
 
 def _ow_move(
     target_file: Path,
-    source_file: Path | None,
+    source_file: Path,
 ) -> bool:
-    if source_file is None:
-        target_file.touch(exist_ok=True)
-    else:
-        move(source_file, target_file)
+    move(source_file, target_file)
     return True
 
 
 def _ow_exact_copy(
     target_file: Path,
-    source_file: Path | None,
+    source_file: Path ,
 ) -> bool:
-    if source_file is None:
-        target_file.touch(exist_ok=True)
-    else:
-        copy2(source_file, target_file)
+    copy2(source_file, target_file)
     return True
 
 
 def _ow_exact_move(
     target_file: Path,
-    source_file: Path | None,
+    source_file: Path,
 ) -> bool:
     move(source_file, target_file)
     return True
@@ -190,12 +183,9 @@ def _ow_exact_move(
 
 def _append_copy(
     target_file: Path,
-    source_file: Path | None,
+    source_file: Path,
 ) -> bool:
-    if source_file is None:
-        target_file.touch(exist_ok=True)
-        return True
-    src_contents = source_file.read_text()
+    src_contents = safe_read_text_file(source_file)
     with target_file.open('a') as f:
         f.write(src_contents)
     return True
@@ -203,12 +193,9 @@ def _append_copy(
 
 def _append_move(
     target_file: Path,
-    source_file: Path | None,
+    source_file: Path,
 ) -> bool:
-    if source_file is None:
-        target_file.touch(exist_ok=True)
-        return True
-    src_contents = source_file.read_text()
+    src_contents = safe_read_text_file(source_file)
     with target_file.open('a') as f:
         f.write(src_contents)
     source_file.unlink() # Remove src File, as it is being 'moved'.
@@ -217,13 +204,10 @@ def _append_move(
 
 def _prepend_copy(
     target_file: Path,
-    source_file: Path | None,
+    source_file: Path,
 ) -> bool:
-    if source_file is None:
-        target_file.touch(exist_ok=True)
-        return True
-    target_contents = target_file.read_text()
-    src_contents = source_file.read_text()
+    target_contents = safe_read_text_file(target_file)
+    src_contents = safe_read_text_file(source_file)
     with target_file.open('w') as f:
         f.write(src_contents)
         f.write(target_contents)
@@ -232,13 +216,10 @@ def _prepend_copy(
 
 def _prepend_move(
     target_file: Path,
-    source_file: Path | None,
+    source_file: Path,
 ) -> bool:
-    if source_file is None:
-        target_file.touch(exist_ok=True)
-        return True
-    target_contents = target_file.read_text()
-    src_file_content = source_file.read_text()
+    target_contents = safe_read_text_file(target_file)
+    src_file_content = safe_read_text_file(source_file)
     with target_file.open('w') as f:
         f.write(src_file_content)
         f.write(target_contents)
