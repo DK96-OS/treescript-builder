@@ -8,6 +8,7 @@ from sys import exit
 
 from treescript_builder.input.string_validation import validate_name
 
+
 _FILE_SIZE_LIMIT = 32 * 1024 # 32 KB
 _FILE_SIZE_LIMIT_ERROR_MSG = "File larger than 32 KB Limit."
 _FILE_SYMLINK_DISABLED_MSG = "Symlink file paths are disabled."
@@ -18,6 +19,9 @@ _FILE_VALIDATION_ERROR_MSG = "Invalid Input File Contents."
 
 _NOT_A_DIR_ERROR_MSG = "Not a Directory."
 _DIR_DOES_NOT_EXIST_MSG = "The Directory does not exist."
+
+_TEXT_FILE_SIZE_LIMIT = 2 * 1024**2 # 2 MB
+_TEXT_FILE_SIZE_LIMIT_ERROR_MSG = "Text File larger than 2 MB Limit."
 
 
 def validate_input_file(file_name: str) -> str | None:
@@ -74,3 +78,22 @@ def validate_directory(
             return path
         exit(_NOT_A_DIR_ERROR_MSG)
     exit(_DIR_DOES_NOT_EXIST_MSG)
+
+
+def safe_read_text_file(file_path: Path) -> str:
+    """ Safely read a TextFile from a Path.
+ - Designed for use in Text Merge Operations, where text files are read and appended.
+ - Quickly returns empty string if the file is missing.
+ - Exits if a real issue with the file is found: symlink, over 4 MB size limit.
+    """
+    try:
+        if not file_path.exists():
+            return ''
+        if S_ISLNK((stat := file_path.lstat()).st_mode):
+            exit(_FILE_SYMLINK_DISABLED_MSG)
+        if stat.st_size > _TEXT_FILE_SIZE_LIMIT:
+            exit(_TEXT_FILE_SIZE_LIMIT_ERROR_MSG)
+        return file_path.read_text()
+    except OSError:
+        exit(_FILE_READ_OSERROR_MSG)
+    return ''
