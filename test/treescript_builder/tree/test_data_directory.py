@@ -179,6 +179,55 @@ def test_validate_build_invalid_datalabel_raises_exit(test_input):
         (TreeData(1, 0, False, "file_name", 'data_label'), ftb_path / data_label),
     ]
 )
+def test_validate_build_unique_input_file_returns_data(test_input, expect):
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True) # The DataDir Exists
+        c.setattr(Path, 'glob', yield_path)
+        assert DataDirectory(ftb_path).validate_build_unique(test_input) == expect
+
+
+@pytest.mark.parametrize(
+    "test_input,expect",
+    [
+        (TreeData(1, 0, False, "file_name", 'data_label'), ftb_path / data_label),
+        (TreeData(2, 1, False, "File123.txt", 'Data.label'), ftb_path / data_label),
+        (TreeData(3, 2, False, "File123.txt", 'DATA-LABEL-123'), ftb_path / data_label),
+    ]
+)
+def test_validate_build_unique_duplicate_data_labels_raises_exit(test_input, expect):
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True) # The DataDir Exists
+        data_dir = DataDirectory(ftb_path)
+        c.setattr(Path, 'glob', yield_path)
+        # The first time the TestInput TreeData is validated, it is stored in the DataDirectory.
+        assert data_dir.validate_build_unique(test_input) == expect
+        # The second time it is validated, an exit is raised.
+        with pytest.raises(SystemExit, match=data_directory._DATA_LABEL_DUPLICATE_MSG):
+            data_dir.validate_build_unique(test_input)
+
+
+@pytest.mark.parametrize(
+    "test_input",
+    [
+        (TreeData(1, 0, False, "file&", data_label)),
+        (TreeData(1, 0, False, "#file", data_label)),
+        (TreeData(1, 0, False, "!file", data_label)),
+    ]
+)
+def test_validate_build_unique_invalid_filename_raises_exit(test_input):
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True) # The DataDir Exists
+        with pytest.raises(SystemExit, match=escape(f'Label not found in DataDirectory on Line: {test_input.line_number}')):
+            DataDirectory(ftb_path).validate_build_unique(test_input)
+
+
+@pytest.mark.parametrize(
+    "test_input,expect",
+    [
+        (TreeData(1, 0, False, "file_name", 'data_label'), ftb_path / data_label),
+        (TreeData(1, 0, False, "file_name", 'data_label'), ftb_path / data_label),
+    ]
+)
 def test_validate_trim_data_file_does_not_yet_exist_returns_path(test_input, expect):
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
