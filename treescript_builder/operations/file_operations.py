@@ -32,19 +32,33 @@ def build(
             not isinstance(is_trim, bool) or \
             not isinstance(control_mode, ControlMode):
         raise TypeError
-    # Both Build and Trim Operations use the same Path Operation for each combination of ControlMode and Move/Copy.
+    return _build_files(
+        move_files, control_mode, instructions
+    ) if not is_trim else _trim_files(
+        move_files, control_mode, instructions
+    )
+
+
+def _build_files(
+    move_files: bool,
+    control_mode: ControlMode,
+    instructions: tuple[InstructionData, ...],
+) -> tuple[bool, ...]:
     path_method = _get_path_method(control_mode, move_files)
-    # Trim and Build diverge in the application of the Path Operation on the InstructionData.
-    if is_trim:
-        # The DataFile is the Target of the Path Operation
-        instruct_method = lambda x: path_method(x.data_path, x.path)
-        # Also needs the handle cleaning up empty directories.
-        return tuple(_trim_instruction(i, instruct_method) for i in instructions)
-    else:
-        # The FileTree Path is the Target of the Path Operation
-        instruct_method = lambda x: path_method(x.path, x.data_path)
-        # Handle Directories in this Build Instruction method.
-        return tuple(_build_instruction(i, instruct_method) for i in instructions)
+    # The DataFile is the Target of the Path Operation
+    instruct_method = lambda x: path_method(x.path, x.data_path)
+    # Also needs the handle cleaning up empty directories.
+    return tuple(_build_instruction(i, instruct_method) for i in instructions)
+
+
+def _trim_files(
+    move_files: bool,
+    control_mode: ControlMode,
+    instructions: tuple[InstructionData, ...],
+) -> tuple[bool, ...]:
+    path_method = _get_path_method(control_mode, move_files)
+    instruct_method = lambda x: path_method(x.data_path, x.path)
+    return tuple(_trim_instruction(i, instruct_method) for i in instructions)
 
 
 def _build_instruction(
@@ -61,12 +75,18 @@ def _build_instruction(
 **Returns:**
  bool - True if operation succeeds. False if OSError occurs, or builder method canceled file operation.
     """
-    try:
-        # Only Path in Instruction is required for directory.
-        return path_operations.make_dir_exist(instruct.path)\
-            if instruct.is_dir else build_method(instruct) 
+    try: # Only Path in Instruction is required for directory.
+        if instruct.is_dir:
+            return path_operations.make_dir_exist(instruct.path)
+        elif instruct.data_path is None:
+            instruct.path.touch(exist_ok=True)
+        else:
+            return build_method(instruct)
     except OSError:
         return False
+    except SystemExit:
+        return False
+    return True
 
 
 def _trim_instruction(
@@ -84,11 +104,15 @@ def _trim_instruction(
  bool - True if operation succeeds. False if OSError occurs, or trimmer method canceled file operation.
     """
     try:
-        # Only Path in Instruction is required for directory.
-        return path_operations.remove_empty_dir(instruct.path) \
-            if instruct.is_dir else trim_method(instruct)
+        if instruct.is_dir:
+            return path_operations.remove_empty_dir(instruct.path)
+        elif instruct.data_path is None:
+            pass
+        else:
+            return trim_method(instruct)
     except OSError:
         return False
+    return True
 
 
 def _get_path_method(
