@@ -68,43 +68,43 @@ from treescript_builder.tree import validate_tree
 
 
 def test_get_path_method_():
-	assert _get_path_method(WriteControlModes(), False, False) == path_operations._try_copy
+	assert _get_path_method(WriteControlModes(), False) == path_operations._try_copy
 
 
 def test_get_path_method_move_files_():
-	assert _get_path_method(WriteControlModes(), True, False) == path_operations._try_move
+	assert _get_path_method(WriteControlModes(), True) == path_operations._try_move
 
 
 def test_get_path_method_overwrite_():
-	assert _get_path_method(WriteControlModes(overwrite=True), False, False) == path_operations._ow_copy
+	assert _get_path_method(WriteControlModes(overwrite=True), False) == path_operations._ow_copy
 
 
 def test_get_path_method_overwrite_move_files_():
-	assert _get_path_method(WriteControlModes(overwrite=True), True, False) == path_operations._ow_move
+	assert _get_path_method(WriteControlModes(overwrite=True), True) == path_operations._ow_move
 
 
 def test_get_path_method_overwrite_exact_():
-	assert _get_path_method(WriteControlModes(overwrite=True, exact_build=True), False, False) == path_operations._ow_exact_copy
+	assert _get_path_method(WriteControlModes(overwrite=True, exact_build=True), False) == path_operations._ow_exact_copy
 
 
 def test_get_path_method_overwrite_exact_move_files_():
-	assert _get_path_method(WriteControlModes(overwrite=True, exact_build=True), True, False) == path_operations._ow_exact_move
+	assert _get_path_method(WriteControlModes(overwrite=True, exact_build=True), True) == path_operations._ow_exact_move
 
 
 def test_get_path_method_prepend():
-	assert _get_path_method(TextMergeControlModes(prepend_merge=True), False, False) == path_operations._prepend_copy
+	assert _get_path_method(TextMergeControlModes(prepend_merge=True), False) == path_operations._prepend_copy
 
 
 def test_get_path_method_prepend_move_files_():
-	assert _get_path_method(TextMergeControlModes(prepend_merge=True), True, False) == path_operations._prepend_move
+	assert _get_path_method(TextMergeControlModes(prepend_merge=True), True) == path_operations._prepend_move
 
 
 def test_get_path_method_append():
-	assert _get_path_method(TextMergeControlModes(prepend_merge=False), False, False) == path_operations._append_copy
+	assert _get_path_method(TextMergeControlModes(prepend_merge=False), False) == path_operations._append_copy
 
 
 def test_get_path_method_append_move_files_():
-	assert _get_path_method(TextMergeControlModes(prepend_merge=False), True, False) == path_operations._append_move
+	assert _get_path_method(TextMergeControlModes(prepend_merge=False), True) == path_operations._append_move
 
 
 def test_build_one_directory_already_exists_returns_true(control_overwrite):
