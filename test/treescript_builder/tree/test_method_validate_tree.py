@@ -84,7 +84,7 @@ def test_validate_tree_trywrite_validate_returns_data(input_data, expected_instr
 
 @pytest.mark.parametrize(
     "input_data_and_dir", [
-        input_data_with_dir('basic+data', 'data/dir', get_control_mode_write(validate=True), False),
+        input_data_with_dir('basic+data', 'data/dir', get_control_mode_write(validate=True), move_files=False, is_trim=False),
     ]
 )
 def test_validate_tree_with_data_validate_data_file_does_not_exist_raises_exit(input_data_and_dir: tuple):
@@ -94,13 +94,14 @@ def test_validate_tree_with_data_validate_data_file_does_not_exist_raises_exit(i
 
 @pytest.mark.parametrize(
     "input_data_and_dir", [
-        input_data_with_dir('basic+data', 'data/dir', get_control_mode_write(validate=True), False, is_trim=True),
+        input_data_with_dir('basic+data', 'data/dir', get_control_mode_write(validate=True), move_files=False, is_trim=True),
     ]
 )
 def test_validate_tree_with_data_is_trim_validate_data_file_does_not_exist_returns_instructions(input_data_and_dir: tuple):
     assert validate_tree(input_data_and_dir[0]) == (
         InstructionData(False, Path('src/data.txt'), Path(input_data_and_dir[1].name) / 'data/dir' / 'DataLabel'),
-        InstructionData(True, Path('src'), None),
+        # Directories are not removed by copy operations.
+        # InstructionData(True, Path('src'), None),
     )
 
 
