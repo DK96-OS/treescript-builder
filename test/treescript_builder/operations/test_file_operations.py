@@ -414,7 +414,7 @@ def test_trim_files_tempdir_data_tree_with_data_move_files_succeeds_returns_true
 	(target_dir := tdir_path / DATA_TREE_TARGET_DIR_NAME).mkdir()
 	(target_file := target_dir / DATA_TREE_TARGET_FILE_NAME).touch()
 	target_file.write_text(DATA_TREE_TARGET_FILE_CONTENTS)
-	assert (True,) == _trim_files(
+	assert (True, True,) == _trim_files(
 		move_files=True,
 		control_mode=control_mode,
 		instructions=validate_tree(input_data),

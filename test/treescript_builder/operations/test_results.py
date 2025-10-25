@@ -162,10 +162,10 @@ def test_process_build_results_single_instruction_tuple_pass_verbosity_1_returns
 
 @pytest.mark.parametrize(
     'control_mode, expected_result', [
-        (get_control_mode_text_merge(is_prepend=False), 'APPEND:\nAll 2 operations succeeded.'),
-        (get_control_mode_text_merge(is_prepend=False, continue_build=True), 'APPEND, CONTINUE:\nAll 2 operations succeeded.'),
-        (get_control_mode_text_merge(is_prepend=True), 'PREPEND:\nAll 2 operations succeeded.'),
-        (get_control_mode_text_merge(is_prepend=True, continue_build=True), 'PREPEND, CONTINUE:\nAll 2 operations succeeded.'),
+        (get_control_mode_text_merge(is_prepend=False), 'APPEND:\nAll File Operations Succeeded.'),
+        (get_control_mode_text_merge(is_prepend=False, continue_build=True), 'APPEND, CONTINUE:\nAll File Operations Succeeded.'),
+        (get_control_mode_text_merge(is_prepend=True), 'PREPEND:\nAll File Operations Succeeded.'),
+        (get_control_mode_text_merge(is_prepend=True, continue_build=True), 'PREPEND, CONTINUE:\nAll File Operations Succeeded.'),
     ]
 )
 def test_process_build_results_basic_data_tree_text_merge_verbosity_1_returns_(control_mode, expected_result):
@@ -182,8 +182,8 @@ def test_process_build_results_basic_data_tree_text_merge_verbosity_1_returns_(c
 @pytest.mark.parametrize(
     "verbosity, expected_result", [
         (0, ''),
-        (1, 'APPEND:\nAll 2 operations succeeded.'),
-        (2, 'APPEND:\nPass: src/\nPass: src/data.txt\nAll 2 operations succeeded.'),
+        (1, 'APPEND:\nAll File Operations Succeeded.'),
+        (2, 'APPEND:\nPass: src/\nPass: src/data.txt\nAll File Operations Succeeded.'),
     ]
 )
 def test_process_build_results_simple_tree_append_succeeds_returns(
@@ -203,8 +203,8 @@ def test_process_build_results_simple_tree_append_succeeds_returns(
     "verbosity, expected_result",
     [
         (0, ''),
-        (1, 'WRITE:\nAll 2 operations succeeded.'),
-        (2, 'WRITE:\nPass: src/\nPass: src/data.txt\nAll 2 operations succeeded.'),
+        (1, 'WRITE:\nAll File Operations Succeeded.'),
+        (2, 'WRITE:\nPass: src/\nPass: src/data.txt\nAll File Operations Succeeded.'),
     ]
 )
 def test_process_build_results_simple_tree_move_succeeds_returns(
@@ -224,8 +224,8 @@ def test_process_build_results_simple_tree_move_succeeds_returns(
     "verbosity, expected_result",
     [
         (0, ''),
-        (1, 'WRITE:\nFail: src/data.txt\n(1 / 2) operations succeeded: 50.0%'),
-        (2, 'WRITE:\nPass: src/\nFail: src/data.txt\n(1 / 2) operations succeeded: 50.0%'),
+        (1, 'WRITE:\nFail: src/data.txt\n(1 / 2) Operations Succeeded: 50.0%'),
+        (2, 'WRITE:\nPass: src/\nFail: src/data.txt\n(1 / 2) Operations Succeeded: 50.0%'),
     ]
 )
 def test_process_build_results_simple_tree_move_file_fails_returns(
@@ -245,8 +245,8 @@ def test_process_build_results_simple_tree_move_file_fails_returns(
     "verbosity, expected_result",
     [
         (0, ''),
-        (1, 'OVERWRITE:\nAll 2 operations succeeded.'),
-        (2, 'OVERWRITE:\nPass: src/\nPass: src/data.txt\nAll 2 operations succeeded.'),
+        (1, 'OVERWRITE:\nAll File Operations Succeeded.'),
+        (2, 'OVERWRITE:\nPass: src/\nPass: src/data.txt\nAll File Operations Succeeded.'),
     ]
 )
 def test_process_build_results_simple_tree_overwrite_succeeds_returns(
@@ -266,8 +266,8 @@ def test_process_build_results_simple_tree_overwrite_succeeds_returns(
     "verbosity, expected_result",
     [
         (0, ''),
-        (1, 'OVERWRITE-EXACT:\nAll 2 operations succeeded.'),
-        (2, 'OVERWRITE-EXACT:\nPass: src/\nPass: src/data.txt\nAll 2 operations succeeded.'),
+        (1, 'OVERWRITE-EXACT:\nAll File Operations Succeeded.'),
+        (2, 'OVERWRITE-EXACT:\nPass: src/\nPass: src/data.txt\nAll File Operations Succeeded.'),
     ]
 )
 def test_process_build_results_simple_tree_overwrite_exact_succeeds_returns(
@@ -287,8 +287,8 @@ def test_process_build_results_simple_tree_overwrite_exact_succeeds_returns(
     "verbosity, expected_result",
     [
         (0, ''),
-        (1, 'PREPEND:\nAll 2 operations succeeded.'),
-        (2, 'PREPEND:\nPass: src/\nPass: src/data.txt\nAll 2 operations succeeded.'),
+        (1, 'PREPEND:\nAll File Operations Succeeded.'),
+        (2, 'PREPEND:\nPass: src/\nPass: src/data.txt\nAll File Operations Succeeded.'),
     ]
 )
 def test_process_build_results_simple_tree_prepend_succeeds_returns(
@@ -308,8 +308,8 @@ def test_process_build_results_simple_tree_prepend_succeeds_returns(
     "verbosity, expected_result",
     [
         (0, ''),
-        (1, 'APPEND:\nFail: src/\nFail: src/data.txt\nAll 2 operations failed.'),
-        (2, 'APPEND:\nFail: src/\nFail: src/data.txt\nAll 2 operations failed.'),
+        (1, 'APPEND:\nFail: src/\nFail: src/data.txt\nAll File Operations Failed.'),
+        (2, 'APPEND:\nFail: src/\nFail: src/data.txt\nAll File Operations Failed.'),
     ]
 )
 def test_process_build_results_simple_tree_append_fails_returns(
@@ -329,8 +329,8 @@ def test_process_build_results_simple_tree_append_fails_returns(
     "verbosity, expected_result",
     [
         (0, ''),
-        (1, 'APPEND, CONTINUE:\nFail: src/\nFail: src/data.txt\nAll 2 operations failed.'),
-        (2, 'APPEND, CONTINUE:\nFail: src/\nFail: src/data.txt\nAll 2 operations failed.'),
+        (1, 'APPEND, CONTINUE:\nFail: src/\nFail: src/data.txt\nAll File Operations Failed.'),
+        (2, 'APPEND, CONTINUE:\nFail: src/\nFail: src/data.txt\nAll File Operations Failed.'),
     ]
 )
 def test_process_build_results_simple_tree_append_continue_fails_returns(
@@ -350,8 +350,8 @@ def test_process_build_results_simple_tree_append_continue_fails_returns(
     "verbosity, expected_result",
     [
         (0, ''),
-        (1, 'WRITE:\nFail: src/\nFail: src/data.txt\nAll 2 operations failed.'),
-        (2, 'WRITE:\nFail: src/\nFail: src/data.txt\nAll 2 operations failed.'),
+        (1, 'WRITE:\nFail: src/\nFail: src/data.txt\nAll File Operations Failed.'),
+        (2, 'WRITE:\nFail: src/\nFail: src/data.txt\nAll File Operations Failed.'),
     ]
 )
 def test_process_build_results_simple_tree_cancel_fails_returns(
@@ -371,8 +371,8 @@ def test_process_build_results_simple_tree_cancel_fails_returns(
     "verbosity, expected_result",
     [
         (0, ''),
-        (1, 'WRITE:\nFail: src/\nFail: src/data.txt\nAll 2 operations failed.'),
-        (2, 'WRITE:\nFail: src/\nFail: src/data.txt\nAll 2 operations failed.'),
+        (1, 'WRITE:\nFail: src/\nFail: src/data.txt\nAll File Operations Failed.'),
+        (2, 'WRITE:\nFail: src/\nFail: src/data.txt\nAll File Operations Failed.'),
     ]
 )
 def test_process_build_results_simple_tree_move_fails_returns(
@@ -392,8 +392,8 @@ def test_process_build_results_simple_tree_move_fails_returns(
     "verbosity, expected_result",
     [
         (0, ''),
-        (1, 'OVERWRITE-EXACT:\nFail: src/\nFail: src/data.txt\nAll 2 operations failed.'),
-        (2, 'OVERWRITE-EXACT:\nFail: src/\nFail: src/data.txt\nAll 2 operations failed.'),
+        (1, 'OVERWRITE-EXACT:\nFail: src/\nFail: src/data.txt\nAll File Operations Failed.'),
+        (2, 'OVERWRITE-EXACT:\nFail: src/\nFail: src/data.txt\nAll File Operations Failed.'),
     ]
 )
 def test_process_build_results_simple_tree_overwrite_fails_returns(
@@ -413,11 +413,11 @@ def test_process_build_results_simple_tree_overwrite_fails_returns(
     "verbosity, expected_result",
     [
         (0, ''),
-        (1, 'PREPEND:\nFail: src/\nFail: src/data.txt\nAll 2 operations failed.'),
-        (2, 'PREPEND:\nFail: src/\nFail: src/data.txt\nAll 2 operations failed.'),
+        (1, 'PREPEND:\nFail: src/\nFail: src/data.txt\nAll File Operations Failed.'),
+        (2, 'PREPEND:\nFail: src/\nFail: src/data.txt\nAll File Operations Failed.'),
     ]
 )
-def test_process_build_results_simple_tree_prepend_fails_returns(
+def test_process_build_results_simple_tree_prepend_copy_fails_returns(
     verbosity, expected_result
 ):
     assert expected_result == process_build_results(
@@ -431,6 +431,27 @@ def test_process_build_results_simple_tree_prepend_fails_returns(
 
 
 @pytest.mark.parametrize(
+    "verbosity, expected_result",
+    [
+        (0, ''),
+        (1, 'PREPEND:\nFail: src/\nFail: src/data.txt\nAll File Operations Failed.'),
+        (2, 'PREPEND:\nFail: src/\nFail: src/data.txt\nAll File Operations Failed.'),
+    ]
+)
+def test_process_build_results_simple_tree_prepend_move_fails_returns(
+    verbosity, expected_result
+):
+    assert expected_result == process_build_results(
+        instructions_tuple=tuple(generate_simple_tree_instructions()),
+        results_tuple=(False, False),
+        control_mode=get_control_mode_text_merge(is_prepend=True),
+        move_files=True,
+        is_trim=False,
+        verbosity_level=verbosity,
+    )
+
+
+@pytest.mark.parametrize(
     "verbosity, control_mode, expected_result",
     [
         (0, get_control_mode_text_merge(is_prepend=False), ''),
@@ -438,11 +459,11 @@ def test_process_build_results_simple_tree_prepend_fails_returns(
         (0, get_control_mode_text_merge(is_prepend=True), ''),
         (0, get_control_mode_text_merge(is_prepend=True, continue_build=True), ''),
         #
-        (1, get_control_mode_text_merge(is_prepend=False), 'APPEND:\nFail: src/data.txt\n(1 / 2) operations succeeded: 50.0%'),
-        (1, get_control_mode_text_merge(is_prepend=True), 'PREPEND:\nFail: src/data.txt\n(1 / 2) operations succeeded: 50.0%'),
+        (1, get_control_mode_text_merge(is_prepend=False), 'APPEND:\nFail: src/data.txt\n(1 / 2) Operations Succeeded: 50.0%'),
+        (1, get_control_mode_text_merge(is_prepend=True), 'PREPEND:\nFail: src/data.txt\n(1 / 2) Operations Succeeded: 50.0%'),
         #
-        (2, get_control_mode_text_merge(is_prepend=False), 'APPEND:\nPass: src/\nFail: src/data.txt\n(1 / 2) operations succeeded: 50.0%'),
-        (2, get_control_mode_text_merge(is_prepend=True), 'PREPEND:\nPass: src/\nFail: src/data.txt\n(1 / 2) operations succeeded: 50.0%'),
+        (2, get_control_mode_text_merge(is_prepend=False), 'APPEND:\nPass: src/\nFail: src/data.txt\n(1 / 2) Operations Succeeded: 50.0%'),
+        (2, get_control_mode_text_merge(is_prepend=True), 'PREPEND:\nPass: src/\nFail: src/data.txt\n(1 / 2) Operations Succeeded: 50.0%'),
     ]
 )
 def test_process_build_results_simple_tree_text_merge_half_succeeded_returns_message(
@@ -466,11 +487,11 @@ def test_process_build_results_simple_tree_text_merge_half_succeeded_returns_mes
         (0, get_control_mode_text_merge(is_prepend=True), ''),
         (0, get_control_mode_text_merge(is_prepend=True, continue_build=True), ''),
         #
-        (1, get_control_mode_text_merge(is_prepend=False), 'APPEND:\nFail: module1/src/main/java/\nFail: module1/src/test/java/\n(2 / 4) operations succeeded: 50.0%'),
-        (1, get_control_mode_text_merge(is_prepend=True), 'PREPEND:\nFail: module1/src/main/java/\nFail: module1/src/test/java/\n(2 / 4) operations succeeded: 50.0%'),
+        (1, get_control_mode_text_merge(is_prepend=False), 'APPEND:\nFail: module1/src/main/java/\nFail: module1/src/test/java/\n(2 / 4) Operations Succeeded: 50.0%'),
+        (1, get_control_mode_text_merge(is_prepend=True), 'PREPEND:\nFail: module1/src/main/java/\nFail: module1/src/test/java/\n(2 / 4) Operations Succeeded: 50.0%'),
         #
-        (2, get_control_mode_text_merge(is_prepend=False), 'APPEND:\nPass: module1/\nPass: module1/build.gradle\nFail: module1/src/main/java/\nFail: module1/src/test/java/\n(2 / 4) operations succeeded: 50.0%'),
-        (2, get_control_mode_text_merge(is_prepend=True), 'PREPEND:\nPass: module1/\nPass: module1/build.gradle\nFail: module1/src/main/java/\nFail: module1/src/test/java/\n(2 / 4) operations succeeded: 50.0%'),
+        (2, get_control_mode_text_merge(is_prepend=False), 'APPEND:\nPass: module1/\nPass: module1/build.gradle\nFail: module1/src/main/java/\nFail: module1/src/test/java/\n(2 / 4) Operations Succeeded: 50.0%'),
+        (2, get_control_mode_text_merge(is_prepend=True), 'PREPEND:\nPass: module1/\nPass: module1/build.gradle\nFail: module1/src/main/java/\nFail: module1/src/test/java/\n(2 / 4) Operations Succeeded: 50.0%'),
     ]
 )
 def test_process_build_results_data_tree_text_merge_half_succeeded_returns_message(

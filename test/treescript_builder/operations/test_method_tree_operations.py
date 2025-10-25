@@ -1,6 +1,6 @@
 """ Testing the Operations Package High Level Method Tree Operations.
 """
-import os
+from os import chdir
 from pathlib import Path
 
 import pytest
@@ -15,12 +15,12 @@ from treescript_builder.tree import data_directory
 @pytest.mark.parametrize(
     'move_files, verbosity, expected_result,', [
         (False, 0, ''),
-        (False, 1, 'WRITE:\nAll 2 operations succeeded.'),
-        (False, 2, 'WRITE:\nPass: src/\nPass: src/data.txt\nAll 2 operations succeeded.'),
+        (False, 1, 'WRITE:\nAll File Operations Succeeded.'),
+        (False, 2, 'WRITE:\nPass: src/\nPass: src/data.txt\nAll File Operations Succeeded.'),
         #
         (True, 0, ''),
-        (True, 1, 'WRITE:\nAll 2 operations succeeded.'),
-        (True, 2, 'WRITE:\nPass: src/\nPass: src/data.txt\nAll 2 operations succeeded.'),
+        (True, 1, 'WRITE:\nAll File Operations Succeeded.'),
+        (True, 2, 'WRITE:\nPass: src/\nPass: src/data.txt\nAll File Operations Succeeded.'),
     ]
 )
 def test_tree_operations_build_basic_tree_empty_tempdir_returns_results(move_files, verbosity, expected_result):
@@ -32,7 +32,7 @@ def test_tree_operations_build_basic_tree_empty_tempdir_returns_results(move_fil
         is_trim=False,
         verbosity=verbosity,
     )
-    os.chdir(Path(temp_dir.name))
+    chdir(Path(temp_dir.name))
     assert expected_result == tree_operations(input_data)
 
 
@@ -51,7 +51,7 @@ def test_tree_operations_build_data_tree_missing_datalabel_raises_exit(move_file
         is_trim=False,
         verbosity=verbosity,
     )
-    os.chdir(Path(temp_dir.name))
+    chdir(Path(temp_dir.name))
     with pytest.raises(SystemExit, match=data_directory._DATA_LABEL_NOT_FOUND_MSG):
         tree_operations(input_data)
 
@@ -59,12 +59,12 @@ def test_tree_operations_build_data_tree_missing_datalabel_raises_exit(move_file
 @pytest.mark.parametrize(
     'move_files, verbosity, expected_result,', [
         (False, 0, ''),
-        (False, 1, 'WRITE:\nAll 2 operations succeeded.'),
-        (False, 2, f'WRITE:\nPass: {DATA_TREE_TARGET_DIR_NAME}/\nPass: {DATA_TREE_TARGET_DIR_NAME}/{DATA_TREE_TARGET_FILE_NAME}\nAll 2 operations succeeded.'),
+        (False, 1, 'WRITE:\nAll File Operations Succeeded.'),
+        (False, 2, f'WRITE:\nPass: {DATA_TREE_TARGET_DIR_NAME}/\nPass: {DATA_TREE_TARGET_DIR_NAME}/{DATA_TREE_TARGET_FILE_NAME}\nAll File Operations Succeeded.'),
         #
         (True, 0, ''),
-        (True, 1, 'WRITE:\nAll 2 operations succeeded.'),
-        (True, 2, f'WRITE:\nPass: {DATA_TREE_TARGET_DIR_NAME}/\nPass: {DATA_TREE_TARGET_DIR_NAME}/{DATA_TREE_TARGET_FILE_NAME}\nAll 2 operations succeeded.'),
+        (True, 1, 'WRITE:\nAll File Operations Succeeded.'),
+        (True, 2, f'WRITE:\nPass: {DATA_TREE_TARGET_DIR_NAME}/\nPass: {DATA_TREE_TARGET_DIR_NAME}/{DATA_TREE_TARGET_FILE_NAME}\nAll File Operations Succeeded.'),
     ]
 )
 def test_tree_operations_build_data_tree_datadir_prepared_returns_results(move_files, verbosity, expected_result):
@@ -76,7 +76,7 @@ def test_tree_operations_build_data_tree_datadir_prepared_returns_results(move_f
         is_trim=False,
         verbosity=verbosity,
     )
-    os.chdir(tempdir_path := Path(temp_dir.name))
+    chdir(tempdir_path := Path(temp_dir.name))
     (datafile := tempdir_path / DATA_TREE_DATA_DIR_NAME / DATA_TREE_DATA_FILE_NAME).touch()
     datafile.write_text(DATA_TREE_DATA_FILE_CONTENTS)
     assert expected_result == tree_operations(input_data)
