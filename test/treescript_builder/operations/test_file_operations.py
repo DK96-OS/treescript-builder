@@ -183,7 +183,7 @@ def test_build_append_target_dir_fails_returns_false(temp_cwd, control_text_appe
 	create_data_tree(root_dir := Path(temp_cwd.name))
 	test_instructions = (DATA_TREE_TARGET_DIR_INSTRUCT,)
 	with pytest.MonkeyPatch().context() as c:
-		c.setattr(Path, 'lstat', lambda _, **kwargs: raise_exception('oserror'))
+		c.setattr(Path, 'exists', lambda _, **kwargs: raise_exception('oserror'))
 		assert (False,) == build(test_instructions, False, False, control_text_append)
 	# Target file is not modified.
 	assert  '' == (root_dir / DATA_TREE_TARGET_DIR_NAME / DATA_TREE_TARGET_FILE_NAME).read_text()
