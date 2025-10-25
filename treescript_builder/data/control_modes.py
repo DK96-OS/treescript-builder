@@ -1,14 +1,14 @@
 """ The Modes of Control applied during the program operation.
 """
-from abc import abstractmethod, ABC
+from abc import ABC
 from dataclasses import dataclass
-from typing import override
 
 
 class ControlMode(ABC):
     """ An empty abstract class used in type hints.
  - Intended to be extended by the dataclasses in this module.
     """
+    pass
 
 
 @dataclass(frozen=True)
