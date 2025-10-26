@@ -3,9 +3,9 @@
 import pytest
 
 from test.conftest import TEST_DATA_DIR
-from treescript_builder.input.argument_parser import parse_arguments, _INVALID_ARGUMENTS_COMBINATION_STR, \
-    _INVALID_CONTROL_MODE_ARGUMENTS_STR, _INVALID_TEXT_MODE_ARGUMENTS_STR
 from treescript_builder.input.argument_data import ArgumentData
+from treescript_builder.input.argument_parser import parse_arguments, _INVALID_CONTROL_MODE_ARGUMENTS_STR, \
+    _INVALID_TEXT_MODE_ARGUMENTS_STR
 
 
 _TS_FILE_NAME = "tree_file"
@@ -88,7 +88,7 @@ def test_parse_arguments_data_dir_parametrized_text_modes_valid(
         data_dir_path_str=TEST_DATA_DIR,
         trim_tree=expect_trim,
         move_files=expect_move,
-        text_append=expect_prepend_mode == False,   # Must be either Append or Prepend!
+        text_append=not expect_prepend_mode,   # Must be either Append or Prepend!
         text_prepend=expect_prepend_mode,
     )
 

@@ -79,7 +79,7 @@ def test_validate_input_arguments_sample_temp_dir(tmp_path: Path):
     assert not result.trim_tree
     assert not result.move_files
     assert result.verbosity_level == 0
-    assert type(result.control_mode) == WriteControlModes
+    assert isinstance(result.control_mode, WriteControlModes)
 
 
 @pytest.mark.parametrize(
