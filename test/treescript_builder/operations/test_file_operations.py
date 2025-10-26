@@ -107,6 +107,11 @@ def test_get_path_method_append_move_files_():
 	assert _get_path_method(TextMergeControlModes(prepend_merge=False), True) == path_operations._append_move
 
 
+def test_build_instruction_data_object_raises_type_error(control_overwrite):
+	with pytest.raises(TypeError):
+		build(InstructionData(True, Path('./src'), None), False, False, control_overwrite)
+
+
 def test_build_one_directory_already_exists_returns_true(control_overwrite):
 	test_instructions = (
 		InstructionData(True, Path('./src'), None),

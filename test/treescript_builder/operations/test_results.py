@@ -48,6 +48,30 @@ def test_process_build_results_empty_instruction_tuple_verbosity_zero_returns_em
     )
 
 
+def test_process_build_results_basic_data_tree_wrong_argument_type_raises_type_error():
+    with pytest.raises(TypeError, ):
+        process_build_results(
+            instructions_tuple=get_basic_data_tree_instructions(), # This is length 2
+            results_tuple=(True, True,),
+            control_mode=get_control_mode_write(),
+            move_files=False,
+            is_trim=False,
+            verbosity_level='True',
+        )
+
+
+def test_process_build_results_basic_data_tree_different_tuple_lengths_raises_value_error():
+    with pytest.raises(ValueError, ):
+        process_build_results(
+            instructions_tuple=get_basic_data_tree_instructions(), # This is length 2
+            results_tuple=(True,),
+            control_mode=get_control_mode_write(),
+            move_files=False,
+            is_trim=False,
+            verbosity_level=1,
+        )
+
+
 @pytest.mark.parametrize(
     'control_mode', [
         # Write ControlMode
