@@ -26,13 +26,13 @@ def read_input_tree(
     """ Generate structured Tree Data from the Input Data String.
 
 **Parameters:**
- - input_data (InputData): The Input.
+ - input_tree_data (str): The Input string, which should contain TreeScript.
 
 **Yields:**
  TreeData - Produces TreeData from the Input Data.
 
 **Raises:**
- SystemExit - When any Line cannot be read successfully.
+ SystemExit - When any Line cannot be read as TreeScript successfully.
     """
     for line_number, line in enumerate(input_tree_data.splitlines(), start=1):
         if len(lstr := line.lstrip()) == 0 or lstr.startswith('#'):

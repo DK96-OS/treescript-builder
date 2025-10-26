@@ -5,9 +5,9 @@ from re import escape
 
 import pytest
 
-from treescript_builder.data import data_directory
-from treescript_builder.data.data_directory import DataDirectory, get_data_dir_validator
 from treescript_builder.data.tree_data import TreeData
+from treescript_builder.tree import data_directory
+from treescript_builder.tree.data_directory import DataDirectory, get_data_dir_validator
 
 
 ftb_path = Path('.ftb/')
@@ -26,7 +26,7 @@ def yield_path(_, x):
         None,
     ]
 )
-def test_data_directory_init_non_path_raise_exit(test_input):
+def test_data_directory_init_non_path_raises_type_error(test_input):
     with pytest.raises(TypeError):
         DataDirectory(test_input)
 
@@ -34,7 +34,7 @@ def test_data_directory_init_non_path_raise_exit(test_input):
 def test_data_directory_init_dir_does_not_exist_raise_exit():
     with pytest.MonkeyPatch().context() as m:
         m.setattr(Path, 'exists', lambda c: False)
-        with pytest.raises(SystemExit):
+        with pytest.raises(SystemExit, match=data_directory._DATA_DIR_PATH_DOES_NOT_EXIST_MSG):
             DataDirectory(Path('data_dir'))
 
 
@@ -179,6 +179,55 @@ def test_validate_build_invalid_datalabel_raises_exit(test_input):
         (TreeData(1, 0, False, "file_name", 'data_label'), ftb_path / data_label),
     ]
 )
+def test_validate_build_unique_input_file_returns_data(test_input, expect):
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True) # The DataDir Exists
+        c.setattr(Path, 'glob', yield_path)
+        assert DataDirectory(ftb_path).validate_build_unique(test_input) == expect
+
+
+@pytest.mark.parametrize(
+    "test_input,expect",
+    [
+        (TreeData(1, 0, False, "file_name", 'data_label'), ftb_path / data_label),
+        (TreeData(2, 1, False, "File123.txt", 'Data.label'), ftb_path / data_label),
+        (TreeData(3, 2, False, "File123.txt", 'DATA-LABEL-123'), ftb_path / data_label),
+    ]
+)
+def test_validate_build_unique_duplicate_data_labels_raises_exit(test_input, expect):
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True) # The DataDir Exists
+        data_dir = DataDirectory(ftb_path)
+        c.setattr(Path, 'glob', yield_path)
+        # The first time the TestInput TreeData is validated, it is stored in the DataDirectory.
+        assert data_dir.validate_build_unique(test_input) == expect
+        # The second time it is validated, an exit is raised.
+        with pytest.raises(SystemExit, match=data_directory._DATA_LABEL_DUPLICATE_MSG):
+            data_dir.validate_build_unique(test_input)
+
+
+@pytest.mark.parametrize(
+    "test_input",
+    [
+        (TreeData(1, 0, False, "file&", data_label)),
+        (TreeData(1, 0, False, "#file", data_label)),
+        (TreeData(1, 0, False, "!file", data_label)),
+    ]
+)
+def test_validate_build_unique_invalid_filename_raises_exit(test_input):
+    with pytest.MonkeyPatch().context() as c:
+        c.setattr(Path, 'exists', lambda _: True) # The DataDir Exists
+        with pytest.raises(SystemExit, match=escape(f'Label not found in DataDirectory on Line: {test_input.line_number}')):
+            DataDirectory(ftb_path).validate_build_unique(test_input)
+
+
+@pytest.mark.parametrize(
+    "test_input,expect",
+    [
+        (TreeData(1, 0, False, "file_name", 'data_label'), ftb_path / data_label),
+        (TreeData(1, 0, False, "file_name", 'data_label'), ftb_path / data_label),
+    ]
+)
 def test_validate_trim_data_file_does_not_yet_exist_returns_path(test_input, expect):
     with pytest.MonkeyPatch().context() as c:
         c.setattr(Path, 'exists', lambda _: True)
@@ -244,7 +293,7 @@ def test_validate_trim_duplicate_data_labels_raises_exit():
     ]
 )
 def test_get_data_dir_validator_build_no_data_dir_tree_data_without_data_label_returns_none(tree_data):
-    validator = get_data_dir_validator(None, is_trim=False)
+    validator = get_data_dir_validator(None, is_trim=False, move_files=False)
     assert validator(tree_data) is None
 
 
@@ -256,7 +305,7 @@ def test_get_data_dir_validator_build_no_data_dir_tree_data_without_data_label_r
     ]
 )
 def test_get_data_dir_validator_build_no_data_dir_tree_data_with_data_label_raises_exit(tree_data):
-    validator = get_data_dir_validator(None, is_trim=False)
+    validator = get_data_dir_validator(None, is_trim=False, move_files=False)
     with pytest.raises(SystemExit):
         validator(tree_data)
 
@@ -268,7 +317,7 @@ def test_get_data_dir_validator_build_no_data_dir_tree_data_with_data_label_rais
     ]
 )
 def test_get_data_dir_validator_trim_no_data_dir_tree_data_without_data_label_returns_none(tree_data):
-    validator = get_data_dir_validator(None, is_trim=True)
+    validator = get_data_dir_validator(None, is_trim=True, move_files=False)
     assert validator(tree_data) is None
 
 
@@ -280,6 +329,6 @@ def test_get_data_dir_validator_trim_no_data_dir_tree_data_without_data_label_re
     ]
 )
 def test_get_data_dir_validator_trim_no_data_dir_tree_data_with_data_label_raises_exit(tree_data):
-    validator = get_data_dir_validator(None, is_trim=True)
+    validator = get_data_dir_validator(None, is_trim=True, move_files=False)
     with pytest.raises(SystemExit):
         validator(tree_data)

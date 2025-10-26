@@ -7,7 +7,8 @@ import pytest
 
 from test.treescript_builder.conftest import raise_exception
 from test.treescript_builder.input.conftest import generate_filenames, MockPathStat
-from treescript_builder.input import validate_input_file, validate_directory, file_validation
+from treescript_builder.input import file_validation
+from treescript_builder.input.file_validation import validate_input_file, validate_directory
 
 
 @pytest.mark.parametrize(

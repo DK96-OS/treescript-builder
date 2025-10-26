@@ -6,7 +6,7 @@ from test.treescript_builder.conftest import create_depth
 from test.treescript_builder.tree.conftest import sample_treescript_1, sample_treedata_1, sample_treedata_2, \
     sample_treescript_2, sample_treescript_2_crlf
 from treescript_builder.data.tree_data import TreeData
-from treescript_builder.input.line_reader import _calculate_depth, _process_line, _validate_node_name, read_input_tree
+from treescript_builder.tree.line_reader import _calculate_depth, _process_line, _validate_node_name, read_input_tree
 
 # Directory Variants: A tuple of all possible ways that a directory may be represented.
 dir_variants = ('/dir', 'dir/', '\\dir', 'dir\\')

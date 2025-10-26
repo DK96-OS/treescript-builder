@@ -2,9 +2,10 @@
  Author: DK96-OS 2024 - 2025
 """
 import builtins
-import os
 import sys
 from itertools import chain
+from os import chdir
+from pathlib import Path
 from typing import Callable
 
 import pytest
@@ -12,6 +13,7 @@ import pytest
 from test.conftest import TEST_INPUT_FILE, TEST_DATA_DIR, get_basic_tree_script, get_nested_tree_script, \
     get_empty_dirs_tree_script
 from treescript_builder.__main__ import main
+from treescript_builder.operations import results
 
 
 class PrintCollector:
@@ -30,18 +32,20 @@ class PrintCollector:
     def get_collector(self):
         def _collection(result, **kwargs):
             self.append_print_output(result)
-            if (end_append := kwargs['end']) is not None:
+            if 'end' not in kwargs:
+                pass
+            elif (end_append := kwargs['end']) is not None:
                 self.append_print_output(end_append)
         return _collection
 
-    
+
 def setup_mock_print_collector() -> tuple[PrintCollector, Callable[[str], None]]:
     return (collector := PrintCollector()), collector.get_collector()
 
 
 def test_main_build_basic_tree(monkeypatch, tmp_path):
     sys.argv = ['treescript-builder', TEST_INPUT_FILE]
-    os.chdir(tmp_path)
+    chdir(tmp_path)
     #
     (input_file := tmp_path / TEST_INPUT_FILE).touch()
     input_file.write_text(get_basic_tree_script())
@@ -59,7 +63,7 @@ def test_main_build_basic_tree(monkeypatch, tmp_path):
 
 def test_main_build_nested_tree(monkeypatch, tmp_path):
     sys.argv = ['treescript-builder', TEST_INPUT_FILE]
-    os.chdir(tmp_path)
+    chdir(tmp_path)
     #
     (input_file := tmp_path / TEST_INPUT_FILE).touch()
     input_file.write_text(get_nested_tree_script())
@@ -78,7 +82,7 @@ def test_main_build_nested_tree(monkeypatch, tmp_path):
 
 def test_main_build_empty_dirs_tree(monkeypatch, tmp_path):
     sys.argv = ['treescript-builder', TEST_INPUT_FILE]
-    os.chdir(tmp_path)
+    chdir(tmp_path)
     #
     (input_file := tmp_path / TEST_INPUT_FILE).touch()
     input_file.write_text(get_empty_dirs_tree_script())
@@ -98,18 +102,18 @@ def test_main_build_empty_dirs_tree(monkeypatch, tmp_path):
 
 def test_main_default_basic_tree(monkeypatch, mock_basic_tree):
     sys.argv = ['treescript-builder', TEST_INPUT_FILE]
-    os.chdir(mock_basic_tree)
+    chdir(mock_basic_tree)
     collector, mock_print = setup_mock_print_collector()
     monkeypatch.setattr(builtins, 'print', mock_print)
     main()
     collector.assert_expected('')
     # BasicTree + TestInputFile = 2 + 1 = 3
-    assert 3 == len(list(mock_basic_tree.rglob('*'))) 
+    assert 3 == len(list(mock_basic_tree.rglob('*')))
 
 
 def test_main_default_nested_tree(monkeypatch, mock_nested_tree):
     sys.argv = ['treescript-builder', TEST_INPUT_FILE]
-    os.chdir(mock_nested_tree)
+    chdir(mock_nested_tree)
     collector, mock_print = setup_mock_print_collector()
     monkeypatch.setattr(builtins, 'print', mock_print)
     main()
@@ -119,7 +123,7 @@ def test_main_default_nested_tree(monkeypatch, mock_nested_tree):
 
 def test_main_default_empty_dirs_tree(monkeypatch, mock_empty_dirs_tree):
     sys.argv = ['treescript-builder', TEST_INPUT_FILE]
-    os.chdir(mock_empty_dirs_tree)
+    chdir(mock_empty_dirs_tree)
     collector, mock_print = setup_mock_print_collector()
     monkeypatch.setattr(builtins, 'print', mock_print)
     main()
@@ -127,29 +131,29 @@ def test_main_default_empty_dirs_tree(monkeypatch, mock_empty_dirs_tree):
     assert 5 == len(list(mock_empty_dirs_tree.rglob('*')))
 
 
-def test_main_reverse_basic_tree(monkeypatch, mock_basic_tree):
-    sys.argv = ['treescript-builder', TEST_INPUT_FILE, '--reverse',]
-    os.chdir(mock_basic_tree)
+def test_main_trim_basic_tree_copy_files(monkeypatch, mock_basic_tree):
+    sys.argv = ['treescript-builder', TEST_INPUT_FILE, '--trim', '-v']
+    chdir(mock_basic_tree)
     collector, mock_print = setup_mock_print_collector()
     monkeypatch.setattr(builtins, 'print', mock_print)
     main()
-    collector.assert_expected('')
-    assert 1 == len(list(mock_basic_tree.rglob('*')))
+    collector.assert_expected(f'WRITE:\n{results._SINGLE_OPERATION_SUCCEEDED_MSG}')
+    assert 3 == len(list(mock_basic_tree.rglob('*')))
 
 
-def test_main_trim_basic_tree(monkeypatch, mock_basic_tree):
-    sys.argv = ['treescript-builder', TEST_INPUT_FILE, '--trim',]
-    os.chdir(mock_basic_tree)
+def test_main_trim_basic_tree_move_files(monkeypatch, mock_basic_tree):
+    sys.argv = ['treescript-builder', TEST_INPUT_FILE, '--trim', '-mv']
+    chdir(mock_basic_tree)
     collector, mock_print = setup_mock_print_collector()
     monkeypatch.setattr(builtins, 'print', mock_print)
     main()
-    collector.assert_expected('')
+    collector.assert_expected(f'WRITE:\n{results._ALL_OPERATION_SUCCEEDED_MSG}')
     assert 1 == len(list(mock_basic_tree.rglob('*')))
 
 
 def test_main_trim_nested_tree(monkeypatch, mock_nested_tree):
-    sys.argv = ['treescript-builder', TEST_INPUT_FILE, '--trim',]
-    os.chdir(mock_nested_tree)
+    sys.argv = ['treescript-builder', TEST_INPUT_FILE, '--trim', '-m']
+    chdir(mock_nested_tree)
     collector, mock_print = setup_mock_print_collector()
     monkeypatch.setattr(builtins, 'print', mock_print)
     main()
@@ -158,8 +162,8 @@ def test_main_trim_nested_tree(monkeypatch, mock_nested_tree):
 
 
 def test_main_trim_empty_dirs_tree(monkeypatch, mock_empty_dirs_tree):
-    sys.argv = ['treescript-builder', TEST_INPUT_FILE, '--trim',]
-    os.chdir(mock_empty_dirs_tree)
+    sys.argv = ['treescript-builder', TEST_INPUT_FILE, '--trim', '-m']
+    chdir(mock_empty_dirs_tree)
     collector, mock_print = setup_mock_print_collector()
     monkeypatch.setattr(builtins, 'print', mock_print)
     main()
@@ -169,7 +173,7 @@ def test_main_trim_empty_dirs_tree(monkeypatch, mock_empty_dirs_tree):
 
 def test_main_data_basic_tree_dir_does_not_exist_raises_exit(monkeypatch, mock_basic_tree):
     sys.argv = ['treescript-builder', TEST_INPUT_FILE, '--data', TEST_DATA_DIR,]
-    os.chdir(mock_basic_tree)
+    chdir(mock_basic_tree)
     collector, mock_print = setup_mock_print_collector()
     monkeypatch.setattr(builtins, 'print', mock_print)
     with pytest.raises(SystemExit, match='The Directory does not exist.'):
@@ -178,9 +182,9 @@ def test_main_data_basic_tree_dir_does_not_exist_raises_exit(monkeypatch, mock_b
 
 def test_main_data_basic_tree(monkeypatch, mock_basic_tree):
     sys.argv = ['treescript-builder', TEST_INPUT_FILE, '--data', TEST_DATA_DIR,]
-    os.chdir(mock_basic_tree)
+    chdir(mock_basic_tree)
     # Create the TEST_DATA_DIR
-    (mock_basic_tree / TEST_DATA_DIR).mkdir()
+    (mock_basic_tree / TEST_DATA_DIR).mkdir(parents=True)
     collector, mock_print = setup_mock_print_collector()
     monkeypatch.setattr(builtins, 'print', mock_print)
     main()
@@ -189,18 +193,25 @@ def test_main_data_basic_tree(monkeypatch, mock_basic_tree):
 
 def test_main_data_nested_tree(monkeypatch, mock_nested_tree):
     sys.argv = ['treescript-builder', TEST_INPUT_FILE, '--data', TEST_DATA_DIR,]
-    os.chdir(mock_nested_tree)
-    (mock_nested_tree / TEST_DATA_DIR).mkdir()
+    chdir(mock_nested_tree)
+    (mock_nested_tree / TEST_DATA_DIR).mkdir(parents=True)
     collector, mock_print = setup_mock_print_collector()
     monkeypatch.setattr(builtins, 'print', mock_print)
     main()
     collector.assert_expected('')
 
 
-def test_main_data_empty_dirs_tree(monkeypatch, mock_empty_dirs_tree):
-    sys.argv = ['treescript-builder', TEST_INPUT_FILE, '--data', TEST_DATA_DIR,]
-    os.chdir(mock_empty_dirs_tree)
-    (mock_empty_dirs_tree / TEST_DATA_DIR).mkdir()
+def test_main_data_empty_dirs_tree(monkeypatch, temp_cwd):
+    tempdir_path = Path(temp_cwd.name)
+    (datadir_path := tempdir_path / TEST_DATA_DIR).mkdir(parents=True)
+    (my_dirs := tempdir_path / 'empty_dirs/').mkdir()
+    for n in range(1, 4):  # Create Numbered Empty Dirs
+        (my_dirs / f'dir{n}').mkdir()
+    (ts_path := tempdir_path / TEST_INPUT_FILE).touch()
+    ts_path.write_text(get_empty_dirs_tree_script())
+    #
+    sys.argv = ['treescript-builder', TEST_INPUT_FILE, '-mt', '--data', str(datadir_path),]
+    chdir(tempdir_path)
     collector, mock_print = setup_mock_print_collector()
     monkeypatch.setattr(builtins, 'print', mock_print)
     main()
@@ -211,24 +222,18 @@ def test_main_data_empty_dirs_tree(monkeypatch, mock_empty_dirs_tree):
     'unrecognized_option_arg', [
         f'-{chr(letter)}' for letter in chain(
             range(65, 91),
-            range(97, 114),
-            # -r is valid
-            range(115, 123),
+            range(97, 109),
+            # -m is valid
+            range(110, 116),
+            # -t is valid
+            range(117, 118),
+            # -v is valid
+            range(119, 123),
         )
     ]
 )
 def test_main_unrecognized_option_basic_tree(unrecognized_option_arg, mock_basic_tree):
     sys.argv = ['treescript-builder', TEST_INPUT_FILE, unrecognized_option_arg ]
-    os.chdir(mock_basic_tree)
+    chdir(mock_basic_tree)
     with pytest.raises(SystemExit, match="Unable to Parse Arguments."):
         main()
-
-
-def test_main_reverse_option_basic_tree(monkeypatch, mock_basic_tree):
-    sys.argv = ['treescript-builder', TEST_INPUT_FILE, '-r' ]
-    os.chdir(mock_basic_tree)
-    collector, mock_print = setup_mock_print_collector()
-    monkeypatch.setattr(builtins, 'print', mock_print)
-    main()
-    collector.assert_expected('')
-    assert 1 == len(list(mock_basic_tree.rglob('*')))

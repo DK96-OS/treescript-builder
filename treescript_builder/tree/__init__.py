@@ -1,56 +1,29 @@
-"""The Tree Module.
+""" The Tree Package Top-Level Module.
 """
-from treescript_builder.input.input_data import InputData
-from treescript_builder.input.line_reader import read_input_tree
+from treescript_builder.data.input_data import InputData
+from treescript_builder.data.instruction_data import InstructionData
+from treescript_builder.tree import build_validation, line_reader, trim_validation
 
 
-def build_tree(input_data: InputData) -> tuple[bool, ...]:
+def validate_tree(
+    input_data: InputData,
+) -> tuple[InstructionData,...]:
     """ Build The Tree as defined by the InputData.
+ - Provides both Trim and Build Validated Instructions, depending on InputData.trim_tree.
+ - Validation is handled in separate modules: build_validation, and trim_validation.
 
 **Parameters:**
- - input_data (str): The InputData produced by the Input Module.
+ - input_data (str): The InputData provided by the Input Package. Contains InputTree and options, notably trim_tree..
 
 **Returns:**
- tuple[bool, ...] - The results of each individual Builder operation.
+ tuple[InstructionData,...] - A resulting set of Instruction Data, produced by a valid Input Tree..
 
 **Raises:**
  SystemExit - If a Tree Validation error occurs.
 	"""
-    if input_data.is_reversed:
-        from treescript_builder.tree.trim_validation import validate_trim
-        instructions = validate_trim(
-            read_input_tree(input_data.tree_input),
-            input_data.data_dir
-        )
-        from treescript_builder.tree.tree_trimmer import trim
-        results = trim(instructions)
-    else:
-        from treescript_builder.tree.build_validation import validate_build
-        instructions = validate_build(
-            read_input_tree(input_data.tree_input),
-            input_data.data_dir
-        )
-        from treescript_builder.tree.tree_builder import build
-        results = build(instructions)
-    #
-    return results
-
-
-def process_results(results: tuple[bool, ...]) -> str:
-    """ Process and Summarize the Results.
-
-**Parameters:**
- - results (tuple[bool]): A tuple containing the results of the operations.
-
-**Returns:**
- str - A summary of the number of operations that succeeded.
-    """
-    if (length := len(results)) == 0:
-        return 'No operations ran.'
-    if (success := sum(iter(results))) == 0:
-        return f"All {length} operations failed."
-    elif success == length:
-        return f"All {length} operations succeeded."
-    # Compute the Fraction of success operations
-    success_percent = round(100 * success / length, 1)
-    return f"{success} out of {length} operations succeeded: {success_percent}%"
+    tree_generator = line_reader.read_input_tree(input_data.tree_input)
+    return trim_validation.validate_trim(
+        tree_generator, input_data.data_dir, input_data.move_files,
+    ) if input_data.trim_tree else build_validation.validate_build(
+        tree_generator, input_data.data_dir
+    )
