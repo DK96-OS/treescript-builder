@@ -129,4 +129,4 @@ def _get_path_method(
     elif isinstance(control_mode, TextMergeControlModes):
         return path_operations.get_text_merge_method(move_files, control_mode.prepend_merge)
     else:
-        raise TypeError(f'Unknown ControlMode of Type: {type(control_mode)}')
+        raise TypeError

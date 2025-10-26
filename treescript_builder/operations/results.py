@@ -152,9 +152,8 @@ def _get_write_mode_segment(write_mode: WriteControlModes):
 def _percentage_summary(
     results_tuple: tuple[bool, ...],
 ) -> str:
-    if (length := len(results_tuple)) == 0:
-        return _NO_FILETREE_OPERATIONS
-    elif (success := sum(results_tuple)) == 0:
+    length = len(results_tuple)
+    if (success := sum(results_tuple)) == 0:
         return _SINGLE_OPERATION_FAILED_MSG if length == 1 else _ALL_OPERATION_FAILED_MSG
     elif success == length:
         return _SINGLE_OPERATION_SUCCEEDED_MSG if length == 1 else _ALL_OPERATION_SUCCEEDED_MSG
