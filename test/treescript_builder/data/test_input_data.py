@@ -1,7 +1,5 @@
 """ Testing Input Data.
 """
-import pytest
-
 from treescript_builder.data.input_data import InputData
 from treescript_builder.data.tree_data import TreeData
 from treescript_builder.tree.line_reader import read_input_tree
