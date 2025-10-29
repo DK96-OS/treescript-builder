@@ -41,7 +41,7 @@ class DataDirectory:
         elif not data_dir.exists():
             exit(_DATA_DIR_PATH_DOES_NOT_EXIST_MSG)
         self._data_dir: Path = data_dir
-        self._expected_trim_data: list[str] = []
+        self._expected_trim_data: set[str] = set()
 
     def validate_build(self, node: TreeData) -> Path | None:
         """ Determine if the Data File supporting this Tree node is available.
