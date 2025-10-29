@@ -83,7 +83,7 @@ class DataDirectory:
         if self._search_label(data_label) is not None:
             exit(_DATA_FILE_EXISTS_MSG + str(node.line_number))
         # Add the new DataLabel to the collection
-        self._expected_trim_data.append(data_label)
+        self._expected_trim_data.add(data_label)
         # Return the DataLabel Path
         return self._data_dir / data_label
 
