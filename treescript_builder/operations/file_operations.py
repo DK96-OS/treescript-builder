@@ -45,10 +45,11 @@ def _build_files(
     instructions: tuple[InstructionData, ...],
 ) -> tuple[bool, ...]:
     path_method = _get_path_method(control_mode, move_files)
-    # The DataFile is the Target of the Path Operation
-    instruct_method = lambda x: path_method(x.path, x.data_path)
-    # Also needs the handle cleaning up empty directories.
-    return tuple(_build_instruction(i, instruct_method) for i in instructions)
+    return tuple(_build_instruction(
+        instruct=i,
+        # The DataFile is the SourcePath for Build Operations
+        build_method=lambda x: path_method(x.path, x.data_path)
+    ) for i in instructions)
 
 
 def _trim_files(
@@ -57,8 +58,14 @@ def _trim_files(
     instructions: tuple[InstructionData, ...],
 ) -> tuple[bool, ...]:
     path_method = _get_path_method(control_mode, move_files)
-    instruct_method = lambda x: path_method(x.data_path, x.path)
-    return tuple(_trim_instruction(i, instruct_method, move_files) for i in instructions)
+    exact_build = control_mode.exact_build if isinstance(control_mode, WriteControlModes) else None
+    return tuple(_trim_instruction(
+        instruct=i,
+        # The TargetFile is the SourcePath for Trim Operations
+        trim_method=lambda x: path_method(x.data_path, x.path),
+        move_files=move_files,
+        exact=exact_build,
+    ) for i in instructions)
 
 
 def _build_instruction(
@@ -93,6 +100,7 @@ def _trim_instruction(
     instruct: InstructionData,
     trim_method: Callable[[InstructionData], bool],
     move_files: bool,
+    exact: bool
 ) -> bool:
     """ Wraps the intersection of InstructionData and Trimmer Method.
  - Handles Directory instructions outside of Trimmer Method.
@@ -106,13 +114,14 @@ def _trim_instruction(
  bool - True if operation succeeds. False if OSError occurs, or trimmer method canceled file operation.
     """
     try:
-        if instruct.is_dir:
+        if instruct.is_dir: # handle cleaning up empty directories.
             return path_operations.remove_empty_dir(instruct.path)
         elif instruct.data_path is None:
             if move_files:
-                instruct.path.unlink(missing_ok=True)
-            else:
-                return True
+                if exact:
+                    instruct.path.unlink(missing_ok=True)
+                else:
+                    return False # Nothing can be done with this instruction in this mode
         else:
             return trim_method(instruct)
     except OSError:
@@ -123,7 +132,18 @@ def _trim_instruction(
 def _get_path_method(
     control_mode: ControlMode,
     move_files: bool,
-) -> Callable[[Path, Path | None], bool]:    
+) -> Callable[[Path, Path], bool]:
+    """ The Path Operation Method that corresponds with given ControlMode, and does either a move or a copy during execution.
+ - The first Path parameter in the Operation Method is the TargetFile, the one that will be written to (if ControlMode permits).
+ - The second Path parameter is the SourceFile, the one that is moved or copied from.
+
+**Parameters:**
+ - control_mode (ControlMode): The set of Control options given to the program during initialization.
+ - move_files (bool): Whether to configure the operation to move files, instead of copy.
+
+**Returns:**
+ Callable[[Path, Path], bool] - A Method that applies consistent file operations on given Path parameters.
+    """
     if isinstance(control_mode, WriteControlModes):
         return path_operations.get_write_operation(move_files, control_mode.overwrite, control_mode.exact_build)
     elif isinstance(control_mode, TextMergeControlModes):

@@ -45,7 +45,7 @@ def process_build_results(
     if len(results_tuple) == 0:
         return _NO_FILETREE_OPERATIONS
     # Results Summary.
-    return _create_opening_statement(control_mode, is_trim, move_files) + "\n" + _verbose_file_paths(
+    return _create_opening_statement(control_mode) + "\n" + _verbose_file_paths(
         verbosity=verbosity_level,
         instructions_tuple=instructions_tuple,
         results_tuple=results_tuple,
@@ -122,8 +122,6 @@ def _verbose_file_paths(
 
 def _create_opening_statement(
     control_mode: ControlMode,
-    is_trim: bool, #unused
-    move_files: bool, #unused
 ) -> str:
     if isinstance(control_mode, WriteControlModes):
         return _get_write_mode_segment(control_mode)
