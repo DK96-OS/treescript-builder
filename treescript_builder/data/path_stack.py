@@ -32,7 +32,7 @@ class PathStack:
 **Returns:**
  str - The String removed from the top of the Stack.
         """
-        if len(self._stack) <= 0:
+        if len(self._stack) < 1:
             return None
         return self._stack.pop()
 
@@ -55,7 +55,7 @@ class PathStack:
 **Returns:**
  boolean - Whether the Reduction was successful, ie 0 or more Stack pops.
         """
-        if depth < 0 or (current_depth := self.get_depth()) < depth:
+        if (current_depth := self.get_depth()) < depth:
             return False
         if current_depth == depth:
             return True
