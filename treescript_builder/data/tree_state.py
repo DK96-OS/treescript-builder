@@ -10,7 +10,6 @@ from treescript_builder.data.tree_data import TreeData
 
 
 _INVALID_TREE_INDENT_MSG = 'Invalid Tree Indentation on Line: '
-_INVALID_LINE_NUMBER_MSG = "Invalid Line Number Sequence"
 
 
 class TreeState:
