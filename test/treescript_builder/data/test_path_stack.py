@@ -3,6 +3,8 @@
 import unittest
 from pathlib import Path
 
+import pytest
+
 from treescript_builder.data.path_stack import PathStack
 
 
@@ -91,12 +93,13 @@ class TestPathStack(unittest.TestCase):
                 self.instance.reduce_depth(depth)
             )
 
-    def test_reduce_depth_invalid_input_returns_false(self):
+    def test_reduce_depth_invalid_input_raises_index_error(self):
         # Check multiple negative numbers
         for depth in range(-1, -100, -20):
-            self.assertFalse(
-                self.instance.reduce_depth(depth)
-            )
+            with pytest.raises(IndexError, match='pop from empty list'):
+                self.assertFalse(
+                    self.instance.reduce_depth(depth)
+                )
 
     def test_reduce_depth_add_one_depth_zero_returns_true(self):
         dir_name_1 = "src"

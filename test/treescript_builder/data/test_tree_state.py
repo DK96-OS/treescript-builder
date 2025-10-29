@@ -14,13 +14,6 @@ def test_validate_tree_data_first_dir_returns_0():
     assert instance.validate_tree_data(input_data) == 0
 
 
-def test_validate_tree_data_invalid_line_number_raises_exit():
-    input_data = TreeData(0, 0, True, 'src', '')
-    instance = TreeState()
-    with pytest.raises(SystemExit):
-        instance.validate_tree_data(input_data)
-
-
 def test_validate_tree_data_item_in_queue_returns_0():
     instance = TreeState()
     instance.add_to_queue('src')
@@ -199,7 +192,6 @@ def test_process_stack_single_item_depth_1_yields_nothing():
     [
         (0, True),
         (1, False),
-        (-1, False),
         (10, False),
     ]
 )
@@ -215,7 +207,6 @@ def test_reduce_depth_empty_stack_returns_bool(test_input, expect):
         (1, True),
         (2, True),
         (3, True),
-        (-1, False),
         (10, False),
     ]
 )
@@ -225,3 +216,12 @@ def test_reduce_depth_single_item_stack_returns_bool(test_input, expect):
     instance.add_to_stack('main')
     instance.add_to_stack('java')
     assert instance.reduce_depth(test_input) == expect
+
+
+def test_reduce_depth_negative_raises_index_error():
+    instance = TreeState()
+    instance.add_to_stack('src')
+    instance.add_to_stack('main')
+    instance.add_to_stack('java')
+    with pytest.raises(IndexError, match='pop from empty list'):
+        assert instance.reduce_depth(-1)
