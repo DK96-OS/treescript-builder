@@ -80,12 +80,12 @@ class DataDirectory:
         if data_label in self._expected_trim_data:
             exit(_DATA_LABEL_DUPLICATE_MSG + str(node.line_number))
         # Check if the DataFile already exists
-        if (data_path := self._search_label(data_label)) is not None:
+        if self._search_label(data_label) is not None:
             exit(_DATA_FILE_EXISTS_MSG + str(node.line_number))
         # Add the new DataLabel to the collection
         self._expected_trim_data.add(data_label)
         # Return the DataLabel Path
-        return data_path
+        return self._data_dir / data_label
 
     def _search_label(self, data_label: str) -> Path | None:
         """ Search for a DataLabel in this DataDirectory.
