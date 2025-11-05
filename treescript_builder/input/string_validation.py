@@ -137,8 +137,7 @@ def _filter_slash_chars(dir_name: str) -> str | None:
     if slash is None: # No slash chars found.
         return None
     if dir_name.endswith(slash) or dir_name.startswith(slash):
-        name: str = dir_name.strip(slash)
-        if slash in name: # Has internal slash characters
+        if slash in (name := dir_name.strip(slash)): # Has internal slash characters
             raise ValueError('Multi-dir line detected')
     else:
         # Found slash chars only within the node name (multi-dir line)

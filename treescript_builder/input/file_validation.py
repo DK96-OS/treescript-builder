@@ -3,11 +3,9 @@
  Author: DK96-OS 2024 - 2025
 """
 from pathlib import Path
-from stat import S_ISLNK
 from sys import exit
 
 from treescript_builder.input.string_validation import validate_name
-
 
 _FILE_SIZE_LIMIT = 32 * 1024 # 32 KB
 _FILE_SIZE_LIMIT_ERROR_MSG = "File larger than 32 KB Limit."
@@ -38,22 +36,9 @@ def validate_input_file(file_name: str) -> str | None:
 **Raises:**
  SystemExit - If the File does not exist, or is empty, blank, over 32 KB, or if the read or validation operation failed.
     """
-    file_path = Path(file_name)
-    try:
-        if not file_path.exists():
-            exit(_FILE_DOES_NOT_EXIST_MSG)
-        if S_ISLNK((stat := file_path.lstat()).st_mode):
-            exit(_FILE_SYMLINK_DISABLED_MSG)
-        if stat.st_size > _FILE_SIZE_LIMIT:
-            exit(_FILE_SIZE_LIMIT_ERROR_MSG)
-        if (data := file_path.read_text()) is not None:
-            if validate_name(data):
-                return data
-            exit(_FILE_VALIDATION_ERROR_MSG)
-        # Fallthrough: return None
-    except OSError:
-        exit(_FILE_READ_OSERROR_MSG)
-    return None
+    if not validate_name(data := safe_read_text_file(Path(file_name), file_size_limit=_FILE_SIZE_LIMIT)):
+        exit(_FILE_VALIDATION_ERROR_MSG)
+    return data
 
 
 def validate_directory(
@@ -80,20 +65,31 @@ def validate_directory(
     exit(_DIR_DOES_NOT_EXIST_MSG)
 
 
-def safe_read_text_file(file_path: Path) -> str:
+def safe_read_text_file(
+    file_path: Path,
+    file_size_limit: int = _TEXT_FILE_SIZE_LIMIT,
+) -> str:
     """ Safely read a TextFile from a Path.
  - Designed for use in Text Merge Operations, where text files are read and appended.
  - Quickly returns empty string if the file is missing.
  - Exits if a real issue with the file is found: symlink, over 4 MB size limit.
     """
     try:
-        if not file_path.exists():
+        if not check_not_symlink(file_path):
             return ''
-        if S_ISLNK((stat := file_path.lstat()).st_mode):
-            exit(_FILE_SYMLINK_DISABLED_MSG)
-        if stat.st_size > _TEXT_FILE_SIZE_LIMIT:
+        if file_path.lstat().st_size > file_size_limit:
             exit(_TEXT_FILE_SIZE_LIMIT_ERROR_MSG)
         return file_path.read_text()
     except OSError:
         exit(_FILE_READ_OSERROR_MSG)
     return ''
+
+
+def check_not_symlink(file_path: Path) -> bool:
+    return (not file_path.is_symlink()) and file_path.exists()
+
+
+def check_text_file_stats(file_path: Path) -> bool:
+    """ Check that the files are not too large for safer operations.
+    """
+    return check_not_symlink(file_path) and file_path.lstat().st_size <= _TEXT_FILE_SIZE_LIMIT
