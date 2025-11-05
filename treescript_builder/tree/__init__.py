@@ -25,5 +25,5 @@ def validate_tree(
     return trim_validation.validate_trim(
         tree_generator, input_data.data_dir, input_data.move_files,
     ) if input_data.trim_tree else build_validation.validate_build(
-        tree_generator, input_data.data_dir
+        tree_generator, input_data.data_dir, input_data.move_files,
     )
