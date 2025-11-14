@@ -8,7 +8,6 @@ from typing import Callable
 from treescript_builder.data.tree_data import TreeData
 from treescript_builder.input.string_validation import validate_data_label
 
-
 _DATA_DIR_PATH_DOES_NOT_EXIST_MSG = 'Data Directory Does Not Exist.'
 _DATA_DIR_NOT_PROVIDED_FOR_DATA_LABEL_MSG = 'No DataDirectory provided, but DataLabel found on Line: '
 
@@ -65,18 +64,16 @@ class DataDirectory:
     def validate_build_unique(self, node: TreeData) -> Path | None:
         if (data_label := _validate_node_data_label(node)) is None:
             return None
-        # Check if another TreeData Node has this DataLabel
-        if data_label in self._expected_data_labels:
-            exit(_DATA_LABEL_DUPLICATE_MSG + str(node.line_number))
+        self._unique_label(data_label, node.line_number)
         # Search in the DataDir for this DataFile.
         if (data_path := self._search_label(data_label)) is None:
             exit(_DATA_LABEL_NOT_FOUND_MSG + str(node.line_number))
-        # Add the new DataLabel to the collection
-        self._expected_data_labels.append(data_label)
         return data_path
 
     def validate_trim(self, node: TreeData) -> Path | None:
-        """ Determine if the File already exists in the Data Directory.
+        """ Validate a Trim DataLabel, with Overwrite disabled.
+ - Prevent overwriting existing DataFiles.
+ - Ensure all DataLabels are unique.
 
 **Parameters:**
  - node (TreeData): The TreeData to validate.
@@ -89,16 +86,50 @@ class DataDirectory:
         """
         if (data_label := _validate_node_data_label(node)) is None:
             return None
-        # Check if another TreeData Node has this DataLabel
-        if data_label in self._expected_data_labels:
-            exit(_DATA_LABEL_DUPLICATE_MSG + str(node.line_number))
+        self._unique_label(data_label, node.line_number)
         # Check if the DataFile already exists
         if self._search_label(data_label) is not None:
             exit(_DATA_FILE_EXISTS_MSG + str(node.line_number))
-        # Add the new DataLabel to the collection
-        self._expected_data_labels.append(data_label)
-        # Return the DataLabel Path
-        return self._data_dir / data_label
+        return self._data_dir / data_label # The DataFile Path
+
+    def validate_trim_overwrite(self, node: TreeData) -> Path | None:
+        """ Validate a Trim DataLabel, with Overwrite enabled.
+ - Allow an existing DataFile to be overwritten.
+ - Ensure all DataLabels are unique.
+ - In effect, each DataFile may only be overwritten once per Trim operation.
+
+**Parameters:**
+ - node (TreeData): The TreeData to validate.
+
+**Returns:**
+ Path? - The Path to a new File in the Data Directory.
+
+**Raises:**
+ SystemExit - When the Data label is invalid, or the Data File already exists.
+        """
+        if (data_label := _validate_node_data_label(node)) is None:
+            return None
+        self._unique_label(data_label, node.line_number)
+        return self._data_dir / data_label # The DataFile Path
+
+    def validate_trim_merge(self, node: TreeData) -> Path | None:
+        """ Validate a Trim DataLabel, with Merge enabled.
+ - No existing DataFile constraints.
+ - No uniqueness constraint on DataLabels.
+ - As long as DataLabel str contains only valid char.
+
+**Parameters:**
+ - node (TreeData): The TreeData to validate.
+
+**Returns:**
+ Path? - The Path to a new File in the Data Directory.
+
+**Raises:**
+ SystemExit - When the Data label is invalid, or the Data File already exists.
+        """
+        if (data_label := _validate_node_data_label(node)) is None:
+            return None
+        return self._data_dir / data_label # The DataFile Path
 
     def _search_label(self, data_label: str) -> Path | None:
         """ Search for a DataLabel in this DataDirectory.
@@ -115,6 +146,11 @@ class DataDirectory:
             return None
         except OSError:
             return None
+
+    def _unique_label(self, data_label: str, line_number: int):
+        if data_label in self._expected_data_labels:
+            exit(_DATA_LABEL_DUPLICATE_MSG + str(line_number))
+        self._expected_data_labels.append(data_label)
 
 
 def get_data_dir_validator(
