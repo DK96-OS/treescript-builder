@@ -6,7 +6,7 @@ from pathlib import Path
 from shutil import copy2, move
 from typing import Callable
 
-from treescript_builder.input.file_validation import safe_read_text_file
+from treescript_builder.input.file_validation import safe_read_text_file, check_text_file_stats, check_not_symlink
 
 
 def make_dir_exist(
@@ -41,7 +41,7 @@ def remove_empty_dir(
 **Returns:**
  bool - True of the directory was removed successfully, false if it was non-empty, or the Path was not a Dir.
     """
-    try: 
+    try:
         dir_path.rmdir()
     except OSError:
         return False
@@ -123,16 +123,20 @@ def _is_non_empty_path(
     target_file: Path,
 ) -> bool:
     try:
-        return target_file.exists() and target_file.stat().st_size > 0
+        return target_file.lstat().st_size > 0
     except OSError:
         # The purpose of this method is trying to prevent overwrite.
         return True # True will likely cancel the Operation.
+    except AttributeError:
+        return False
 
 
 def _try_copy(
     target_file: Path,
     source_file: Path,
 ) -> bool:
+    if not check_text_file_stats(source_file):
+        return False
     if _is_non_empty_path(target_file):
         return False
     copy2(source_file, target_file)
@@ -145,6 +149,8 @@ def _try_move(
 ) -> bool:
     if _is_non_empty_path(target_file):
         return False
+    if not check_not_symlink(source_file):
+        return False
     move(source_file, target_file)
     return True
 
@@ -153,6 +159,10 @@ def _ow_copy(
     target_file: Path,
     source_file: Path ,
 ) -> bool:
+    if not _is_non_empty_path(target_file):
+        return False
+    if not check_text_file_stats(source_file):
+        return False
     copy2(source_file, target_file)
     return True
 
@@ -161,6 +171,10 @@ def _ow_move(
     target_file: Path,
     source_file: Path,
 ) -> bool:
+    if not _is_non_empty_path(target_file):
+        return False
+    if not check_not_symlink(source_file):
+        return False
     move(source_file, target_file)
     return True
 
@@ -169,6 +183,8 @@ def _ow_exact_copy(
     target_file: Path,
     source_file: Path ,
 ) -> bool:
+    if not check_text_file_stats(source_file):
+        return False
     copy2(source_file, target_file)
     return True
 
@@ -177,6 +193,8 @@ def _ow_exact_move(
     target_file: Path,
     source_file: Path,
 ) -> bool:
+    if not check_not_symlink(source_file):
+        return False
     move(source_file, target_file)
     return True
 

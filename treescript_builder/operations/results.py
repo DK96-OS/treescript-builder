@@ -1,5 +1,6 @@
 """ TS-Builder Results Processing and Summarization.
 """
+from pathlib import Path
 from typing import Generator
 
 from treescript_builder.data.control_modes import ControlMode, WriteControlModes, TextMergeControlModes
@@ -55,8 +56,8 @@ def process_build_results(
 _NO_FILETREE_OPERATIONS = 'No FileTree Operations Ran.'
 _INVALID_RESULTS_TUPLE_MSG = 'Inconsistent Instruction and Results Tuple Lengths.'
 
-_PASSED_OPERATION_MSG = 'Pass: '
-_FAILED_OPERATION_MSG = 'Fail: '
+_PASSED_OPERATION_MSG = '. '
+_FAILED_OPERATION_MSG = 'F '
 
 _SINGLE_OPERATION_SUCCEEDED_MSG = 'File Operation Succeeded.'
 _SINGLE_OPERATION_FAILED_MSG = 'File Operation Failed.'
@@ -97,27 +98,32 @@ def _verbose_file_paths(
 **Returns:**
  str - The output string containing the requested information from the InstructionData-Results data input.
     """
+    dir_char = _determine_path_separator()
     if verbosity == 1: # Only Failed File Operations + Summary of Operations Statement.
         return _wrap_text_block_in_newline(
             '\n'.join(
-                _FAILED_OPERATION_MSG + str(x.path) + ('/' if x.is_dir else '')
+                _FAILED_OPERATION_MSG + str(x.path) + (dir_char if x.is_dir else '')
                 for x in _filter_instruction_results(instructions_tuple, results_tuple, is_true=False)
             )
         )
     else:  # Opening Statement + All File Paths + Summary of Operations Statement
         pass_files = _wrap_text_block_in_newline(
             '\n'.join(
-                _PASSED_OPERATION_MSG + str(x.path) + ('/' if x.is_dir else '')
+                _PASSED_OPERATION_MSG + str(x.path) + (dir_char if x.is_dir else '')
                 for x in _filter_instruction_results(instructions_tuple, results_tuple, is_true=True)
             )
         )
         failed_files = _wrap_text_block_in_newline(
             '\n'.join(map(
-                lambda x: _FAILED_OPERATION_MSG + str(x.path) + ('/' if x.is_dir else ''),
+                lambda x: _FAILED_OPERATION_MSG + str(x.path) + (dir_char if x.is_dir else ''),
                 _filter_instruction_results(instructions_tuple, results_tuple, is_true=False)
             ))
         )
         return pass_files + failed_files
+
+
+def _determine_path_separator():
+    return str(Path('a/b'))[1]
 
 
 def _create_opening_statement(
